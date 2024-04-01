@@ -723,3 +723,84 @@ async fn test_config_bad_owner() {
         TransactionError::InstructionError(0, InstructionError::InvalidAccountOwner)
     );
 }
+
+#[tokio::test]
+async fn test_maximum_keys_input() {
+    // `limited_deserialize` allows up to 1232 bytes of input.
+    // One config key is `Pubkey` + `bool` = 32 + 1 = 33 bytes.
+    // 1232 / 33 = 37 keys max.
+    let mut context = setup_test_context().await;
+
+    let config_keypair = Keypair::new();
+
+    // First store with 37 keys.
+    let mut keys = vec![];
+    for _ in 0..37 {
+        keys.push((Pubkey::new_unique(), false));
+    }
+    let my_config = MyConfig::new(42);
+
+    create_config_account(&mut context, &config_keypair, keys.clone()).await;
+    let instruction =
+        config_instruction::store(&config_keypair.pubkey(), true, keys.clone(), &my_config);
+    let payer = &context.payer;
+
+    context
+        .banks_client
+        .process_transaction(Transaction::new_signed_with_payer(
+            &[instruction],
+            Some(&payer.pubkey()),
+            &[&payer, &config_keypair],
+            context.last_blockhash,
+        ))
+        .await
+        .unwrap();
+
+    let config_account = context
+        .banks_client
+        .get_account(config_keypair.pubkey())
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(
+        Some(my_config),
+        deserialize(get_config_data(config_account.data()).unwrap()).ok()
+    );
+
+    // Do an update with 37 keys, forcing the program to deserialize the
+    // config account data.
+    let new_config = MyConfig::new(84);
+    let instruction =
+        config_instruction::store(&config_keypair.pubkey(), true, keys.clone(), &new_config);
+    context
+        .banks_client
+        .process_transaction(Transaction::new_signed_with_payer(
+            &[instruction],
+            Some(&payer.pubkey()),
+            &[&payer, &config_keypair],
+            context.last_blockhash,
+        ))
+        .await
+        .unwrap();
+
+    // Now try to store with 38 keys.
+    keys.push((Pubkey::new_unique(), false));
+    let my_config = MyConfig::new(42);
+    let instruction = config_instruction::store(&config_keypair.pubkey(), true, keys, &my_config);
+
+    let err = context
+        .banks_client
+        .process_transaction(Transaction::new_signed_with_payer(
+            &[instruction],
+            Some(&payer.pubkey()),
+            &[&payer, &config_keypair],
+            context.last_blockhash,
+        ))
+        .await
+        .unwrap_err()
+        .unwrap();
+    assert_eq!(
+        err,
+        TransactionError::InstructionError(0, InstructionError::InvalidInstructionData)
+    );
+}
