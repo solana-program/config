@@ -3154,17 +3154,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "scbpf-config"
-version = "0.1.0"
-dependencies = [
- "bincode",
- "serde",
- "solana-program",
- "solana-program-test",
- "solana-sdk",
-]
-
-[[package]]
 name = "schannel"
 version = "0.1.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3464,7 +3453,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "serde_json",
- "solana-config-program",
+ "solana-config-program 1.18.7",
  "solana-sdk",
  "spl-token",
  "spl-token-2022",
@@ -3515,7 +3504,7 @@ dependencies = [
  "serde_derive",
  "smallvec",
  "solana-bucket-map",
- "solana-config-program",
+ "solana-config-program 1.18.7",
  "solana-frozen-abi",
  "solana-frozen-abi-macro",
  "solana-measure",
@@ -3703,6 +3692,17 @@ dependencies = [
 
 [[package]]
 name = "solana-config-program"
+version = "0.1.0"
+dependencies = [
+ "bincode",
+ "serde",
+ "solana-program",
+ "solana-program-test",
+ "solana-sdk",
+]
+
+[[package]]
+name = "solana-config-program"
 version = "1.18.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c7bf92f66a8643b2a1da993a90d2fbd1860eda936d8ed0f931621360a0a707bf"
@@ -3749,7 +3749,7 @@ dependencies = [
  "solana-address-lookup-table-program",
  "solana-bpf-loader-program",
  "solana-compute-budget-program",
- "solana-config-program",
+ "solana-config-program 1.18.7",
  "solana-frozen-abi",
  "solana-frozen-abi-macro",
  "solana-loader-v4-program",
@@ -4208,7 +4208,7 @@ dependencies = [
  "solana-bpf-loader-program",
  "solana-bucket-map",
  "solana-compute-budget-program",
- "solana-config-program",
+ "solana-config-program 1.18.7",
  "solana-cost-model",
  "solana-frozen-abi",
  "solana-frozen-abi-macro",
@@ -4335,7 +4335,7 @@ dependencies = [
  "bincode",
  "log",
  "rustc_version",
- "solana-config-program",
+ "solana-config-program 1.18.7",
  "solana-program-runtime",
  "solana-sdk",
  "solana-vote-program",

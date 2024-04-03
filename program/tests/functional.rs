@@ -2,11 +2,11 @@
 
 use {
     bincode::{deserialize, serialized_size},
-    scbpf_config::{
+    serde::{Deserialize, Serialize},
+    solana_config_program::{
         instruction as config_instruction,
         state::{get_config_data, ConfigKeys, ConfigState},
     },
-    serde::{Deserialize, Serialize},
     solana_program_test::*,
     solana_sdk::{
         account::{AccountSharedData, ReadableAccount},
@@ -45,9 +45,9 @@ async fn setup_test_context() -> ProgramTestContext {
     let mut program_test = ProgramTest::default();
     program_test.prefer_bpf(true);
     program_test.add_program(
-        "scbpf_config",
-        scbpf_config::id(),
-        processor!(scbpf_config::processor::process),
+        "solana_config_program",
+        solana_config_program::id(),
+        processor!(solana_config_program::processor::process),
     );
     program_test.start_with_context().await
 }
@@ -273,7 +273,7 @@ async fn test_process_store_without_config_signer() {
 
     context.set_account(
         &signer0.pubkey(),
-        &AccountSharedData::new(100_000, 0, &scbpf_config::id()),
+        &AccountSharedData::new(100_000, 0, &solana_config_program::id()),
     );
 
     create_config_account(&mut context, &config_keypair, keys.clone()).await;
