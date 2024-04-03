@@ -1,10 +1,12 @@
 [package]
 name = "solana-config-program"
 version = "0.1.0"
-edition = "2021"
+description = "Solana Config Program"
+authors = ["Anza Technology Maintainers <maintainers@anza.xyz>"]
+repository = "https://github.com/solana-program/config"
 readme = "./README.md"
 license-file = "../LICENSE"
-publish = false
+edition = "2021"
 
 [package.metadata.solana]
 program-id = "Config1111111111111111111111111111111111111"
