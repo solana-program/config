@@ -255,13 +255,7 @@ async fn test_process_store_with_additional_signers() {
 }
 
 #[tokio::test]
-async fn test_process_store_without_config_signer() {
-    // [Core BPF]: This test actually has nothing to do with signatures.
-    // Instead, it's testing what happens when the config account is not
-    // included in the accounts list. In the original builtin test, it's
-    // marked as a signer in the instruction, but since that won't pass
-    // transaction sanitation from the client here, this version of that
-    // same tests looks even more strange.
+async fn test_process_store_bad_config_account() {
     let mut context = setup_test_context().await;
 
     let config_keypair = Keypair::new();
@@ -280,7 +274,7 @@ async fn test_process_store_without_config_signer() {
     let payer = &context.payer;
 
     let mut instruction =
-        config_instruction::store(&config_keypair.pubkey(), false, keys.clone(), &my_config);
+        config_instruction::store(&config_keypair.pubkey(), false, keys, &my_config);
     instruction.accounts.remove(0); // Config popped out of instruction.
 
     let err = context
@@ -288,7 +282,7 @@ async fn test_process_store_without_config_signer() {
         .process_transaction(Transaction::new_signed_with_payer(
             &[instruction],
             Some(&payer.pubkey()),
-            &[&payer, &signer0], // Config missing from signers.
+            &[&payer, &signer0],
             context.last_blockhash,
         ))
         .await
@@ -538,13 +532,13 @@ async fn test_config_update_contains_duplicates_fails() {
         (signer0.pubkey(), true), // Duplicate signer0.
     ];
     let instruction =
-        config_instruction::store(&config_keypair.pubkey(), false, dupe_keys, &new_config);
+        config_instruction::store(&config_keypair.pubkey(), true, dupe_keys, &new_config);
     let err = context
         .banks_client
         .process_transaction(Transaction::new_signed_with_payer(
             &[instruction],
             Some(&payer.pubkey()),
-            &[&payer, &signer0], // Config missing from signers.
+            &[&payer, &config_keypair, &signer0],
             context.last_blockhash,
         ))
         .await
@@ -640,9 +634,6 @@ async fn test_config_updates_requiring_config() {
     );
 }
 
-// [Core BPF]: I don't think this test is necessary.
-// This test is really just making sure the runtime doesn't panic when no
-// accounts are provided. Not relevant to BPF programs, really.
 #[tokio::test]
 async fn test_config_initialize_no_panic() {
     let mut context = setup_test_context().await;
