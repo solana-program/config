@@ -1,0 +1,28 @@
+[package]
+name = "solana-config-program"
+version = "0.1.0"
+description = "Solana Config Program"
+authors = ["Anza Technology Maintainers <maintainers@anza.xyz>"]
+repository = "https://github.com/solana-program/config"
+readme = "./README.md"
+license-file = "../LICENSE"
+edition = "2021"
+
+[package.metadata.solana]
+program-id = "Config1111111111111111111111111111111111111"
+
+[features]
+bpf-entrypoint = []
+test-sbf = []
+
+[dependencies]
+bincode = "1.3.3"
+serde = { version = "1.0.193", features = ["derive"] }
+solana-program = "1.18.2"
+
+[dev-dependencies]
+solana-program-test = "1.18.2"
+solana-sdk = "1.18.2"
+
+[lib]
+crate-type = ["cdylib", "lib"]
