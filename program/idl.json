@@ -139,7 +139,7 @@
           "During the first call to `store`, no signers will be required.",
           "Subsequent calls may add new required signers, but cannot remove any previously configured signers."
         ],
-        "optionalAccountStrategy": "programId"
+        "optionalAccountStrategy": "omitted"
       }
     ],
     "definedTypes": [],
