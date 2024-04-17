@@ -39,7 +39,18 @@
                   }
                 }
               },
-              "docs": []
+              "docs": [
+                "List of pubkeys stored in the config account,",
+                "and whether each pubkey needs to sign subsequent calls to `store`."
+              ]
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "data",
+              "type": {
+                "kind": "bytesTypeNode"
+              },
+              "docs": ["Arbitrary data to store in the config account."]
             }
           ]
         },
@@ -57,7 +68,11 @@
             "isWritable": true,
             "isSigner": "either",
             "isOptional": false,
-            "docs": []
+            "docs": [
+              "The config account to be modified.",
+              "Must sign during the first call to `store` to initialize the account,",
+              "or if no signers are configured in the config data."
+            ]
           }
         ],
         "arguments": [
@@ -91,7 +106,19 @@
                 }
               }
             },
-            "docs": []
+            "docs": [
+              "List of pubkeys to store in the config account,",
+              "and whether each pubkey needs to sign subsequent calls to `store`.",
+              "Non-signer pubkeys do not need to be passed to the program as accounts."
+            ]
+          },
+          {
+            "kind": "instructionArgumentNode",
+            "name": "data",
+            "type": {
+              "kind": "bytesTypeNode"
+            },
+            "docs": ["Arbitrary data to store in the config account."]
           }
         ],
         "remainingAccounts": [
@@ -105,8 +132,13 @@
             "isSigner": true
           }
         ],
-        "name": "initialize",
-        "docs": [],
+        "name": "store",
+        "docs": [
+          "Initializes or updates the config account.",
+          "Additional signers may be required to modify the config data.",
+          "During the first call to `store`, no signers will be required.",
+          "Subsequent calls may add new required signers, but cannot remove any previously configured signers."
+        ],
         "optionalAccountStrategy": "programId"
       }
     ],
