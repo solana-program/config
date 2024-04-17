@@ -1,0 +1,124 @@
+{
+  "kind": "rootNode",
+  "program": {
+    "kind": "programNode",
+    "pdas": [],
+    "accounts": [
+      {
+        "kind": "accountNode",
+        "data": {
+          "kind": "structTypeNode",
+          "fields": [
+            {
+              "kind": "structFieldTypeNode",
+              "name": "keys",
+              "type": {
+                "kind": "arrayTypeNode",
+                "item": {
+                  "kind": "tupleTypeNode",
+                  "items": [
+                    {
+                      "kind": "publicKeyTypeNode"
+                    },
+                    {
+                      "kind": "booleanTypeNode",
+                      "size": {
+                        "kind": "numberTypeNode",
+                        "format": "u8",
+                        "endian": "le"
+                      }
+                    }
+                  ]
+                },
+                "count": {
+                  "kind": "prefixedCountNode",
+                  "prefix": {
+                    "kind": "numberTypeNode",
+                    "format": "shortU16",
+                    "endian": "le"
+                  }
+                }
+              },
+              "docs": []
+            }
+          ]
+        },
+        "name": "config",
+        "docs": []
+      }
+    ],
+    "instructions": [
+      {
+        "kind": "instructionNode",
+        "accounts": [
+          {
+            "kind": "instructionAccountNode",
+            "name": "configAccount",
+            "isWritable": true,
+            "isSigner": "either",
+            "isOptional": false,
+            "docs": []
+          }
+        ],
+        "arguments": [
+          {
+            "kind": "instructionArgumentNode",
+            "name": "keys",
+            "type": {
+              "kind": "arrayTypeNode",
+              "item": {
+                "kind": "tupleTypeNode",
+                "items": [
+                  {
+                    "kind": "publicKeyTypeNode"
+                  },
+                  {
+                    "kind": "booleanTypeNode",
+                    "size": {
+                      "kind": "numberTypeNode",
+                      "format": "u8",
+                      "endian": "le"
+                    }
+                  }
+                ]
+              },
+              "count": {
+                "kind": "prefixedCountNode",
+                "prefix": {
+                  "kind": "numberTypeNode",
+                  "format": "shortU16",
+                  "endian": "le"
+                }
+              }
+            },
+            "docs": []
+          }
+        ],
+        "remainingAccounts": [
+          {
+            "kind": "instructionRemainingAccountsNode",
+            "value": {
+              "kind": "argumentValueNode",
+              "name": "signers"
+            },
+            "isOptional": true,
+            "isSigner": true
+          }
+        ],
+        "name": "initialize",
+        "docs": [],
+        "optionalAccountStrategy": "programId"
+      }
+    ],
+    "definedTypes": [],
+    "errors": [],
+    "name": "config",
+    "prefix": "",
+    "publicKey": "Config1111111111111111111111111111111111111",
+    "version": "0.0.1",
+    "origin": "shank"
+  },
+  "additionalPrograms": [],
+  "standard": "kinobi",
+  "version": "0.19.0"
+}
