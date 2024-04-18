@@ -134,10 +134,9 @@
         ],
         "name": "store",
         "docs": [
-          "Initializes or updates the config account.",
-          "Additional signers may be required to modify the config data.",
-          "During the first call to `store`, no signers will be required.",
-          "Subsequent calls may add new required signers, but cannot remove any previously configured signers."
+          "Stores keys and data in a config account.",
+          "Keys can be marked as signer or non-signer.",
+          "Only non-signer keys and data can be updated. Signer keys are immutable."
         ],
         "optionalAccountStrategy": "omitted"
       }
