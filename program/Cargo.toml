@@ -21,7 +21,7 @@ serde = { version = "1.0.193", features = ["derive"] }
 solana-program = "1.18.2"
 
 [dev-dependencies]
-solana-program-test = "1.18.2"
+mollusk-svm = { git = "https://github.com/buffalojoec/mollusk.git" }
 solana-sdk = "1.18.2"
 
 [lib]
