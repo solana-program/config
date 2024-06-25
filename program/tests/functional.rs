@@ -43,12 +43,8 @@ impl ConfigState for MyConfig {
 
 async fn setup_test_context() -> ProgramTestContext {
     let mut program_test = ProgramTest::default();
-    program_test.prefer_bpf(true);
-    program_test.add_program(
-        "solana_config_program",
-        solana_config_program::id(),
-        processor!(solana_config_program::processor::process),
-    );
+    program_test
+        .add_upgradeable_program_to_genesis("solana_config_program", &solana_config_program::id());
     program_test.start_with_context().await
 }
 
