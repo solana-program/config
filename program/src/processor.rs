@@ -57,9 +57,9 @@ pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], input: &[u8]) -> P
         }
     }
 
-    let mut counter = 0;
+    let mut counter: usize = 0;
     for (signer, _) in key_list.keys.iter().filter(|(_, is_signer)| *is_signer) {
-        counter += 1;
+        counter = counter.saturating_add(1);
         if signer != config_account.key {
             let signer_account = next_account_info(&mut accounts_iter).map_err(|_| {
                 msg!("account {:?} is not in account list", signer);
@@ -72,7 +72,7 @@ pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], input: &[u8]) -> P
             if signer_account.key != signer {
                 msg!(
                     "account[{:?}].signer_key() does not match Config data)",
-                    counter + 1
+                    counter.saturating_add(1)
                 );
                 return Err(ProgramError::MissingRequiredSignature);
             }

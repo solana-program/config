@@ -9,10 +9,15 @@ import {
 
 // Configure additional arguments here, e.g.:
 // ['--arg1', '--arg2', ...cliArguments()]
-const lintArgs = cliArguments();
+const lintArgs = [
+  '-Zunstable-options',
+  '--',
+  '--deny=warnings',
+  ...cliArguments()
+];
 
 const fix = popArgument(lintArgs, '--fix');
-const toolchain = getToolchainArgument('format');
+const toolchain = getToolchainArgument('lint');
 const manifestPath = path.join(
   workingDirectory,
   'clients',

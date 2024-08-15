@@ -3,12 +3,12 @@
 //! to add features, then rerun kinobi to update it.
 //!
 //! <https://github.com/kinobi-so/kinobi>
-//!
 
-use crate::hooked::ConfigKeys;
-use borsh::BorshDeserialize;
-use borsh::BorshSerialize;
-use kaigan::types::RemainderVec;
+use {
+    crate::hooked::ConfigKeys,
+    borsh::{BorshDeserialize, BorshSerialize},
+    kaigan::types::RemainderVec,
+};
 
 #[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
