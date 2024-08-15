@@ -6,5 +6,5 @@
 
 use solana_program::{pubkey, pubkey::Pubkey};
 
-/// `config` program ID.
-pub const CONFIG_ID: Pubkey = pubkey!("Config1111111111111111111111111111111111111");
+/// `solana_config` program ID.
+pub const SOLANA_CONFIG_ID: Pubkey = pubkey!("Config1111111111111111111111111111111111111");

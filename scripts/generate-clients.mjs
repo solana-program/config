@@ -10,6 +10,13 @@ const kinobi = k.createFromRoot(
   require(path.join(workingDirectory, 'program', 'idl.json'))
 );
 
+// Update programs.
+kinobi.update(
+  k.updateProgramsVisitor({
+    "solanaConfigProgram": { name: "solanaConfig" },
+  })
+);
+
 // Add missing types from the IDL.
 kinobi.update(
   k.bottomUpTransformerVisitor([

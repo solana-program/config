@@ -2,6 +2,6 @@ mod generated;
 mod hooked;
 
 pub use {
-    generated::{programs::CONFIG_ID as ID, *},
+    generated::{programs::SOLANA_CONFIG_ID as ID, *},
     hooked::*,
 };

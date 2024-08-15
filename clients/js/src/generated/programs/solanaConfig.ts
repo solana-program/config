@@ -9,19 +9,19 @@
 import { type Address } from '@solana/web3.js';
 import { type ParsedStoreInstruction } from '../instructions';
 
-export const CONFIG_PROGRAM_ADDRESS =
+export const SOLANA_CONFIG_PROGRAM_ADDRESS =
   'Config1111111111111111111111111111111111111' as Address<'Config1111111111111111111111111111111111111'>;
 
-export enum ConfigAccount {
+export enum SolanaConfigAccount {
   Config,
 }
 
-export enum ConfigInstruction {
+export enum SolanaConfigInstruction {
   Store,
 }
 
-export type ParsedConfigInstruction<
+export type ParsedSolanaConfigInstruction<
   TProgram extends string = 'Config1111111111111111111111111111111111111',
 > = {
-  instructionType: ConfigInstruction.Store;
+  instructionType: SolanaConfigInstruction.Store;
 } & ParsedStoreInstruction<TProgram>;
