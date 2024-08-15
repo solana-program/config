@@ -1900,6 +1900,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "kaigan"
+version = "0.2.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b6dd100976df9dd59d0c3fecf6f9ad3f161a087374d1b2a77ebb4ad8920f11bb"
+dependencies = [
+ "borsh 0.10.3",
+ "serde",
+]
+
+[[package]]
 name = "keccak"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3735,7 +3745,9 @@ name = "solana-config-program-client"
 version = "0.0.0"
 dependencies = [
  "assert_matches",
+ "bincode",
  "borsh 0.10.3",
+ "kaigan",
  "num-derive 0.3.3",
  "num-traits",
  "serde",

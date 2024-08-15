@@ -1,74 +1,42 @@
 #!/usr/bin/env zx
 import 'zx/globals';
-import * as k from 'kinobi';
-import { rootNodeFromAnchor } from '@kinobi-so/nodes-from-anchor';
+import * as k from "kinobi";
 import { renderVisitor as renderJavaScriptVisitor } from '@kinobi-so/renderers-js';
 import { renderVisitor as renderRustVisitor } from '@kinobi-so/renderers-rust';
-import { getAllProgramIdls } from './utils.mjs';
+import { getToolchainArgument, workingDirectory } from './utils.mjs';
 
 // Instanciate Kinobi.
-const [idl, ...additionalIdls] = getAllProgramIdls().map((idl) =>
-  rootNodeFromAnchor(require(idl))
-);
-const kinobi = k.createFromRoot(idl, additionalIdls);
-
-// Update programs.
-kinobi.update(
-  k.updateProgramsVisitor({
-    solanaProgramConfig: { name: 'config' },
-  })
+const kinobi = k.createFromRoot(
+  require(path.join(workingDirectory, 'program', 'idl.json'))
 );
 
-// Update accounts.
+// Add missing types from the IDL.
 kinobi.update(
-  k.updateAccountsVisitor({
-    counter: {
-      seeds: [
-        k.constantPdaSeedNodeFromString('utf8', 'counter'),
-        k.variablePdaSeedNode(
-          'authority',
-          k.publicKeyTypeNode(),
-          'The authority of the counter account'
-        ),
-      ],
-    },
-  })
-);
-
-// Update instructions.
-kinobi.update(
-  k.updateInstructionsVisitor({
-    create: {
-      byteDeltas: [k.instructionByteDeltaNode(k.accountLinkNode('counter'))],
-      accounts: {
-        counter: { defaultValue: k.pdaValueNode('counter') },
-        payer: { defaultValue: k.accountValueNode('authority') },
+  k.bottomUpTransformerVisitor([
+    {
+      select: (node) => {
+        const names = ["keys"];
+        return (
+          names.includes(node.name) &&
+          (k.isNode(node, "instructionArgumentNode") || k.isNode(node, "structFieldTypeNode")) &&
+          k.isNode(node.type, "arrayTypeNode")
+        );
+      },
+      transform: (node) => {
+        return {
+          ...node,
+          type: k.definedTypeLinkNode("configKeys", "hooked"),
+        };
       },
     },
-    increment: {
-      accounts: {
-        counter: { defaultValue: k.pdaValueNode('counter') },
-      },
-      arguments: {
-        amount: { defaultValue: k.noneValueNode() },
-      },
-    },
-  })
-);
-
-// Set account discriminators.
-const key = (name) => ({ field: 'key', value: k.enumValueNode('Key', name) });
-kinobi.update(
-  k.setAccountDiscriminatorFromFieldVisitor({
-    counter: key('counter'),
-  })
+  ])
 );
 
 // Render JavaScript.
 const jsClient = path.join(__dirname, '..', 'clients', 'js');
 kinobi.accept(
   renderJavaScriptVisitor(path.join(jsClient, 'src', 'generated'), {
-    prettierOptions: require(path.join(jsClient, '.prettierrc.json')),
+    prettier: require(path.join(jsClient, '.prettierrc.json')),
   })
 );
 
@@ -78,5 +46,6 @@ kinobi.accept(
   renderRustVisitor(path.join(rustClient, 'src', 'generated'), {
     formatCode: true,
     crateFolder: rustClient,
+    toolchain: getToolchainArgument('format'),
   })
 );
