@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Solana Config Program"
 authors = ["Anza Technology Maintainers <maintainers@anza.xyz>"]
 repository = "https://github.com/solana-program/config"
-readme = "./README.md"
+readme = "../README.md"
 license-file = "../LICENSE"
 edition = "2021"
 

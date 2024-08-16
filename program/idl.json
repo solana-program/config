@@ -143,7 +143,7 @@
     ],
     "definedTypes": [],
     "errors": [],
-    "name": "config",
+    "name": "solanaConfigProgram",
     "prefix": "",
     "publicKey": "Config1111111111111111111111111111111111111",
     "version": "0.0.1",
