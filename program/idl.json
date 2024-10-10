@@ -13,31 +13,8 @@
               "kind": "structFieldTypeNode",
               "name": "keys",
               "type": {
-                "kind": "arrayTypeNode",
-                "item": {
-                  "kind": "tupleTypeNode",
-                  "items": [
-                    {
-                      "kind": "publicKeyTypeNode"
-                    },
-                    {
-                      "kind": "booleanTypeNode",
-                      "size": {
-                        "kind": "numberTypeNode",
-                        "format": "u8",
-                        "endian": "le"
-                      }
-                    }
-                  ]
-                },
-                "count": {
-                  "kind": "prefixedCountNode",
-                  "prefix": {
-                    "kind": "numberTypeNode",
-                    "format": "shortU16",
-                    "endian": "le"
-                  }
-                }
+                "kind": "definedTypeLinkNode",
+                "name": "configKeys"
               },
               "docs": [
                 "List of pubkeys stored in the config account,",
@@ -80,31 +57,8 @@
             "kind": "instructionArgumentNode",
             "name": "keys",
             "type": {
-              "kind": "arrayTypeNode",
-              "item": {
-                "kind": "tupleTypeNode",
-                "items": [
-                  {
-                    "kind": "publicKeyTypeNode"
-                  },
-                  {
-                    "kind": "booleanTypeNode",
-                    "size": {
-                      "kind": "numberTypeNode",
-                      "format": "u8",
-                      "endian": "le"
-                    }
-                  }
-                ]
-              },
-              "count": {
-                "kind": "prefixedCountNode",
-                "prefix": {
-                  "kind": "numberTypeNode",
-                  "format": "shortU16",
-                  "endian": "le"
-                }
-              }
+              "kind": "definedTypeLinkNode",
+              "name": "configKeys"
             },
             "docs": [
               "List of pubkeys to store in the config account,",
@@ -141,15 +95,52 @@
         "optionalAccountStrategy": "omitted"
       }
     ],
-    "definedTypes": [],
+    "definedTypes": [
+      {
+        "kind": "definedTypeNode",
+        "name": "configKeys",
+        "type": {
+          "kind": "arrayTypeNode",
+          "item": {
+            "kind": "tupleTypeNode",
+            "items": [
+              {
+                "kind": "publicKeyTypeNode"
+              },
+              {
+                "kind": "booleanTypeNode",
+                "size": {
+                  "kind": "numberTypeNode",
+                  "format": "u8",
+                  "endian": "le"
+                }
+              }
+            ]
+          },
+          "count": {
+            "kind": "prefixedCountNode",
+            "prefix": {
+              "kind": "numberTypeNode",
+              "format": "shortU16",
+              "endian": "le"
+            }
+          }
+        },
+        "docs": [
+          "A collection of keys to be stored in Config account data.",
+          "Each key tuple comprises a unique `Pubkey` identifier,",
+          "and `bool` whether that key is a signer of the data."
+        ]
+      }
+    ],
     "errors": [],
-    "name": "solanaConfigProgram",
+    "name": "solanaConfig",
     "prefix": "",
     "publicKey": "Config1111111111111111111111111111111111111",
     "version": "0.0.1",
     "origin": "shank"
   },
   "additionalPrograms": [],
-  "standard": "kinobi",
-  "version": "0.19.0"
+  "standard": "codama",
+  "version": "1.0.0"
 }
