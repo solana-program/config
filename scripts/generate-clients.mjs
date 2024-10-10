@@ -18,7 +18,10 @@ codama.accept(
   })
 );
 
-// FIXME(loris): Temporary fix until the Rust renderer fixes the missing semicolon.
+// FIXME: Currently, the Rust renderer fails to generate a `ShortVec` because
+// it requires extra traits such as `BorshSerialize` that are not implemented
+// on the `ShortVec` type. To work around this issue, we remove the `configKeys`
+// type from Rust code generation and use a hooked type for it instead.
 codama.update(deleteNodesVisitor(['[definedTypeNode]configKeys']));
 
 // Render Rust.
@@ -29,7 +32,7 @@ codama.accept(
     crateFolder: rustClient,
     toolchain: getToolchainArgument('format'),
 
-    // FIXME(loris): Temporary fix until the Rust renderer fixes the missing semicolon.
+    // FIXME: The second part of the workaround for the `ShortVec` issue mentioned above.
     linkOverrides: {
       definedTypes: { configKeys: 'hooked' },
     },
