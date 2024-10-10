@@ -5,7 +5,7 @@
 //! <https://github.com/codama-idl/codama>
 
 use {
-    crate::generated::types::ConfigKeys,
+    crate::hooked::ConfigKeys,
     borsh::{BorshDeserialize, BorshSerialize},
     kaigan::types::RemainderVec,
 };
