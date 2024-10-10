@@ -25,9 +25,9 @@
   },
   "devDependencies": {
     "@iarna/toml": "^2.2.5",
-    "@kinobi-so/renderers-js": "^0.21.2",
-    "@kinobi-so/renderers-rust": "^0.21.1",
-    "kinobi": "^0.21.0",
+    "@codama/renderers-js": "^1.0.0",
+    "@codama/renderers-rust": "^1.0.0",
+    "codama": "^1.0.0",
     "typescript": "^5.5.2",
     "zx": "^7.2.3"
   },

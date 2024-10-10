@@ -8,18 +8,18 @@ importers:
 
   .:
     devDependencies:
+      '@codama/renderers-js':
+        specifier: ^1.0.0
+        version: 1.0.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)
+      '@codama/renderers-rust':
+        specifier: ^1.0.0
+        version: 1.0.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)
       '@iarna/toml':
         specifier: ^2.2.5
         version: 2.2.5
-      '@kinobi-so/renderers-js':
-        specifier: ^0.21.2
-        version: 0.21.2(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)
-      '@kinobi-so/renderers-rust':
-        specifier: ^0.21.1
-        version: 0.21.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)
-      kinobi:
-        specifier: ^0.21.0
-        version: 0.21.0
+      codama:
+        specifier: ^1.0.0
+        version: 1.0.0
       typescript:
         specifier: ^5.5.2
         version: 5.5.4
@@ -29,43 +29,43 @@ importers:
 
 packages:
 
+  '@codama/errors@1.0.0':
+    resolution: {integrity: sha512-XSdkNbCNJukhKO5TFJ5cFP7TfddxZwqHV7N/XyMbZ0meVPN1ymT94/d/9b8R+bvKuflj/SXImv527tGZWz6pGA==}
+    hasBin: true
+
+  '@codama/node-types@1.0.0':
+    resolution: {integrity: sha512-UAc+0jprwHFOqtAPqqA//PkrnlUzuqs+N5E36bHhLV0m5qWMlqrfmPg/ffBwMYFJsLFWsRsisALrqPy7ARkUow==}
+
+  '@codama/nodes-from-anchor@1.0.0':
+    resolution: {integrity: sha512-urqFOV5K1oKBptgIFFLCPWrUsEeZsonml12ieP26ozX12aglGlN0tsxNsCvxJulRIjUxuONbH6xzv7uKt0xSYQ==}
+
+  '@codama/nodes@1.0.0':
+    resolution: {integrity: sha512-btcnjDaOpEFvVq3uVzlQK4G2OxxyK3P9HkXw423GZaqYQzeSr1pDdTKjyVyg+QO578CGqIMySVlJ2UAdHVMytw==}
+
+  '@codama/renderers-core@1.0.0':
+    resolution: {integrity: sha512-WYvOylIzcR0WOc7GlUvGi5ym8IwmslwyV8zfj7FR646bMqaROirFJc+naGEbZ1lMykOyxcackTKL0eDB7954Qw==}
+
+  '@codama/renderers-js@1.0.0':
+    resolution: {integrity: sha512-wi9eqrtLbTM49ELqKqxIgbTaf7xKMWT+HIqj6GN373G0OJnSKwUJPIXAGLO+RCls5DGjDuOE5svuThU0zBkfzA==}
+
+  '@codama/renderers-rust@1.0.0':
+    resolution: {integrity: sha512-2z+XN6KCTQFDfE30OQcRo2LW4+9dnYlqs8rSUhKO2YsRiCnOoMu/zrNSqLtjL84T2PAwReRq+vBifcE0zaOuRw==}
+
+  '@codama/validators@1.0.0':
+    resolution: {integrity: sha512-jSfU5IrcGTvcqsJSBSzD3Ochig+hKKg2NKsT/vUfQ4jAw2cQrVUP5f4dMXyX779JYfHLHCwZnBYvgEdgi9gBZQ==}
+
+  '@codama/visitors-core@1.0.0':
+    resolution: {integrity: sha512-tDIfURVPf7ZokCFLOpKL6Au0ORiza1sPT4zmRSEjCC7iZp0Vb5K5FrdtUL13Wb+6jNM191e5GUFOmULRoavWug==}
+
+  '@codama/visitors@1.0.0':
+    resolution: {integrity: sha512-JncE6wRJLxt0imlj+loGH6dLPEMK7ozlv9YjWgCQgUYUI7is66OFwhWP5SFO0iEFlVjtOzZLXVQwoe9LSDz8Gg==}
+
   '@iarna/toml@2.2.5':
     resolution: {integrity: sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==}
 
-  '@kinobi-so/errors@0.21.0':
-    resolution: {integrity: sha512-7dPK35L/Y01qzekhVHdKAu+lENmHhuwX39rIx3qNJpNPHKi1VCcorLuOJlfT2F9MPPUjv5pZliL5qQ5IsvtNMw==}
-    hasBin: true
-
-  '@kinobi-so/node-types@0.21.0':
-    resolution: {integrity: sha512-UmzjocmsLa1pZ/ExVklGRsWQZNoIvifKBuTEAcpdxlDhg6hmrMWoXwWvRrLI5o7v1WKvTucv7KuM+5GU9UhFDw==}
-
-  '@kinobi-so/nodes-from-anchor@0.20.9':
-    resolution: {integrity: sha512-xNlwvJek6Hbfi45Unocwq/lT3rFXhmpZcAZmQJMgdIH8E4iAya9ZQ89j4neRQ+C1KVrK9qFJh0SaJvt9xnJQXA==}
-
-  '@kinobi-so/nodes@0.21.0':
-    resolution: {integrity: sha512-Z8STFjB3/f9LzK494l6qydkBMsFtnm96YreJjlAg9/DeKNtphimslSvFTF/9qHiGMfOQpOVhQqbWFXpt+PCZiQ==}
-
-  '@kinobi-so/renderers-core@0.20.7':
-    resolution: {integrity: sha512-KJhU8+UMowO9dDkLhEodAkbRkgSxdfBWeY+DIgOCgXcakt0T140K7OREuaAo9fp12Owf+10SAEGx9AzTNySoHA==}
-
-  '@kinobi-so/renderers-js@0.21.2':
-    resolution: {integrity: sha512-G576GAQ10ugmA63EZRlEbv892th37q9ow+AMzZD1vtypRCEJ7znakzySSDG3aeqaZujk2igKXFQTD+FHuY/xPg==}
-
-  '@kinobi-so/renderers-rust@0.21.1':
-    resolution: {integrity: sha512-G2MmTdaAT2JbjZxIZobweVd9HmusxzaEFZeTL3Xc5Ke5aFth4z4JijkdftcdNS1K6N34/4/qg/IXbC43l/XSkw==}
-
-  '@kinobi-so/validators@0.21.0':
-    resolution: {integrity: sha512-mpBqgqlto/Wdj6rlf1mqWkyw00rPJw98bkNItXq+ofCEtBsjaMq9lsevCE+IPmfJJYEPFGHGJW4Gb6m/cLmOqw==}
-
-  '@kinobi-so/visitors-core@0.21.0':
-    resolution: {integrity: sha512-m6C/cAy7q7ZAWhByQGo2YnBsbt0qS3Un0lyT4mmPGQt0QFXUDExFipjTvY/NnzZ5lQJ2grvnL04pqLx8V7eiuw==}
-
-  '@kinobi-so/visitors@0.21.0':
-    resolution: {integrity: sha512-gigysLJCfVtNCFkdDMeHGB+1SOvoiQOPUVKxewzOq1wDYVioFmmf4aXfB1GCEslLlMvl63cTJrwvh8bDIZoaSA==}
-
-  '@noble/hashes@1.4.0':
-    resolution: {integrity: sha512-V1JJ1WTRUqHHrOSh597hURcMqVKVGL/ea3kv0gSnEdsEZ0/+VyPghM1lMNGc00z7CIQorSvbKpuJkxvuHbvdbg==}
-    engines: {node: '>= 16'}
+  '@noble/hashes@1.5.0':
+    resolution: {integrity: sha512-1j6kQFb7QRru7eKN3ZDvRcP13rugwdxZqCjbiAVZfIJwgj2A65UmT4TgARXGlXgnRkORLTDTrO19ZErt7+QXgA==}
+    engines: {node: ^14.21.3 || >=16}
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -79,24 +79,24 @@ packages:
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
 
-  '@solana/codecs-core@2.0.0-preview.4':
-    resolution: {integrity: sha512-A0VVuDDA5kNKZUinOqHxJQK32aKTucaVbvn31YenGzHX1gPqq+SOnFwgaEY6pq4XEopSmaK16w938ZQS8IvCnw==}
+  '@solana/codecs-core@2.0.0-rc.1':
+    resolution: {integrity: sha512-bauxqMfSs8EHD0JKESaNmNuNvkvHSuN3bbWAF5RjOfDu2PugxHrvRebmYauvSumZ3cTfQ4HJJX6PG5rN852qyQ==}
     peerDependencies:
       typescript: '>=5'
 
-  '@solana/codecs-numbers@2.0.0-preview.4':
-    resolution: {integrity: sha512-Q061rLtMadsO7uxpguT+Z7G4UHnjQ6moVIxAQxR58nLxDPCC7MB1Pk106/Z7NDhDLHTcd18uO6DZ7ajHZEn2XQ==}
+  '@solana/codecs-numbers@2.0.0-rc.1':
+    resolution: {integrity: sha512-J5i5mOkvukXn8E3Z7sGIPxsThRCgSdgTWJDQeZvucQ9PT6Y3HiVXJ0pcWiOWAoQ3RX8e/f4I3IC+wE6pZiJzDQ==}
     peerDependencies:
       typescript: '>=5'
 
-  '@solana/codecs-strings@2.0.0-preview.4':
-    resolution: {integrity: sha512-YDbsQePRWm+xnrfS64losSGRg8Wb76cjK1K6qfR8LPmdwIC3787x9uW5/E4icl/k+9nwgbIRXZ65lpF+ucZUnw==}
+  '@solana/codecs-strings@2.0.0-rc.1':
+    resolution: {integrity: sha512-9/wPhw8TbGRTt6mHC4Zz1RqOnuPTqq1Nb4EyuvpZ39GW6O2t2Q7Q0XxiB3+BdoEjwA2XgPw6e2iRfvYgqty44g==}
     peerDependencies:
       fastestsmallesttextencoderdecoder: ^1.0.22
       typescript: '>=5'
 
-  '@solana/errors@2.0.0-preview.4':
-    resolution: {integrity: sha512-kadtlbRv2LCWr8A9V22On15Us7Nn8BvqNaOB4hXsTB3O0fU40D1ru2l+cReqLcRPij4znqlRzW9Xi0m6J5DIhA==}
+  '@solana/errors@2.0.0-rc.1':
+    resolution: {integrity: sha512-ejNvQ2oJ7+bcFAYWj225lyRkHnixuAeb7RQCixm+5mH4n1IA4Qya/9Bmfy5RAAHQzxK43clu3kZmL5eF9VGtYQ==}
     hasBin: true
     peerDependencies:
       typescript: '>=5'
@@ -136,6 +136,9 @@ packages:
   chalk@5.3.0:
     resolution: {integrity: sha512-dLitG79d+GV1Nb/VYcCDFivJeK1hiukt9QjRNVOsUtTy1rR1YJsmpGGTZ3qJos+uw7WmWF4wUwBd9jxjocFC2w==}
     engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
+
+  codama@1.0.0:
+    resolution: {integrity: sha512-ttJ9n2THpqTD8fP8reec+Y2j4ZTBuonDJk8SiKuS6enZBXd67JF3b+GFKM2S5a0xtxN5Evof5aBlY3JyC+jujQ==}
 
   commander@12.1.0:
     resolution: {integrity: sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA==}
@@ -272,9 +275,6 @@ packages:
   jsonify@0.0.1:
     resolution: {integrity: sha512-2/Ki0GcmuqSrgFyelQq9M05y7PS0mEwuIzrf3f1fPqkVDVRvZrPZtVSMHxdgo8Aq0sxAOb/cr2aqqA3LeWHVPg==}
 
-  kinobi@0.21.0:
-    resolution: {integrity: sha512-T71VNh4yS8uSvtNp1FEWhJGygW5/8O82SAlFRlPYsWiwqWH9X3eZwwUthBVH7dfazqs8GLia0rAMEmUP99iwLw==}
-
   map-stream@0.1.0:
     resolution: {integrity: sha512-CkYQrPYZfWnu/DAmVCpTSX/xHpKZ80eKh2lAkyA6AJTef6bW+6JpbQZN5rofum7da+SyN1bi5ctTm+lTfcCW3g==}
 
@@ -400,42 +400,40 @@ packages:
 
 snapshots:
 
-  '@iarna/toml@2.2.5': {}
-
-  '@kinobi-so/errors@0.21.0':
+  '@codama/errors@1.0.0':
     dependencies:
-      '@kinobi-so/node-types': 0.21.0
+      '@codama/node-types': 1.0.0
       chalk: 5.3.0
       commander: 12.1.0
 
-  '@kinobi-so/node-types@0.21.0': {}
+  '@codama/node-types@1.0.0': {}
 
-  '@kinobi-so/nodes-from-anchor@0.20.9':
+  '@codama/nodes-from-anchor@1.0.0':
     dependencies:
-      '@kinobi-so/errors': 0.21.0
-      '@kinobi-so/nodes': 0.21.0
-      '@kinobi-so/visitors': 0.21.0
-      '@noble/hashes': 1.4.0
+      '@codama/errors': 1.0.0
+      '@codama/nodes': 1.0.0
+      '@codama/visitors': 1.0.0
+      '@noble/hashes': 1.5.0
 
-  '@kinobi-so/nodes@0.21.0':
+  '@codama/nodes@1.0.0':
     dependencies:
-      '@kinobi-so/errors': 0.21.0
-      '@kinobi-so/node-types': 0.21.0
+      '@codama/errors': 1.0.0
+      '@codama/node-types': 1.0.0
 
-  '@kinobi-so/renderers-core@0.20.7':
+  '@codama/renderers-core@1.0.0':
     dependencies:
-      '@kinobi-so/errors': 0.21.0
-      '@kinobi-so/nodes': 0.21.0
-      '@kinobi-so/visitors-core': 0.21.0
+      '@codama/errors': 1.0.0
+      '@codama/nodes': 1.0.0
+      '@codama/visitors-core': 1.0.0
 
-  '@kinobi-so/renderers-js@0.21.2(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)':
+  '@codama/renderers-js@1.0.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)':
     dependencies:
-      '@kinobi-so/errors': 0.21.0
-      '@kinobi-so/nodes': 0.21.0
-      '@kinobi-so/nodes-from-anchor': 0.20.9
-      '@kinobi-so/renderers-core': 0.20.7
-      '@kinobi-so/visitors-core': 0.21.0
-      '@solana/codecs-strings': 2.0.0-preview.4(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)
+      '@codama/errors': 1.0.0
+      '@codama/nodes': 1.0.0
+      '@codama/nodes-from-anchor': 1.0.0
+      '@codama/renderers-core': 1.0.0
+      '@codama/visitors-core': 1.0.0
+      '@solana/codecs-strings': 2.0.0-rc.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)
       nunjucks: 3.2.4
       prettier: 3.3.3
     transitivePeerDependencies:
@@ -443,38 +441,40 @@ snapshots:
       - fastestsmallesttextencoderdecoder
       - typescript
 
-  '@kinobi-so/renderers-rust@0.21.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)':
+  '@codama/renderers-rust@1.0.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)':
     dependencies:
-      '@kinobi-so/errors': 0.21.0
-      '@kinobi-so/nodes': 0.21.0
-      '@kinobi-so/renderers-core': 0.20.7
-      '@kinobi-so/visitors-core': 0.21.0
-      '@solana/codecs-strings': 2.0.0-preview.4(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)
+      '@codama/errors': 1.0.0
+      '@codama/nodes': 1.0.0
+      '@codama/renderers-core': 1.0.0
+      '@codama/visitors-core': 1.0.0
+      '@solana/codecs-strings': 2.0.0-rc.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)
       nunjucks: 3.2.4
     transitivePeerDependencies:
       - chokidar
       - fastestsmallesttextencoderdecoder
       - typescript
 
-  '@kinobi-so/validators@0.21.0':
+  '@codama/validators@1.0.0':
     dependencies:
-      '@kinobi-so/errors': 0.21.0
-      '@kinobi-so/nodes': 0.21.0
-      '@kinobi-so/visitors-core': 0.21.0
+      '@codama/errors': 1.0.0
+      '@codama/nodes': 1.0.0
+      '@codama/visitors-core': 1.0.0
 
-  '@kinobi-so/visitors-core@0.21.0':
+  '@codama/visitors-core@1.0.0':
     dependencies:
-      '@kinobi-so/errors': 0.21.0
-      '@kinobi-so/nodes': 0.21.0
+      '@codama/errors': 1.0.0
+      '@codama/nodes': 1.0.0
       json-stable-stringify: 1.1.1
 
-  '@kinobi-so/visitors@0.21.0':
+  '@codama/visitors@1.0.0':
     dependencies:
-      '@kinobi-so/errors': 0.21.0
-      '@kinobi-so/nodes': 0.21.0
-      '@kinobi-so/visitors-core': 0.21.0
+      '@codama/errors': 1.0.0
+      '@codama/nodes': 1.0.0
+      '@codama/visitors-core': 1.0.0
 
-  '@noble/hashes@1.4.0': {}
+  '@iarna/toml@2.2.5': {}
+
+  '@noble/hashes@1.5.0': {}
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -488,26 +488,26 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.17.1
 
-  '@solana/codecs-core@2.0.0-preview.4(typescript@5.5.4)':
+  '@solana/codecs-core@2.0.0-rc.1(typescript@5.5.4)':
     dependencies:
-      '@solana/errors': 2.0.0-preview.4(typescript@5.5.4)
+      '@solana/errors': 2.0.0-rc.1(typescript@5.5.4)
       typescript: 5.5.4
 
-  '@solana/codecs-numbers@2.0.0-preview.4(typescript@5.5.4)':
+  '@solana/codecs-numbers@2.0.0-rc.1(typescript@5.5.4)':
     dependencies:
-      '@solana/codecs-core': 2.0.0-preview.4(typescript@5.5.4)
-      '@solana/errors': 2.0.0-preview.4(typescript@5.5.4)
+      '@solana/codecs-core': 2.0.0-rc.1(typescript@5.5.4)
+      '@solana/errors': 2.0.0-rc.1(typescript@5.5.4)
       typescript: 5.5.4
 
-  '@solana/codecs-strings@2.0.0-preview.4(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)':
+  '@solana/codecs-strings@2.0.0-rc.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)':
     dependencies:
-      '@solana/codecs-core': 2.0.0-preview.4(typescript@5.5.4)
-      '@solana/codecs-numbers': 2.0.0-preview.4(typescript@5.5.4)
-      '@solana/errors': 2.0.0-preview.4(typescript@5.5.4)
+      '@solana/codecs-core': 2.0.0-rc.1(typescript@5.5.4)
+      '@solana/codecs-numbers': 2.0.0-rc.1(typescript@5.5.4)
+      '@solana/errors': 2.0.0-rc.1(typescript@5.5.4)
       fastestsmallesttextencoderdecoder: 1.0.22
       typescript: 5.5.4
 
-  '@solana/errors@2.0.0-preview.4(typescript@5.5.4)':
+  '@solana/errors@2.0.0-rc.1(typescript@5.5.4)':
     dependencies:
       chalk: 5.3.0
       commander: 12.1.0
@@ -549,6 +549,13 @@ snapshots:
       set-function-length: 1.2.2
 
   chalk@5.3.0: {}
+
+  codama@1.0.0:
+    dependencies:
+      '@codama/errors': 1.0.0
+      '@codama/nodes': 1.0.0
+      '@codama/validators': 1.0.0
+      '@codama/visitors': 1.0.0
 
   commander@12.1.0: {}
 
@@ -689,13 +696,6 @@ snapshots:
       graceful-fs: 4.2.11
 
   jsonify@0.0.1: {}
-
-  kinobi@0.21.0:
-    dependencies:
-      '@kinobi-so/errors': 0.21.0
-      '@kinobi-so/nodes': 0.21.0
-      '@kinobi-so/validators': 0.21.0
-      '@kinobi-so/visitors': 0.21.0
 
   map-stream@0.1.0: {}
 

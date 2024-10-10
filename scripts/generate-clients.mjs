@@ -1,38 +1,39 @@
 #!/usr/bin/env zx
 import 'zx/globals';
-import * as k from "kinobi";
-import { renderVisitor as renderJavaScriptVisitor } from '@kinobi-so/renderers-js';
-import { renderVisitor as renderRustVisitor } from '@kinobi-so/renderers-rust';
+import * as c from 'codama';
+import { renderVisitor as renderJavaScriptVisitor } from '@codama/renderers-js';
+import { renderVisitor as renderRustVisitor } from '@codama/renderers-rust';
 import { getToolchainArgument, workingDirectory } from './utils.mjs';
 
-// Instanciate Kinobi.
-const kinobi = k.createFromRoot(
+// Instanciate Codama.
+const codama = c.createFromRoot(
   require(path.join(workingDirectory, 'program', 'idl.json'))
 );
 
 // Update programs.
-kinobi.update(
-  k.updateProgramsVisitor({
-    "solanaConfigProgram": { name: "solanaConfig" },
+codama.update(
+  c.updateProgramsVisitor({
+    solanaConfigProgram: { name: 'solanaConfig' },
   })
 );
 
 // Add missing types from the IDL.
-kinobi.update(
-  k.bottomUpTransformerVisitor([
+codama.update(
+  c.bottomUpTransformerVisitor([
     {
       select: (node) => {
-        const names = ["keys"];
+        const names = ['keys'];
         return (
           names.includes(node.name) &&
-          (k.isNode(node, "instructionArgumentNode") || k.isNode(node, "structFieldTypeNode")) &&
-          k.isNode(node.type, "arrayTypeNode")
+          (c.isNode(node, 'instructionArgumentNode') ||
+            c.isNode(node, 'structFieldTypeNode')) &&
+          c.isNode(node.type, 'arrayTypeNode')
         );
       },
       transform: (node) => {
         return {
           ...node,
-          type: k.definedTypeLinkNode("configKeys", "hooked"),
+          type: c.definedTypeLinkNode('configKeys'),
         };
       },
     },
@@ -41,7 +42,7 @@ kinobi.update(
 
 // Render JavaScript.
 const jsClient = path.join(__dirname, '..', 'clients', 'js');
-kinobi.accept(
+codama.accept(
   renderJavaScriptVisitor(path.join(jsClient, 'src', 'generated'), {
     prettier: require(path.join(jsClient, '.prettierrc.json')),
   })
@@ -49,7 +50,7 @@ kinobi.accept(
 
 // Render Rust.
 const rustClient = path.join(__dirname, '..', 'clients', 'rust');
-kinobi.accept(
+codama.accept(
   renderRustVisitor(path.join(rustClient, 'src', 'generated'), {
     formatCode: true,
     crateFolder: rustClient,
