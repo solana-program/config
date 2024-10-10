@@ -21,7 +21,7 @@ serde = { version = "1.0.193", features = ["derive"] }
 solana-program = "2.0.1"
 
 [dev-dependencies]
-solana-program-test = "2.0.1"
+mollusk-svm = "0.0.2"
 solana-sdk = "2.0.1"
 
 [lib]
