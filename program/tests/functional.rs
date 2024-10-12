@@ -439,7 +439,13 @@ fn test_config_updates_requiring_config() {
             (config, config_account),
             (signer0, AccountSharedData::default()),
         ],
-        &[Check::success(), Check::compute_units(3_324)],
+        &[
+            Check::success(),
+            Check::compute_units(3_324),
+            Check::account(&config)
+                .data(&bincode::serialize(&(ConfigKeys { keys: keys.clone() }, my_config)).unwrap())
+                .build(),
+        ],
     );
 
     // Use this for next invoke.
@@ -468,7 +474,8 @@ fn test_config_updates_requiring_config() {
 
     // Attempt update with incomplete signatures.
     let keys = vec![(pubkey, false), (config, true)]; // Missing signer0.
-    let instruction = config_instruction::store(&config, true, keys, &my_config);
+    let new_config = MyConfig::new(128);
+    let instruction = config_instruction::store(&config, true, keys, &new_config);
     mollusk.process_and_validate_instruction(
         &instruction,
         &[
