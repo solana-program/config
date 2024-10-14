@@ -2160,6 +2160,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "mollusk-svm"
+version = "0.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9ab64b7fdd65d01453cebbe010715f161f0317303a8d8e9f6b7c88950cbd95f3"
+dependencies = [
+ "bincode",
+ "solana-bpf-loader-program",
+ "solana-compute-budget",
+ "solana-logger",
+ "solana-program-runtime",
+ "solana-sdk",
+ "solana-system-program",
+]
+
+[[package]]
 name = "multimap"
 version = "0.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3720,9 +3735,9 @@ name = "solana-config-program"
 version = "0.1.0"
 dependencies = [
  "bincode",
+ "mollusk-svm",
  "serde",
  "solana-program",
- "solana-program-test",
  "solana-sdk",
 ]
 

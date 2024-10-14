@@ -1,19 +1,18 @@
 #![cfg(feature = "test-sbf")]
 
 use {
-    bincode::{deserialize, serialized_size},
+    bincode::serialized_size,
+    mollusk_svm::{result::Check, Mollusk},
     serde::{Deserialize, Serialize},
     solana_config_program::{
         instruction as config_instruction,
-        state::{get_config_data, ConfigKeys, ConfigState},
+        state::{ConfigKeys, ConfigState},
     },
-    solana_program_test::*,
     solana_sdk::{
-        account::{AccountSharedData, ReadableAccount},
-        instruction::{AccountMeta, InstructionError},
+        account::AccountSharedData,
+        instruction::{AccountMeta, Instruction},
+        program_error::ProgramError,
         pubkey::Pubkey,
-        signature::{Keypair, Signer},
-        transaction::{Transaction, TransactionError},
     },
 };
 
@@ -30,9 +29,6 @@ impl MyConfig {
     pub fn new(item: u64) -> Self {
         Self { item }
     }
-    pub fn deserialize(input: &[u8]) -> Option<Self> {
-        deserialize(input).ok()
-    }
 }
 
 impl ConfigState for MyConfig {
@@ -41,11 +37,8 @@ impl ConfigState for MyConfig {
     }
 }
 
-async fn setup_test_context() -> ProgramTestContext {
-    let mut program_test = ProgramTest::default();
-    program_test
-        .add_upgradeable_program_to_genesis("solana_config_program", &solana_config_program::id());
-    program_test.start_with_context().await
+fn setup() -> Mollusk {
+    Mollusk::new(&solana_config_program::id(), "solana_config_program")
 }
 
 fn get_config_space(key_len: usize) -> usize {
@@ -54,671 +47,501 @@ fn get_config_space(key_len: usize) -> usize {
         + key_len * entry_size
 }
 
-async fn create_config_account(
-    context: &mut ProgramTestContext,
-    config_keypair: &Keypair,
-    keys: Vec<(Pubkey, bool)>,
-) {
-    let payer = &context.payer;
-
+fn create_config_account(mollusk: &Mollusk, keys: Vec<(Pubkey, bool)>) -> AccountSharedData {
     let space = get_config_space(keys.len());
-    let lamports = context
-        .banks_client
-        .get_rent()
-        .await
-        .unwrap()
-        .minimum_balance(space as usize);
-    let instructions = config_instruction::create_account::<MyConfig>(
-        &payer.pubkey(),
-        &config_keypair.pubkey(),
+    let lamports = mollusk.sysvars.rent.minimum_balance(space as usize);
+    AccountSharedData::new_data(
         lamports,
-        keys,
-    );
-
-    context
-        .banks_client
-        .process_transaction(Transaction::new_signed_with_payer(
-            &instructions,
-            Some(&payer.pubkey()),
-            &[&payer, &config_keypair],
-            context.last_blockhash,
-        ))
-        .await
-        .unwrap();
+        &(ConfigKeys { keys }, MyConfig::default()),
+        &solana_config_program::id(),
+    )
+    .unwrap()
 }
 
-#[tokio::test]
-async fn test_process_create_ok() {
-    let mut context = setup_test_context().await;
-    let config_keypair = Keypair::new();
-    create_config_account(&mut context, &config_keypair, vec![]).await;
-    let config_account = context
-        .banks_client
-        .get_account(config_keypair.pubkey())
-        .await
-        .unwrap()
-        .unwrap();
-    assert_eq!(
-        Some(MyConfig::default()),
-        deserialize(get_config_data(config_account.data()).unwrap()).ok()
+#[test]
+fn test_process_create_ok() {
+    let mollusk = setup();
+
+    let config = Pubkey::new_unique();
+    let config_account = {
+        let space = get_config_space(0);
+        let lamports = mollusk.sysvars.rent.minimum_balance(space);
+        AccountSharedData::new(lamports, space as usize, &solana_config_program::id())
+    };
+
+    // `instruction::initialize_account` without making it public...
+    let instruction = {
+        let account_metas = vec![AccountMeta::new(config, true)];
+        let account_data = (ConfigKeys { keys: vec![] }, MyConfig::default());
+        Instruction::new_with_bincode(solana_config_program::id(), &account_data, account_metas)
+    };
+
+    mollusk.process_and_validate_instruction(
+        &instruction,
+        &[(config, config_account)],
+        &[
+            Check::success(),
+            Check::compute_units(581),
+            Check::account(&config)
+                .data(
+                    &bincode::serialize(&(ConfigKeys { keys: vec![] }, MyConfig::default()))
+                        .unwrap(),
+                )
+                .build(),
+        ],
     );
 }
 
-#[tokio::test]
-async fn test_process_store_ok() {
-    let mut context = setup_test_context().await;
+#[test]
+fn test_process_store_ok() {
+    let mollusk = setup();
 
-    let config_keypair = Keypair::new();
+    let config = Pubkey::new_unique();
     let keys = vec![];
     let my_config = MyConfig::new(42);
 
-    create_config_account(&mut context, &config_keypair, keys.clone()).await;
-    let instruction = config_instruction::store(&config_keypair.pubkey(), true, keys, &my_config);
-    let payer = &context.payer;
+    let config_account = create_config_account(&mollusk, keys.clone());
 
-    context
-        .banks_client
-        .process_transaction(Transaction::new_signed_with_payer(
-            &[instruction],
-            Some(&payer.pubkey()),
-            &[&payer, &config_keypair],
-            context.last_blockhash,
-        ))
-        .await
-        .unwrap();
+    let instruction = config_instruction::store(&config, true, keys.clone(), &my_config);
 
-    let config_account = context
-        .banks_client
-        .get_account(config_keypair.pubkey())
-        .await
-        .unwrap()
-        .unwrap();
-    assert_eq!(
-        Some(my_config),
-        deserialize(get_config_data(config_account.data()).unwrap()).ok()
+    mollusk.process_and_validate_instruction(
+        &instruction,
+        &[(config, config_account)],
+        &[
+            Check::success(),
+            Check::compute_units(581),
+            Check::account(&config)
+                .data(&bincode::serialize(&(ConfigKeys { keys }, my_config)).unwrap())
+                .build(),
+        ],
     );
 }
 
-#[tokio::test]
-async fn test_process_store_fail_instruction_data_too_large() {
+#[test]
+fn test_process_store_fail_instruction_data_too_large() {
     // [Core BPF]: To be clear, this is testing instruction data that's too
     // large for the keys list provided, not the max deserialize length.
-    let mut context = setup_test_context().await;
+    let mollusk = setup();
 
-    let config_keypair = Keypair::new();
+    let config = Pubkey::new_unique();
     let keys = vec![];
     let my_config = MyConfig::new(42);
 
-    create_config_account(&mut context, &config_keypair, keys.clone()).await;
-    let mut instruction =
-        config_instruction::store(&config_keypair.pubkey(), true, keys, &my_config);
-    instruction.data = vec![0; 123]; // <-- Replace data with a vector that's too large
-    let payer = &context.payer;
+    let config_account = create_config_account(&mollusk, keys.clone());
 
-    let err = context
-        .banks_client
-        .process_transaction(Transaction::new_signed_with_payer(
-            &[instruction],
-            Some(&payer.pubkey()),
-            &[&payer, &config_keypair],
-            context.last_blockhash,
-        ))
-        .await
-        .unwrap_err()
-        .unwrap();
-    assert_eq!(
-        err,
-        TransactionError::InstructionError(0, InstructionError::InvalidInstructionData)
+    let mut instruction = config_instruction::store(&config, true, keys, &my_config);
+    instruction.data = vec![0; 123]; // <-- Replace data with a vector that's too large
+
+    mollusk.process_and_validate_instruction(
+        &instruction,
+        &[(config, config_account)],
+        &[Check::err(ProgramError::InvalidInstructionData)],
     );
 }
 
-#[tokio::test]
-async fn test_process_store_fail_account0_not_signer() {
-    let mut context = setup_test_context().await;
+#[test]
+fn test_process_store_fail_account0_not_signer() {
+    let mollusk = setup();
 
-    let config_keypair = Keypair::new();
+    let config = Pubkey::new_unique();
     let keys = vec![];
     let my_config = MyConfig::new(42);
 
-    create_config_account(&mut context, &config_keypair, keys.clone()).await;
-    let mut instruction =
-        config_instruction::store(&config_keypair.pubkey(), true, keys, &my_config);
-    let payer = &context.payer;
+    let config_account = create_config_account(&mollusk, keys.clone());
 
+    let mut instruction = config_instruction::store(&config, true, keys, &my_config);
     instruction.accounts[0].is_signer = false; // <----- not a signer
 
-    let err = context
-        .banks_client
-        .process_transaction(Transaction::new_signed_with_payer(
-            &[instruction],
-            Some(&payer.pubkey()),
-            &[&payer],
-            context.last_blockhash,
-        ))
-        .await
-        .unwrap_err()
-        .unwrap();
-    assert_eq!(
-        err,
-        TransactionError::InstructionError(0, InstructionError::MissingRequiredSignature)
+    mollusk.process_and_validate_instruction(
+        &instruction,
+        &[(config, config_account)],
+        &[Check::err(ProgramError::MissingRequiredSignature)],
     );
 }
 
-#[tokio::test]
-async fn test_process_store_with_additional_signers() {
-    let mut context = setup_test_context().await;
+#[test]
+fn test_process_store_with_additional_signers() {
+    let mollusk = setup();
 
-    let config_keypair = Keypair::new();
+    let config = Pubkey::new_unique();
 
     let pubkey = Pubkey::new_unique();
-    let signer0 = Keypair::new();
-    let signer1 = Keypair::new();
-    let keys = vec![
-        (pubkey, false),
-        (signer0.pubkey(), true),
-        (signer1.pubkey(), true),
-    ];
+    let signer0 = Pubkey::new_unique();
+    let signer1 = Pubkey::new_unique();
+    let keys = vec![(pubkey, false), (signer0, true), (signer1, true)];
     let my_config = MyConfig::new(42);
 
-    create_config_account(&mut context, &config_keypair, keys.clone()).await;
-    let instruction =
-        config_instruction::store(&config_keypair.pubkey(), true, keys.clone(), &my_config);
-    let payer = &context.payer;
+    let config_account = create_config_account(&mollusk, keys.clone());
 
-    context
-        .banks_client
-        .process_transaction(Transaction::new_signed_with_payer(
-            &[instruction],
-            Some(&payer.pubkey()),
-            &[&payer, &config_keypair, &signer0, &signer1],
-            context.last_blockhash,
-        ))
-        .await
-        .unwrap();
+    let instruction = config_instruction::store(&config, true, keys.clone(), &my_config);
 
-    let config_account = context
-        .banks_client
-        .get_account(config_keypair.pubkey())
-        .await
-        .unwrap()
-        .unwrap();
-    let config_state: ConfigKeys = deserialize(config_account.data()).unwrap();
-    assert_eq!(config_state.keys, keys);
-    assert_eq!(
-        Some(my_config),
-        deserialize(get_config_data(config_account.data()).unwrap()).ok()
+    mollusk.process_and_validate_instruction(
+        &instruction,
+        &[
+            (config, config_account),
+            (signer0, AccountSharedData::default()),
+            (signer1, AccountSharedData::default()),
+        ],
+        &[
+            Check::success(),
+            Check::compute_units(3_228),
+            Check::account(&config)
+                .data(&bincode::serialize(&(ConfigKeys { keys }, my_config)).unwrap())
+                .build(),
+        ],
     );
 }
 
-#[tokio::test]
-async fn test_process_store_bad_config_account() {
-    let mut context = setup_test_context().await;
+#[test]
+fn test_process_store_bad_config_account() {
+    let mollusk = setup();
 
-    let config_keypair = Keypair::new();
+    let config = Pubkey::new_unique();
 
     let pubkey = Pubkey::new_unique();
-    let signer0 = Keypair::new();
-    let keys = vec![(pubkey, false), (signer0.pubkey(), true)];
+    let signer0 = Pubkey::new_unique();
+    let keys = vec![(pubkey, false), (signer0, true)];
     let my_config = MyConfig::new(42);
 
-    context.set_account(
-        &signer0.pubkey(),
-        &AccountSharedData::new(100_000, 0, &solana_config_program::id()),
-    );
-
-    create_config_account(&mut context, &config_keypair, keys.clone()).await;
-    let payer = &context.payer;
-
-    let mut instruction =
-        config_instruction::store(&config_keypair.pubkey(), false, keys, &my_config);
+    let mut instruction = config_instruction::store(&config, false, keys, &my_config);
     instruction.accounts.remove(0); // Config popped out of instruction.
 
-    let err = context
-        .banks_client
-        .process_transaction(Transaction::new_signed_with_payer(
-            &[instruction],
-            Some(&payer.pubkey()),
-            &[&payer, &signer0],
-            context.last_blockhash,
-        ))
-        .await
-        .unwrap_err()
-        .unwrap();
-    assert_eq!(
-        err,
-        TransactionError::InstructionError(0, InstructionError::InvalidAccountData)
+    mollusk.process_and_validate_instruction(
+        &instruction,
+        &[
+            // Config missing from accounts.
+            (
+                signer0,
+                AccountSharedData::new(100_000, 0, &solana_config_program::id()),
+            ),
+        ],
+        &[Check::err(ProgramError::InvalidAccountData)],
     );
 }
 
-#[tokio::test]
-async fn test_process_store_with_bad_additional_signer() {
-    let mut context = setup_test_context().await;
+#[test]
+fn test_process_store_with_bad_additional_signer() {
+    let mollusk = setup();
 
-    let config_keypair = Keypair::new();
-    let bad_signer = Keypair::new();
+    let config = Pubkey::new_unique();
 
-    let signer0 = Keypair::new();
-    let keys = vec![(signer0.pubkey(), true)];
+    let signer0 = Pubkey::new_unique();
+    let keys = vec![(signer0, true)];
     let my_config = MyConfig::new(42);
 
-    create_config_account(&mut context, &config_keypair, keys.clone()).await;
-    let payer = &context.payer;
+    let bad_signer = Pubkey::new_unique();
+
+    let config_account = create_config_account(&mollusk, keys.clone());
 
     // Config-data pubkey doesn't match signer.
-    let mut instruction =
-        config_instruction::store(&config_keypair.pubkey(), true, keys.clone(), &my_config);
-    instruction.accounts[1] = AccountMeta::new(bad_signer.pubkey(), true);
-    let err = context
-        .banks_client
-        .process_transaction(Transaction::new_signed_with_payer(
-            &[instruction],
-            Some(&payer.pubkey()),
-            &[&payer, &config_keypair, &bad_signer],
-            context.last_blockhash,
-        ))
-        .await
-        .unwrap_err()
-        .unwrap();
-    assert_eq!(
-        err,
-        TransactionError::InstructionError(0, InstructionError::MissingRequiredSignature)
+    let mut instruction = config_instruction::store(&config, true, keys.clone(), &my_config);
+    instruction.accounts[1] = AccountMeta::new(bad_signer, true);
+
+    mollusk.process_and_validate_instruction(
+        &instruction,
+        &[
+            (config, config_account.clone()),
+            (bad_signer, AccountSharedData::default()),
+        ],
+        &[Check::err(ProgramError::MissingRequiredSignature)],
     );
 
     // Config-data pubkey not a signer.
-    let mut instruction =
-        config_instruction::store(&config_keypair.pubkey(), true, keys, &my_config);
+    let mut instruction = config_instruction::store(&config, true, keys, &my_config);
     instruction.accounts[1].is_signer = false;
-    let err = context
-        .banks_client
-        .process_transaction(Transaction::new_signed_with_payer(
-            &[instruction],
-            Some(&payer.pubkey()),
-            &[&payer, &config_keypair],
-            context.last_blockhash,
-        ))
-        .await
-        .unwrap_err()
-        .unwrap();
-    assert_eq!(
-        err,
-        TransactionError::InstructionError(0, InstructionError::MissingRequiredSignature)
+
+    mollusk.process_and_validate_instruction(
+        &instruction,
+        &[
+            (config, config_account),
+            (signer0, AccountSharedData::default()),
+        ],
+        &[Check::err(ProgramError::MissingRequiredSignature)],
     );
 }
 
-#[tokio::test]
-async fn test_config_updates() {
-    let mut context = setup_test_context().await;
+#[test]
+fn test_config_updates() {
+    let mollusk = setup();
 
-    let config_keypair = Keypair::new();
+    let config = Pubkey::new_unique();
 
     let pubkey = Pubkey::new_unique();
-    let signer0 = Keypair::new();
-    let signer1 = Keypair::new();
-    let signer2 = Keypair::new();
-    let keys = vec![
-        (pubkey, false),
-        (signer0.pubkey(), true),
-        (signer1.pubkey(), true),
-    ];
+    let signer0 = Pubkey::new_unique();
+    let signer1 = Pubkey::new_unique();
+    let signer2 = Pubkey::new_unique();
+    let keys = vec![(pubkey, false), (signer0, true), (signer1, true)];
     let my_config = MyConfig::new(42);
 
-    create_config_account(&mut context, &config_keypair, keys.clone()).await;
-    let payer = &context.payer;
+    let config_account = create_config_account(&mollusk, keys.clone());
 
-    let instruction =
-        config_instruction::store(&config_keypair.pubkey(), true, keys.clone(), &my_config);
-    context
-        .banks_client
-        .process_transaction(Transaction::new_signed_with_payer(
-            &[instruction],
-            Some(&payer.pubkey()),
-            &[&payer, &config_keypair, &signer0, &signer1],
-            context.last_blockhash,
-        ))
-        .await
-        .unwrap();
+    let instruction = config_instruction::store(&config, true, keys.clone(), &my_config);
+    let result = mollusk.process_and_validate_instruction(
+        &instruction,
+        &[
+            (config, config_account),
+            (signer0, AccountSharedData::default()),
+            (signer1, AccountSharedData::default()),
+        ],
+        &[Check::success(), Check::compute_units(3_228)],
+    );
+
+    // Use this for next invoke.
+    let updated_config_account = result.get_account(&config).unwrap().to_owned();
 
     // Update with expected signatures.
     let new_config = MyConfig::new(84);
-    let instruction =
-        config_instruction::store(&config_keypair.pubkey(), false, keys.clone(), &new_config);
-    context
-        .banks_client
-        .process_transaction(Transaction::new_signed_with_payer(
-            &[instruction],
-            Some(&payer.pubkey()),
-            &[&payer, &signer0, &signer1],
-            context.last_blockhash,
-        ))
-        .await
-        .unwrap();
-
-    let config_account = context
-        .banks_client
-        .get_account(config_keypair.pubkey())
-        .await
-        .unwrap()
-        .unwrap();
-    let config_state: ConfigKeys = deserialize(config_account.data()).unwrap();
-    assert_eq!(config_state.keys, keys);
-    assert_eq!(
-        new_config,
-        MyConfig::deserialize(get_config_data(config_account.data()).unwrap()).unwrap()
+    let instruction = config_instruction::store(&config, false, keys.clone(), &new_config);
+    mollusk.process_and_validate_instruction(
+        &instruction,
+        &[
+            (config, updated_config_account),
+            (signer0, AccountSharedData::default()),
+            (signer1, AccountSharedData::default()),
+        ],
+        &[
+            Check::success(),
+            Check::compute_units(3_229),
+            Check::account(&config)
+                .data(&bincode::serialize(&(ConfigKeys { keys }, new_config)).unwrap())
+                .build(),
+        ],
     );
+
+    // Use this for next invoke.
+    let updated_config_account = result.get_account(&config).unwrap();
 
     // Attempt update with incomplete signatures.
     let keys = vec![
         (pubkey, false),
-        (signer0.pubkey(), true), // Missing signer1.
+        (signer0, true), // Missing signer1.
     ];
-    let instruction = config_instruction::store(&config_keypair.pubkey(), false, keys, &my_config);
-    let err = context
-        .banks_client
-        .process_transaction(Transaction::new_signed_with_payer(
-            &[instruction],
-            Some(&payer.pubkey()),
-            &[&payer, &signer0], // Missing signer1.
-            context.last_blockhash,
-        ))
-        .await
-        .unwrap_err()
-        .unwrap();
-    assert_eq!(
-        err,
-        TransactionError::InstructionError(0, InstructionError::MissingRequiredSignature)
+    let instruction = config_instruction::store(&config, false, keys, &my_config);
+    mollusk.process_and_validate_instruction(
+        &instruction,
+        &[
+            (config, updated_config_account.clone()),
+            (signer0, AccountSharedData::default()), // Missing signer1.
+        ],
+        &[Check::err(ProgramError::MissingRequiredSignature)],
     );
 
     // Attempt update with incorrect signatures.
     let keys = vec![
         (pubkey, false),
-        (signer0.pubkey(), true),
-        (signer2.pubkey(), true), // Incorrect signer1.
+        (signer0, true),
+        (signer2, true), // Incorrect signer1.
     ];
-    let instruction = config_instruction::store(&config_keypair.pubkey(), false, keys, &my_config);
-    let err = context
-        .banks_client
-        .process_transaction(Transaction::new_signed_with_payer(
-            &[instruction],
-            Some(&payer.pubkey()),
-            &[&payer, &signer0, &signer2], // Incorrect signer1.
-            context.last_blockhash,
-        ))
-        .await
-        .unwrap_err()
-        .unwrap();
-    assert_eq!(
-        err,
-        TransactionError::InstructionError(0, InstructionError::MissingRequiredSignature)
+    let instruction = config_instruction::store(&config, false, keys, &my_config);
+    mollusk.process_and_validate_instruction(
+        &instruction,
+        &[
+            (config, updated_config_account.clone()),
+            (signer0, AccountSharedData::default()),
+            (signer2, AccountSharedData::default()), // Incorrect signer1.
+        ],
+        &[Check::err(ProgramError::MissingRequiredSignature)],
     );
 }
 
-#[tokio::test]
-async fn test_config_initialize_contains_duplicates_fails() {
-    let mut context = setup_test_context().await;
+#[test]
+fn test_config_initialize_contains_duplicates_fails() {
+    let mollusk = setup();
 
-    let config_keypair = Keypair::new();
+    let config = Pubkey::new_unique();
 
     let pubkey = Pubkey::new_unique();
-    let signer0 = Keypair::new();
+    let signer0 = Pubkey::new_unique();
     let keys = vec![
         (pubkey, false),
-        (signer0.pubkey(), true),
-        (signer0.pubkey(), true), // Duplicate signer0.
+        (signer0, true),
+        (signer0, true), // Duplicate signer0.
     ];
     let my_config = MyConfig::new(42);
 
-    create_config_account(&mut context, &config_keypair, keys.clone()).await;
-    let payer = &context.payer;
+    let config_account = create_config_account(&mollusk, keys.clone());
 
     // Attempt initialization with duplicate signer inputs.
-    let instruction = config_instruction::store(&config_keypair.pubkey(), true, keys, &my_config);
-    let err = context
-        .banks_client
-        .process_transaction(Transaction::new_signed_with_payer(
-            &[instruction],
-            Some(&payer.pubkey()),
-            &[&payer, &config_keypair, &signer0],
-            context.last_blockhash,
-        ))
-        .await
-        .unwrap_err()
-        .unwrap();
-    assert_eq!(
-        err,
-        TransactionError::InstructionError(0, InstructionError::InvalidArgument)
+    let instruction = config_instruction::store(&config, true, keys, &my_config);
+
+    mollusk.process_and_validate_instruction(
+        &instruction,
+        &[
+            (config, config_account),
+            (signer0, AccountSharedData::default()),
+            (signer0, AccountSharedData::default()), // Duplicate signer0.
+        ],
+        &[Check::err(ProgramError::InvalidArgument)],
     );
 }
 
-#[tokio::test]
-async fn test_config_update_contains_duplicates_fails() {
-    let mut context = setup_test_context().await;
+#[test]
+fn test_config_update_contains_duplicates_fails() {
+    let mollusk = setup();
 
-    let config_keypair = Keypair::new();
+    let config = Pubkey::new_unique();
 
     let pubkey = Pubkey::new_unique();
-    let signer0 = Keypair::new();
-    let signer1 = Keypair::new();
-    let keys = vec![
-        (pubkey, false),
-        (signer0.pubkey(), true),
-        (signer1.pubkey(), true),
-    ];
+    let signer0 = Pubkey::new_unique();
+    let signer1 = Pubkey::new_unique();
+    let keys = vec![(pubkey, false), (signer0, true), (signer1, true)];
     let my_config = MyConfig::new(42);
 
-    create_config_account(&mut context, &config_keypair, keys.clone()).await;
-    let payer = &context.payer;
+    let config_account = create_config_account(&mollusk, keys.clone());
 
-    let instruction = config_instruction::store(&config_keypair.pubkey(), true, keys, &my_config);
-    context
-        .banks_client
-        .process_transaction(Transaction::new_signed_with_payer(
-            &[instruction],
-            Some(&payer.pubkey()),
-            &[&payer, &config_keypair, &signer0, &signer1],
-            context.last_blockhash,
-        ))
-        .await
-        .unwrap();
+    let instruction = config_instruction::store(&config, true, keys, &my_config);
+    mollusk.process_and_validate_instruction(
+        &instruction,
+        &[
+            (config, config_account.clone()),
+            (signer0, AccountSharedData::default()),
+            (signer1, AccountSharedData::default()),
+        ],
+        &[Check::success(), Check::compute_units(3_228)],
+    );
 
     // Attempt update with duplicate signer inputs.
     let new_config = MyConfig::new(84);
     let dupe_keys = vec![
         (pubkey, false),
-        (signer0.pubkey(), true),
-        (signer0.pubkey(), true), // Duplicate signer0.
+        (signer0, true),
+        (signer0, true), // Duplicate signer0.
     ];
-    let instruction =
-        config_instruction::store(&config_keypair.pubkey(), true, dupe_keys, &new_config);
-    let err = context
-        .banks_client
-        .process_transaction(Transaction::new_signed_with_payer(
-            &[instruction],
-            Some(&payer.pubkey()),
-            &[&payer, &config_keypair, &signer0],
-            context.last_blockhash,
-        ))
-        .await
-        .unwrap_err()
-        .unwrap();
-    assert_eq!(
-        err,
-        TransactionError::InstructionError(0, InstructionError::InvalidArgument)
+    let instruction = config_instruction::store(&config, true, dupe_keys, &new_config);
+    mollusk.process_and_validate_instruction(
+        &instruction,
+        &[
+            (config, config_account),
+            (signer0, AccountSharedData::default()),
+            (signer0, AccountSharedData::default()), // Duplicate signer0.
+        ],
+        &[Check::err(ProgramError::InvalidArgument)],
     );
 }
 
-#[tokio::test]
-async fn test_config_updates_requiring_config() {
-    let mut context = setup_test_context().await;
+#[test]
+fn test_config_updates_requiring_config() {
+    let mollusk = setup();
 
-    let config_keypair = Keypair::new();
+    let config = Pubkey::new_unique();
 
     let pubkey = Pubkey::new_unique();
-    let signer0 = Keypair::new();
-    let keys = vec![
-        (pubkey, false),
-        (signer0.pubkey(), true),
-        (config_keypair.pubkey(), true),
-    ];
+    let signer0 = Pubkey::new_unique();
+    let keys = vec![(pubkey, false), (signer0, true), (config, true)];
     let my_config = MyConfig::new(42);
 
-    create_config_account(
-        &mut context,
-        &config_keypair,
-        vec![(pubkey, false), (pubkey, false), (pubkey, false)], // Dummy keys for account sizing.
-    )
-    .await;
-    let payer = &context.payer;
+    let config_account = create_config_account(&mollusk, keys.clone());
 
-    let instruction =
-        config_instruction::store(&config_keypair.pubkey(), true, keys.clone(), &my_config);
-    context
-        .banks_client
-        .process_transaction(Transaction::new_signed_with_payer(
-            &[instruction],
-            Some(&payer.pubkey()),
-            &[&payer, &config_keypair, &signer0],
-            context.last_blockhash,
-        ))
-        .await
-        .unwrap();
+    let instruction = config_instruction::store(&config, true, keys.clone(), &my_config);
+    let result = mollusk.process_and_validate_instruction(
+        &instruction,
+        &[
+            (config, config_account),
+            (signer0, AccountSharedData::default()),
+        ],
+        &[
+            Check::success(),
+            Check::compute_units(3_324),
+            Check::account(&config)
+                .data(&bincode::serialize(&(ConfigKeys { keys: keys.clone() }, my_config)).unwrap())
+                .build(),
+        ],
+    );
+
+    // Use this for next invoke.
+    let updated_config_account = result.get_account(&config).unwrap().to_owned();
 
     // Update with expected signatures.
     let new_config = MyConfig::new(84);
-    let instruction =
-        config_instruction::store(&config_keypair.pubkey(), true, keys.clone(), &new_config);
-    context
-        .banks_client
-        .process_transaction(Transaction::new_signed_with_payer(
-            &[instruction],
-            Some(&payer.pubkey()),
-            &[&payer, &config_keypair, &signer0],
-            context.last_blockhash,
-        ))
-        .await
-        .unwrap();
-
-    let config_account = context
-        .banks_client
-        .get_account(config_keypair.pubkey())
-        .await
-        .unwrap()
-        .unwrap();
-    let config_state: ConfigKeys = deserialize(config_account.data()).unwrap();
-    assert_eq!(config_state.keys, keys);
-    assert_eq!(
-        Some(new_config),
-        deserialize(get_config_data(config_account.data()).unwrap()).ok()
+    let instruction = config_instruction::store(&config, true, keys.clone(), &new_config);
+    let result = mollusk.process_and_validate_instruction(
+        &instruction,
+        &[
+            (config, updated_config_account),
+            (signer0, AccountSharedData::default()),
+        ],
+        &[
+            Check::success(),
+            Check::compute_units(3_324),
+            Check::account(&config)
+                .data(&bincode::serialize(&(ConfigKeys { keys }, new_config)).unwrap())
+                .build(),
+        ],
     );
 
+    // Use this for next invoke.
+    let updated_config_account = result.get_account(&config).unwrap().to_owned();
+
     // Attempt update with incomplete signatures.
-    let keys = vec![(pubkey, false), (config_keypair.pubkey(), true)]; // Missing signer0.
-    let instruction = config_instruction::store(&config_keypair.pubkey(), true, keys, &my_config);
-    let err = context
-        .banks_client
-        .process_transaction(Transaction::new_signed_with_payer(
-            &[instruction],
-            Some(&payer.pubkey()),
-            &[&payer, &config_keypair], // Missing signer0.
-            context.last_blockhash,
-        ))
-        .await
-        .unwrap_err()
-        .unwrap();
-    assert_eq!(
-        err,
-        TransactionError::InstructionError(0, InstructionError::MissingRequiredSignature)
+    let keys = vec![(pubkey, false), (config, true)]; // Missing signer0.
+    let new_config = MyConfig::new(128);
+    let instruction = config_instruction::store(&config, true, keys, &new_config);
+    mollusk.process_and_validate_instruction(
+        &instruction,
+        &[
+            (config, updated_config_account),
+            (signer0, AccountSharedData::default()),
+        ],
+        &[Check::err(ProgramError::MissingRequiredSignature)],
     );
 }
 
-#[tokio::test]
-async fn test_config_initialize_no_panic() {
-    let mut context = setup_test_context().await;
-    let config_keypair = Keypair::new();
-    create_config_account(&mut context, &config_keypair, vec![]).await;
-    let payer = &context.payer;
+#[test]
+fn test_config_initialize_no_panic() {
+    let mollusk = setup();
 
-    let instructions = config_instruction::create_account::<MyConfig>(
-        &payer.pubkey(),
-        &config_keypair.pubkey(),
-        1,
-        vec![],
-    );
+    let config = Pubkey::new_unique();
+
+    let instructions =
+        config_instruction::create_account::<MyConfig>(&Pubkey::new_unique(), &config, 1, vec![]);
     let mut instruction = instructions[1].clone();
     instruction.accounts = vec![];
 
-    let err = context
-        .banks_client
-        .process_transaction(Transaction::new_signed_with_payer(
-            &[instruction],
-            Some(&payer.pubkey()),
-            &[&payer],
-            context.last_blockhash,
-        ))
-        .await
-        .unwrap_err()
-        .unwrap();
-    assert_eq!(
-        err,
-        TransactionError::InstructionError(0, InstructionError::NotEnoughAccountKeys)
+    mollusk.process_and_validate_instruction(
+        &instruction,
+        &[],
+        &[Check::err(ProgramError::NotEnoughAccountKeys)],
     );
 }
 
-#[tokio::test]
-async fn test_config_bad_owner() {
-    let mut context = setup_test_context().await;
+#[test]
+fn test_config_bad_owner() {
+    let mollusk = setup();
 
-    let config_keypair = Keypair::new();
+    let config = Pubkey::new_unique();
 
     let pubkey = Pubkey::new_unique();
-    let signer0 = Keypair::new();
-    let keys = vec![
-        (pubkey, false),
-        (signer0.pubkey(), true),
-        (config_keypair.pubkey(), true),
-    ];
+    let signer0 = Pubkey::new_unique();
+    let keys = vec![(pubkey, false), (signer0, true), (config, true)];
     let my_config = MyConfig::new(42);
 
     // Store a config account with the wrong owner.
-    let space = get_config_space(keys.len());
-    let lamports = context
-        .banks_client
-        .get_rent()
-        .await
-        .unwrap()
-        .minimum_balance(space as usize);
-    context.set_account(
-        &config_keypair.pubkey(),
-        &AccountSharedData::new(lamports, 0, &Pubkey::new_unique()),
-    );
+    let config_account = {
+        let space = get_config_space(keys.len());
+        let lamports = mollusk.sysvars.rent.minimum_balance(space as usize);
+        AccountSharedData::new(lamports, 0, &Pubkey::new_unique())
+    };
 
-    let payer = &context.payer;
+    let instruction = config_instruction::store(&config, true, keys, &my_config);
 
-    let instruction = config_instruction::store(&config_keypair.pubkey(), true, keys, &my_config);
-    let err = context
-        .banks_client
-        .process_transaction(Transaction::new_signed_with_payer(
-            &[instruction],
-            Some(&payer.pubkey()),
-            &[&payer, &config_keypair, &signer0],
-            context.last_blockhash,
-        ))
-        .await
-        .unwrap_err()
-        .unwrap();
-    assert_eq!(
-        err,
-        TransactionError::InstructionError(0, InstructionError::InvalidAccountOwner)
+    mollusk.process_and_validate_instruction(
+        &instruction,
+        &[
+            (config, config_account),
+            (signer0, AccountSharedData::default()),
+        ],
+        &[Check::err(ProgramError::InvalidAccountOwner)],
     );
 }
 
-#[tokio::test]
-async fn test_maximum_keys_input() {
+#[test]
+fn test_maximum_keys_input() {
     // `limited_deserialize` allows up to 1232 bytes of input.
     // One config key is `Pubkey` + `bool` = 32 + 1 = 33 bytes.
     // 1232 / 33 = 37 keys max.
-    let mut context = setup_test_context().await;
+    let mollusk = setup();
 
-    let config_keypair = Keypair::new();
+    let config = Pubkey::new_unique();
 
     // First store with 37 keys.
     let mut keys = vec![];
@@ -727,67 +550,38 @@ async fn test_maximum_keys_input() {
     }
     let my_config = MyConfig::new(42);
 
-    create_config_account(&mut context, &config_keypair, keys.clone()).await;
-    let instruction =
-        config_instruction::store(&config_keypair.pubkey(), true, keys.clone(), &my_config);
-    let payer = &context.payer;
+    let config_account = create_config_account(&mollusk, keys.clone());
 
-    context
-        .banks_client
-        .process_transaction(Transaction::new_signed_with_payer(
-            &[instruction],
-            Some(&payer.pubkey()),
-            &[&payer, &config_keypair],
-            context.last_blockhash,
-        ))
-        .await
-        .unwrap();
-
-    let config_account = context
-        .banks_client
-        .get_account(config_keypair.pubkey())
-        .await
-        .unwrap()
-        .unwrap();
-    assert_eq!(
-        Some(my_config),
-        deserialize(get_config_data(config_account.data()).unwrap()).ok()
+    let instruction = config_instruction::store(&config, true, keys.clone(), &my_config);
+    let result = mollusk.process_and_validate_instruction(
+        &instruction,
+        &[(config, config_account)],
+        &[Check::success(), Check::compute_units(25_020)],
     );
+
+    // Use this for next invoke.
+    let updated_config_account = result.get_account(&config).unwrap().to_owned();
 
     // Do an update with 37 keys, forcing the program to deserialize the
     // config account data.
     let new_config = MyConfig::new(84);
-    let instruction =
-        config_instruction::store(&config_keypair.pubkey(), true, keys.clone(), &new_config);
-    context
-        .banks_client
-        .process_transaction(Transaction::new_signed_with_payer(
-            &[instruction],
-            Some(&payer.pubkey()),
-            &[&payer, &config_keypair],
-            context.last_blockhash,
-        ))
-        .await
-        .unwrap();
+    let instruction = config_instruction::store(&config, true, keys.clone(), &new_config);
+    let result = mollusk.process_and_validate_instruction(
+        &instruction,
+        &[(config, updated_config_account)],
+        &[Check::success(), Check::compute_units(25_020)],
+    );
+
+    // Use this for next invoke.
+    let updated_config_account = result.get_account(&config).unwrap().to_owned();
 
     // Now try to store with 38 keys.
     keys.push((Pubkey::new_unique(), false));
     let my_config = MyConfig::new(42);
-    let instruction = config_instruction::store(&config_keypair.pubkey(), true, keys, &my_config);
-
-    let err = context
-        .banks_client
-        .process_transaction(Transaction::new_signed_with_payer(
-            &[instruction],
-            Some(&payer.pubkey()),
-            &[&payer, &config_keypair],
-            context.last_blockhash,
-        ))
-        .await
-        .unwrap_err()
-        .unwrap();
-    assert_eq!(
-        err,
-        TransactionError::InstructionError(0, InstructionError::InvalidInstructionData)
+    let instruction = config_instruction::store(&config, true, keys, &my_config);
+    mollusk.process_and_validate_instruction(
+        &instruction,
+        &[(config, updated_config_account)],
+        &[Check::err(ProgramError::InvalidInstructionData)],
     );
 }
