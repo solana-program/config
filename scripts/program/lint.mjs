@@ -12,6 +12,8 @@ import {
 // ['--arg1', '--arg2', ...cliArguments()]
 const lintArgs = [
   '-Zunstable-options',
+  '--tests',
+  '--benches',
   '--features',
   'bpf-entrypoint,test-sbf',
   '--',
