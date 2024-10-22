@@ -109,6 +109,38 @@ jobs:
       - name: Test Programs
         run: pnpm programs:test
 
+  bench_program_compute_units:
+    name: Benchmark Program Compute Units
+    runs-on: ubuntu-latest
+    needs: build_programs # Cargo Bench won't build the SBPF binary...
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup
+        with:
+          cargo-cache-key: cargo-program-benches
+          cargo-cache-fallback-key: cargo-programs
+          solana: true
+      
+      - name: Restore Program Builds
+        uses: actions/cache/restore@v4
+        with:
+          path: ./**/*.so
+          key: ${{ runner.os }}-builds-${{ github.sha }}
+
+      - name: Benchmark Compute Units
+        run: pnpm programs:bench
+      
+      - name: Check Working Directory
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            test -z "$(git status --porcelain)"
+            echo "CU usage has changed. Please run `cargo bench` and commit the new results.";
+            exit 1;
+          fi
+
   ## SKIP: IDL is hand-cranked here for now.
   ##
   # generate_idls:
