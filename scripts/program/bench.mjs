@@ -11,17 +11,23 @@ import './dump.mjs';
 
 // Configure additional arguments here, e.g.:
 // ['--arg1', '--arg2', ...cliArguments()]
-const buildArgs = [
+const benchArgs = [
   '--features',
   'bpf-entrypoint',
   ...cliArguments(),
 ];
 
-// Build the programs.
+const hasSolfmt = await which('solfmt', { nothrow: true });
+
+// Test the programs.
 await Promise.all(
   getProgramFolders().map(async (folder) => {
     const manifestPath = path.join(workingDirectory, folder, 'Cargo.toml');
 
-    await $`cargo-build-sbf --manifest-path ${manifestPath} ${buildArgs}`;
+    if (hasSolfmt) {
+      await $`RUST_LOG=error cargo bench --manifest-path ${manifestPath} ${benchArgs} 2>&1 | solfmt`;
+    } else {
+      await $`RUST_LOG=error cargo bench --manifest-path ${manifestPath} ${benchArgs}`;
+    }
   })
 );

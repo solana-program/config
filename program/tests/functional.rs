@@ -43,13 +43,15 @@ fn setup() -> Mollusk {
 
 fn get_config_space(key_len: usize) -> usize {
     let entry_size = bincode::serialized_size(&(Pubkey::default(), true)).unwrap() as usize;
-    bincode::serialized_size(&(ConfigKeys::default(), MyConfig::default())).unwrap() as usize
-        + key_len * entry_size
+    let total_keys_size = (key_len).checked_mul(entry_size).unwrap();
+    let serialized_size =
+        bincode::serialized_size(&(ConfigKeys::default(), MyConfig::default())).unwrap() as usize;
+    serialized_size.checked_add(total_keys_size).unwrap()
 }
 
 fn create_config_account(mollusk: &Mollusk, keys: Vec<(Pubkey, bool)>) -> AccountSharedData {
     let space = get_config_space(keys.len());
-    let lamports = mollusk.sysvars.rent.minimum_balance(space as usize);
+    let lamports = mollusk.sysvars.rent.minimum_balance(space);
     AccountSharedData::new_data(
         lamports,
         &(ConfigKeys { keys }, MyConfig::default()),
@@ -66,7 +68,7 @@ fn test_process_create_ok() {
     let config_account = {
         let space = get_config_space(0);
         let lamports = mollusk.sysvars.rent.minimum_balance(space);
-        AccountSharedData::new(lamports, space as usize, &solana_config_program::id())
+        AccountSharedData::new(lamports, space, &solana_config_program::id())
     };
 
     // `instruction::initialize_account` without making it public...
@@ -518,7 +520,7 @@ fn test_config_bad_owner() {
     // Store a config account with the wrong owner.
     let config_account = {
         let space = get_config_space(keys.len());
-        let lamports = mollusk.sysvars.rent.minimum_balance(space as usize);
+        let lamports = mollusk.sysvars.rent.minimum_balance(space);
         AccountSharedData::new(lamports, 0, &Pubkey::new_unique())
     };
 

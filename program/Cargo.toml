@@ -22,7 +22,12 @@ solana-program = "2.0.1"
 
 [dev-dependencies]
 mollusk-svm = { version = "0.0.5", features = ["fuzz"] }
+mollusk-svm-bencher = "0.0.5"
 solana-sdk = "2.0.1"
 
 [lib]
 crate-type = ["cdylib", "lib"]
+
+[[bench]]
+name = "compute_units"
+harness = false
