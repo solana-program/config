@@ -1,4 +1,4 @@
-#![cfg(feature = "test-sbf")]
+// #![cfg(feature = "test-sbf")]
 
 use {
     bincode::serialized_size,
@@ -41,11 +41,13 @@ fn setup() -> Mollusk {
     Mollusk::new(&solana_config_program::id(), "solana_config_program")
 }
 
-#[allow(clippy::arithmetic_side_effects)]
 fn get_config_space(key_len: usize) -> usize {
     let entry_size = bincode::serialized_size(&(Pubkey::default(), true)).unwrap() as usize;
-    bincode::serialized_size(&(ConfigKeys::default(), MyConfig::default())).unwrap() as usize
-        + key_len * entry_size
+    let total_keys_size = (key_len).checked_mul(entry_size).unwrap();
+    bincode::serialized_size(&(ConfigKeys::default(), MyConfig::default()))
+        .ok()
+        .and_then(|s| s.checked_add(total_keys_size as u64))
+        .unwrap() as usize
 }
 
 fn create_config_account(mollusk: &Mollusk, keys: Vec<(Pubkey, bool)>) -> AccountSharedData {

@@ -31,4 +31,3 @@ crate-type = ["cdylib", "lib"]
 [[bench]]
 name = "compute_units"
 harness = false
-required-features = ["bpf-entrypoint"]

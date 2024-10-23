@@ -1,6 +1,6 @@
 use {
     mollusk_svm_bencher::Bench,
-    serde::{Deserialize, Serialize},
+    serde::Serialize,
     solana_config_program::{
         instruction::store,
         state::{ConfigKeys, ConfigState},
@@ -37,9 +37,10 @@ pub trait BenchSetup: ConfigState + Default {
         (ConfigKeys { keys }, Self::default())
     }
 
-    #[allow(clippy::arithmetic_side_effects)]
     fn default_space(keys: Vec<(Pubkey, bool)>) -> usize {
-        (Self::max_space() + ConfigKeys::serialized_size(keys)) as usize
+        (Self::max_space()
+            .checked_add(ConfigKeys::serialized_size(keys))
+            .unwrap()) as usize
     }
 
     fn keys(keys_len: usize) -> Vec<(Pubkey, bool)> {
@@ -47,8 +48,6 @@ pub trait BenchSetup: ConfigState + Default {
             .map(|_| (Pubkey::new_unique(), false))
             .collect()
     }
-
-    fn test_store_value() -> Self;
 
     fn init(keys_len: usize) -> BenchContext {
         let config_pubkey = Pubkey::new_unique();
@@ -80,12 +79,7 @@ pub trait BenchSetup: ConfigState + Default {
         let space = Self::default_space(keys.clone());
         let lamports = Rent::default().minimum_balance(space);
 
-        let instruction = store(
-            &config_pubkey,
-            true,
-            keys.clone(),
-            &Self::test_store_value(),
-        );
+        let instruction = store(&config_pubkey, true, keys.clone(), &Self::default());
 
         let accounts = vec![(
             config_pubkey,
@@ -106,7 +100,7 @@ pub trait BenchSetup: ConfigState + Default {
 }
 
 /// A small config, which just stores 8 bytes.
-#[derive(Debug, Default, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Default, PartialEq, Serialize)]
 pub struct ConfigSmall {
     pub item: u64,
 }
@@ -119,17 +113,12 @@ impl ConfigState for ConfigSmall {
 
 impl BenchSetup for ConfigSmall {
     const BENCH_ID: &'static str = "config_small";
-
-    fn test_store_value() -> Self {
-        Self { item: 42 }
-    }
 }
 
-/// A medium config, which stores 256 bytes.
-#[derive(Debug, Default, PartialEq, Deserialize, Serialize)]
+/// A medium config, which stores 1024 bytes.
+#[derive(Debug, Default, PartialEq, Serialize)]
 pub struct ConfigMedium {
-    pub hashes: [Hash; 8], // 32 x 8 = 256 bytes
-    pub rent: Rent,
+    pub hashes: [Hash; 32], // 32 x 32 = 1024 bytes
 }
 
 impl ConfigState for ConfigMedium {
@@ -140,20 +129,12 @@ impl ConfigState for ConfigMedium {
 
 impl BenchSetup for ConfigMedium {
     const BENCH_ID: &'static str = "config_medium";
-
-    fn test_store_value() -> Self {
-        Self {
-            hashes: [[1; 32].into(); 8],
-            rent: Rent::default(),
-        }
-    }
 }
 
-/// A large config, which stores 1024 bytes.
-#[derive(Debug, Default, PartialEq, Deserialize, Serialize)]
+/// A large config, which stores 32_768 bytes.
+#[derive(Debug, Default, PartialEq, Serialize)]
 pub struct ConfigLarge {
-    pub hashes: [Hash; 32], // 32 x 32 = 1024 bytes
-    pub rent: Rent,
+    pub hashes: [[Hash; 32]; 32], // 32 x 32 x 32 = 32_768 bytes
 }
 
 impl ConfigState for ConfigLarge {
@@ -164,11 +145,4 @@ impl ConfigState for ConfigLarge {
 
 impl BenchSetup for ConfigLarge {
     const BENCH_ID: &'static str = "config_large";
-
-    fn test_store_value() -> Self {
-        Self {
-            hashes: [[1; 32].into(); 32],
-            rent: Rent::default(),
-        }
-    }
 }
