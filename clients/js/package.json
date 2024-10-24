@@ -32,15 +32,22 @@
     "access": "public",
     "registry": "https://registry.npmjs.org"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/solana-program/config.git"
+  },
+  "bugs": {
+    "url": "https://github.com/solana-program/config/issues"
+  },
+  "homepage": "https://github.com/solana-program/config#readme",
   "license": "MIT",
   "peerDependencies": {
-    "@solana/web3.js": "2.0.0-preview.4"
+    "@solana/web3.js": "2.0.0-rc.1"
   },
   "devDependencies": {
     "@ava/typescript": "^4.1.0",
     "@solana/eslint-config-solana": "^3.0.3",
-    "@solana/web3.js": "2.0.0-preview.4",
-    "@solana/webcrypto-ed25519-polyfill": "2.0.0-preview.4",
+    "@solana/web3.js": "2.0.0-rc.1",
     "@types/node": "^20",
     "@typescript-eslint/eslint-plugin": "^7.16.1",
     "@typescript-eslint/parser": "^7.16.1",
@@ -50,15 +57,11 @@
     "rimraf": "^5.0.5",
     "tsup": "^8.1.2",
     "typedoc": "^0.25.12",
-    "typedoc-plugin-missing-exports": "^2.2.0",
     "typescript": "^5.5.3"
   },
   "ava": {
     "nodeArguments": [
       "--no-warnings"
-    ],
-    "require": [
-      "@solana/webcrypto-ed25519-polyfill"
     ],
     "typescript": {
       "compile": false,
