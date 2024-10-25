@@ -13,8 +13,7 @@ import {
 const lintArgs = [
   '-Zunstable-options',
   '--all-targets',
-  '--features',
-  'bpf-entrypoint,test-sbf',
+  '--all-features',
   '--',
   '--deny=warnings',
   '--deny=clippy::arithmetic_side_effects',

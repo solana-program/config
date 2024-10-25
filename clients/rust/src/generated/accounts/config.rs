@@ -38,28 +38,3 @@ impl<'a> TryFrom<&solana_program::account_info::AccountInfo<'a>> for Config {
         Self::deserialize(&mut data)
     }
 }
-
-#[cfg(feature = "anchor")]
-impl anchor_lang::AccountDeserialize for Config {
-    fn try_deserialize_unchecked(buf: &mut &[u8]) -> anchor_lang::Result<Self> {
-        Ok(Self::deserialize(buf)?)
-    }
-}
-
-#[cfg(feature = "anchor")]
-impl anchor_lang::AccountSerialize for Config {}
-
-#[cfg(feature = "anchor")]
-impl anchor_lang::Owner for Config {
-    fn owner() -> Pubkey {
-        crate::SOLANA_CONFIG_ID
-    }
-}
-
-#[cfg(feature = "anchor-idl-build")]
-impl anchor_lang::IdlBuild for Config {}
-
-#[cfg(feature = "anchor-idl-build")]
-impl anchor_lang::Discriminator for Config {
-    const DISCRIMINATOR: [u8; 8] = [0; 8];
-}

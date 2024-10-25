@@ -31,3 +31,9 @@ crate-type = ["cdylib", "lib"]
 [[bench]]
 name = "compute_units"
 harness = false
+
+[lints.rust.unexpected_cfgs]
+level = "warn"
+check-cfg = [
+    'cfg(target_os, values("solana"))',
+]

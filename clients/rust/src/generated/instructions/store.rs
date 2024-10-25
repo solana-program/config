@@ -228,7 +228,7 @@ impl<'a, 'b> StoreCpi<'a, 'b> {
             accounts,
             data,
         };
-        let mut account_infos = Vec::with_capacity(1 + 1 + remaining_accounts.len());
+        let mut account_infos = Vec::with_capacity(2 + remaining_accounts.len());
         account_infos.push(self.__program.clone());
         account_infos.push(self.config_account.0.clone());
         remaining_accounts

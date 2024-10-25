@@ -28,6 +28,7 @@ codama.update(deleteNodesVisitor(['[definedTypeNode]configKeys']));
 const rustClient = path.join(__dirname, '..', 'clients', 'rust');
 codama.accept(
   renderRustVisitor(path.join(rustClient, 'src', 'generated'), {
+    anchorTraits: false,
     formatCode: true,
     crateFolder: rustClient,
     toolchain: getToolchainArgument('format'),
