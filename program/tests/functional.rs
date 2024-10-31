@@ -587,3 +587,65 @@ fn test_maximum_keys_input() {
         &[Check::err(ProgramError::InvalidInstructionData)],
     );
 }
+
+#[test]
+fn test_safe_deserialize() {
+    let mollusk = setup();
+
+    // Accounts don't matter for this test.
+
+    // First try to spoof the program with just `ShortU16` length values.
+    let build_instruction =
+        |data: &[u8]| Instruction::new_with_bytes(solana_config_program::id(), data, vec![]);
+
+    mollusk.process_and_validate_instruction(
+        // Empty buffer. Not a valid `ShortU16`.
+        &build_instruction(&[]),
+        &[],
+        &[Check::err(ProgramError::InvalidInstructionData)],
+    );
+
+    mollusk.process_and_validate_instruction(
+        // `ShortU16` value of 38. One byte too large.
+        &build_instruction(&[0x26]),
+        &[],
+        &[Check::err(ProgramError::InvalidInstructionData)],
+    );
+
+    mollusk.process_and_validate_instruction(
+        // `ShortU16` value of 37. OK for vector size, but no keys following.
+        &build_instruction(&[0x25]),
+        &[],
+        &[Check::err(ProgramError::InvalidInstructionData)],
+    );
+
+    // Now try with some actual `ConfigKeys` inputs.
+    let mut keys = Vec::new();
+    let serialized_config_keys = |keys: &[(Pubkey, bool)]| {
+        let config_keys = ConfigKeys {
+            keys: keys.to_vec(),
+        };
+        bincode::serialize(&config_keys).unwrap()
+    };
+
+    // First build out to an acceptable size of 37.
+    (0..37).for_each(|i| keys.push((Pubkey::new_unique(), i % 2 == 0)));
+
+    mollusk.process_and_validate_instruction(
+        // `ShortU16` value of 37. OK.
+        &build_instruction(&serialized_config_keys(&keys)),
+        &[],
+        // Falls through to account keys failure.
+        &[Check::err(ProgramError::NotEnoughAccountKeys)],
+    );
+
+    // Add one more key, pushing the size to 38.
+    keys.push((Pubkey::new_unique(), true));
+
+    mollusk.process_and_validate_instruction(
+        // `ShortU16` value of 38. Err.
+        &build_instruction(&serialized_config_keys(&keys)),
+        &[],
+        &[Check::err(ProgramError::InvalidInstructionData)],
+    );
+}
