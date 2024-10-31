@@ -2,8 +2,10 @@
 
 use {
     bincode::{deserialize, serialized_size},
+    bytemuck::{Pod, Zeroable},
     serde::{Deserialize, Serialize},
-    solana_program::{pubkey::Pubkey, short_vec},
+    solana_program::{program_error::ProgramError, pubkey::Pubkey, short_vec},
+    spl_pod::primitives::PodBool,
 };
 
 /// Trait defining config state to be stored at the end of the account data.
@@ -34,4 +36,24 @@ pub fn get_config_data(bytes: &[u8]) -> Result<&[u8], bincode::Error> {
     deserialize::<ConfigKeys>(bytes)
         .and_then(|keys| serialized_size(&keys))
         .map(|offset| &bytes[offset as usize..])
+}
+
+/// Pod-type for zero-copy config key reads.
+#[derive(Clone, Copy, Pod, Zeroable)]
+#[repr(C)]
+pub struct PodConfigKey(pub Pubkey, pub PodBool);
+
+/// Utility for obtaining stored config keys as a slice.
+pub fn get_config_keys_slice(bytes: &[u8]) -> Result<&[PodConfigKey], ProgramError> {
+    let (vector_len, num_bytes) = solana_program::short_vec::decode_shortu16_len(bytes)
+        .map_err(|_| ProgramError::InvalidAccountData)?;
+
+    let offset = num_bytes;
+    let length = vector_len
+        .checked_mul(std::mem::size_of::<PodConfigKey>())
+        .ok_or(ProgramError::InvalidAccountData)?;
+    let end = offset.saturating_add(length);
+
+    bytemuck::try_cast_slice::<u8, PodConfigKey>(&bytes[offset..end])
+        .map_err(|_| ProgramError::InvalidAccountData)
 }
