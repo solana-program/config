@@ -83,7 +83,7 @@ fn test_process_create_ok() {
         &[(config, config_account)],
         &[
             Check::success(),
-            Check::compute_units(581),
+            Check::compute_units(584),
             Check::account(&config)
                 .data(
                     &bincode::serialize(&(ConfigKeys { keys: vec![] }, MyConfig::default()))
@@ -111,7 +111,7 @@ fn test_process_store_ok() {
         &[(config, config_account)],
         &[
             Check::success(),
-            Check::compute_units(581),
+            Check::compute_units(584),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, my_config)).unwrap())
                 .build(),
@@ -186,7 +186,7 @@ fn test_process_store_with_additional_signers() {
         ],
         &[
             Check::success(),
-            Check::compute_units(3_228),
+            Check::compute_units(3_253),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, my_config)).unwrap())
                 .build(),
@@ -285,7 +285,7 @@ fn test_config_updates() {
             (signer0, AccountSharedData::default()),
             (signer1, AccountSharedData::default()),
         ],
-        &[Check::success(), Check::compute_units(3_228)],
+        &[Check::success(), Check::compute_units(3_253)],
     );
 
     // Use this for next invoke.
@@ -303,7 +303,7 @@ fn test_config_updates() {
         ],
         &[
             Check::success(),
-            Check::compute_units(3_229),
+            Check::compute_units(3_254),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, new_config)).unwrap())
                 .build(),
@@ -399,7 +399,7 @@ fn test_config_update_contains_duplicates_fails() {
             (signer0, AccountSharedData::default()),
             (signer1, AccountSharedData::default()),
         ],
-        &[Check::success(), Check::compute_units(3_228)],
+        &[Check::success(), Check::compute_units(3_253)],
     );
 
     // Attempt update with duplicate signer inputs.
@@ -443,7 +443,7 @@ fn test_config_updates_requiring_config() {
         ],
         &[
             Check::success(),
-            Check::compute_units(3_324),
+            Check::compute_units(3_352),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys: keys.clone() }, my_config)).unwrap())
                 .build(),
@@ -464,7 +464,7 @@ fn test_config_updates_requiring_config() {
         ],
         &[
             Check::success(),
-            Check::compute_units(3_324),
+            Check::compute_units(3_352),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, new_config)).unwrap())
                 .build(),
@@ -558,7 +558,7 @@ fn test_maximum_keys_input() {
     let result = mollusk.process_and_validate_instruction(
         &instruction,
         &[(config, config_account)],
-        &[Check::success(), Check::compute_units(25_020)],
+        &[Check::success(), Check::compute_units(25_247)],
     );
 
     // Use this for next invoke.
@@ -571,7 +571,7 @@ fn test_maximum_keys_input() {
     let result = mollusk.process_and_validate_instruction(
         &instruction,
         &[(config, updated_config_account)],
-        &[Check::success(), Check::compute_units(25_020)],
+        &[Check::success(), Check::compute_units(25_247)],
     );
 
     // Use this for next invoke.
@@ -584,6 +584,68 @@ fn test_maximum_keys_input() {
     mollusk.process_and_validate_instruction(
         &instruction,
         &[(config, updated_config_account)],
+        &[Check::err(ProgramError::InvalidInstructionData)],
+    );
+}
+
+#[test]
+fn test_safe_deserialize() {
+    let mollusk = setup();
+
+    // Accounts don't matter for this test.
+
+    // First try to spoof the program with just `ShortU16` length values.
+    let build_instruction =
+        |data: &[u8]| Instruction::new_with_bytes(solana_config_program::id(), data, vec![]);
+
+    mollusk.process_and_validate_instruction(
+        // Empty buffer. Not a valid `ShortU16`.
+        &build_instruction(&[]),
+        &[],
+        &[Check::err(ProgramError::InvalidInstructionData)],
+    );
+
+    mollusk.process_and_validate_instruction(
+        // `ShortU16` value of 38. One byte too large.
+        &build_instruction(&[0x26]),
+        &[],
+        &[Check::err(ProgramError::InvalidInstructionData)],
+    );
+
+    mollusk.process_and_validate_instruction(
+        // `ShortU16` value of 37. OK for vector size, but no keys following.
+        &build_instruction(&[0x25]),
+        &[],
+        &[Check::err(ProgramError::InvalidInstructionData)],
+    );
+
+    // Now try with some actual `ConfigKeys` inputs.
+    let mut keys = Vec::new();
+    let serialized_config_keys = |keys: &[(Pubkey, bool)]| {
+        let config_keys = ConfigKeys {
+            keys: keys.to_vec(),
+        };
+        bincode::serialize(&config_keys).unwrap()
+    };
+
+    // First build out to an acceptable size of 37.
+    (0..37).for_each(|i| keys.push((Pubkey::new_unique(), i % 2 == 0)));
+
+    mollusk.process_and_validate_instruction(
+        // `ShortU16` value of 37. OK.
+        &build_instruction(&serialized_config_keys(&keys)),
+        &[],
+        // Falls through to account keys failure.
+        &[Check::err(ProgramError::NotEnoughAccountKeys)],
+    );
+
+    // Add one more key, pushing the size to 38.
+    keys.push((Pubkey::new_unique(), true));
+
+    mollusk.process_and_validate_instruction(
+        // `ShortU16` value of 38. Err.
+        &build_instruction(&serialized_config_keys(&keys)),
+        &[],
         &[Check::err(ProgramError::InvalidInstructionData)],
     );
 }

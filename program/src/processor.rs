@@ -12,21 +12,49 @@ use {
     std::collections::BTreeSet,
 };
 
-// [Core BPF]: Locally-implemented
-// `solana_sdk::program_utils::limited_deserialize`.
-fn limited_deserialize<T>(input: &[u8]) -> Result<T, ProgramError>
-where
-    T: serde::de::DeserializeOwned,
-{
-    solana_program::program_utils::limited_deserialize(
-        input, 1232, // [Core BPF]: See `solana_sdk::packet::PACKET_DATA_SIZE`
-    )
-    .map_err(|_| ProgramError::InvalidInstructionData)
+// Maximum input buffer length that can be deserialized.
+// See `solana_sdk::packet::PACKET_DATA_SIZE`.
+const MAX_INPUT_LEN: usize = 1232;
+// Maximum vector length for a `ConfigKeys` struct's `keys` list.
+// See comments below for `safe_deserialize_config_keys`.
+//
+// Take the maximum input length and subtract (up to) 3 bytes for the
+// `ShortU16`, then divide that by the size of a `(Pubkey, bool)` entry.
+const MAX_VECTOR_LEN: usize = (MAX_INPUT_LEN - 3) / (32 + 1);
+
+// [Core BPF]: The original Config builtin leverages the
+// `solana_sdk::program_utils::limited_deserialize` method to cap the length of
+// the input buffer at `MAX_INPUT_LEN` (1232). As a result, any input buffer
+// larger than `MAX_INPUT_LEN` will abort deserialization and return
+// `InstructionError::InvalidInstructionData`.
+//
+// Howevever, since `ConfigKeys` contains a vector of `(Pubkey, bool)`, the
+// `limited_deserialize` method will still read the vector's length and attempt
+// to allocate a vector of the designated size. For extremely large length
+// values, this can cause the initial allocation of a large vector to exhuast
+// the BPF program's heap before deserialization can proceed.
+//
+// To mitigate this memory issue, the BPF version of the Config program has
+// been designed to "peek" the length value, and ensure it cannot allocate a
+// vector that would otherwise violate the input buffer length restriction.
+// Since a `ShortU16` value for `MAX_VECTOR_LEN` fits in just one byte, we can
+// simply peek the first byte before attempting deserialization.
+fn safe_deserialize_config_keys(input: &[u8]) -> Result<ConfigKeys, ProgramError> {
+    match input.first() {
+        Some(first_byte) if *first_byte as usize <= MAX_VECTOR_LEN => {
+            solana_program::program_utils::limited_deserialize::<ConfigKeys>(
+                input,
+                MAX_INPUT_LEN as u64,
+            )
+            .map_err(|_| ProgramError::InvalidInstructionData)
+        }
+        _ => Err(ProgramError::InvalidInstructionData),
+    }
 }
 
 /// Config program processor.
 pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], input: &[u8]) -> ProgramResult {
-    let key_list: ConfigKeys = limited_deserialize(input)?;
+    let key_list = safe_deserialize_config_keys(input)?;
 
     let mut accounts_iter = accounts.iter();
     let config_account = next_account_info(&mut accounts_iter)?;
