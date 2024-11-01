@@ -3,10 +3,7 @@
 use {
     crate::state::ConfigKeys,
     solana_program::{
-        account_info::{next_account_info, AccountInfo},
-        entrypoint::ProgramResult,
-        msg,
-        program_error::ProgramError,
+        account_info::AccountInfo, entrypoint::ProgramResult, msg, program_error::ProgramError,
         pubkey::Pubkey,
     },
     std::collections::BTreeSet,
@@ -56,8 +53,7 @@ fn safe_deserialize_config_keys(input: &[u8]) -> Result<ConfigKeys, ProgramError
 pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], input: &[u8]) -> ProgramResult {
     let key_list = safe_deserialize_config_keys(input)?;
 
-    let mut accounts_iter = accounts.iter();
-    let config_account = next_account_info(&mut accounts_iter)?;
+    let config_account = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
 
     if config_account.owner != program_id {
         msg!("Config account is not owned by the config program");
@@ -89,7 +85,7 @@ pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], input: &[u8]) -> P
     for (signer, _) in key_list.keys.iter().filter(|(_, is_signer)| *is_signer) {
         counter = counter.saturating_add(1);
         if signer != config_account.key {
-            let signer_account = next_account_info(&mut accounts_iter).map_err(|_| {
+            let signer_account = accounts.get(counter).ok_or_else(|| {
                 msg!("account {:?} is not in account list", signer);
                 ProgramError::MissingRequiredSignature
             })?;
