@@ -12,11 +12,21 @@ use {
     std::collections::BTreeSet,
 };
 
+// Maximum input buffer length that can be deserialized.
+// See `solana_sdk::packet::PACKET_DATA_SIZE`.
+const MAX_INPUT_LEN: usize = 1232;
+// Maximum vector length for a `ConfigKeys` struct's `keys` list.
+// See comments below for `safe_deserialize_config_keys`.
+//
+// Take the maximum input length and subtract (up to) 3 bytes for the
+// `ShortU16`, then divide that by the size of a `(Pubkey, bool)` entry.
+const MAX_VECTOR_LEN: usize = (MAX_INPUT_LEN - 3) / (32 + 1);
+
 // [Core BPF]: The original Config builtin leverages the
 // `solana_sdk::program_utils::limited_deserialize` method to cap the length of
-// the input buffer at 1232 (`solana_sdk::packet::PACKET_DATA_SIZE`). As a
-// result, any input buffer larger than 1232 will abort deserialization and
-// return `InstructionError::InvalidInstructionData`.
+// the input buffer at `MAX_INPUT_LEN` (1232). As a result, any input buffer
+// larger than `MAX_INPUT_LEN` will abort deserialization and return
+// `InstructionError::InvalidInstructionData`.
 //
 // Howevever, since `ConfigKeys` contains a vector of `(Pubkey, bool)`, the
 // `limited_deserialize` method will still read the vector's length and attempt
@@ -26,19 +36,15 @@ use {
 //
 // To mitigate this memory issue, the BPF version of the Config program has
 // been designed to "peek" the length value, and ensure it cannot allocate a
-// vector that would otherwise violate the input buffer length restriction of
-// 1232.
-//
-// Taking the maximum input length of 1232 and subtracting (up to) 3 bytes for
-// the `ShortU16`, then dividing that by the size of a `(Pubkey, bool)` entry
-// (33), we get a maximum vector size of 37. A `ShortU16` value for 37 fits in
-// just one byte (`[0x25]`), so this function can simply check the first
-// provided byte.
+// vector that would otherwise violate the input buffer length restriction.
+// Since a `ShortU16` value for `MAX_VECTOR_LEN` fits in just one byte, we can
+// simply peek the first byte before attempting deserialization.
 fn safe_deserialize_config_keys(input: &[u8]) -> Result<ConfigKeys, ProgramError> {
     match input.first() {
-        Some(first_byte) if *first_byte <= 0x25 => {
+        Some(first_byte) if *first_byte as usize <= MAX_VECTOR_LEN => {
             solana_program::program_utils::limited_deserialize::<ConfigKeys>(
-                input, 1232, // [Core BPF]: See `solana_sdk::packet::PACKET_DATA_SIZE`
+                input,
+                MAX_INPUT_LEN as u64,
             )
             .map_err(|_| ProgramError::InvalidInstructionData)
         }
