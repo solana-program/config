@@ -83,7 +83,7 @@ fn test_process_create_ok() {
         &[(config, config_account)],
         &[
             Check::success(),
-            Check::compute_units(584),
+            Check::compute_units(580),
             Check::account(&config)
                 .data(
                     &bincode::serialize(&(ConfigKeys { keys: vec![] }, MyConfig::default()))
@@ -111,7 +111,7 @@ fn test_process_store_ok() {
         &[(config, config_account)],
         &[
             Check::success(),
-            Check::compute_units(584),
+            Check::compute_units(580),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, my_config)).unwrap())
                 .build(),
@@ -186,7 +186,7 @@ fn test_process_store_with_additional_signers() {
         ],
         &[
             Check::success(),
-            Check::compute_units(3_253),
+            Check::compute_units(3_234),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, my_config)).unwrap())
                 .build(),
@@ -263,6 +263,55 @@ fn test_process_store_with_bad_additional_signer() {
 }
 
 #[test]
+fn test_store_requiring_config() {
+    let mollusk = setup();
+
+    let config = Pubkey::new_unique();
+
+    // New keys contains the config account, as well as another signer.
+    let signer = Pubkey::new_unique();
+    let new_keys = vec![(config, true), (signer, true)];
+    let my_config = MyConfig::new(42);
+
+    let config_account = {
+        // Allocate enough space for they `new_keys`, but leave the account
+        // uninitalized.
+        let space = get_config_space(new_keys.len());
+        let lamports = mollusk.sysvars.rent.minimum_balance(space);
+        AccountSharedData::new(lamports, space, &solana_config_program::id())
+    };
+
+    let mut instruction = config_instruction::store(&config, true, new_keys, &my_config);
+    mollusk.process_and_validate_instruction(
+        &instruction,
+        &[
+            (config, config_account.clone()),
+            (signer, AccountSharedData::default()),
+        ],
+        &[Check::err(ProgramError::MissingRequiredSignature)],
+    );
+
+    // This is kind of strange, since the `store` helper was taken directly
+    // from the builtin crate, and it's designed to only add the config account
+    // once, even if it's a signer.
+    // However, if you include it in the instruction twice, the loop-counter
+    // mechanism of the processor actually works...
+    instruction.accounts = vec![
+        AccountMeta::new(config, true),
+        AccountMeta::new(config, true),
+        AccountMeta::new(signer, true),
+    ];
+    mollusk.process_and_validate_instruction(
+        &instruction,
+        &[
+            (config, config_account),
+            (signer, AccountSharedData::default()),
+        ],
+        &[Check::success()],
+    );
+}
+
+#[test]
 fn test_config_updates() {
     let mollusk = setup();
 
@@ -285,7 +334,7 @@ fn test_config_updates() {
             (signer0, AccountSharedData::default()),
             (signer1, AccountSharedData::default()),
         ],
-        &[Check::success(), Check::compute_units(3_253)],
+        &[Check::success(), Check::compute_units(3_234)],
     );
 
     // Use this for next invoke.
@@ -303,7 +352,7 @@ fn test_config_updates() {
         ],
         &[
             Check::success(),
-            Check::compute_units(3_254),
+            Check::compute_units(3_235),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, new_config)).unwrap())
                 .build(),
@@ -316,6 +365,22 @@ fn test_config_updates() {
     // Attempt update with incomplete signatures.
     let keys = vec![
         (pubkey, false),
+        (signer1, true), // Missing signer0.
+    ];
+    let instruction = config_instruction::store(&config, false, keys, &my_config);
+    mollusk.process_and_validate_instruction(
+        &instruction,
+        &[
+            (config, updated_config_account.clone()),
+            // Missing signer0.
+            (signer1, AccountSharedData::default()),
+        ],
+        &[Check::err(ProgramError::MissingRequiredSignature)],
+    );
+
+    // Do it again, this time missing signer1.
+    let keys = vec![
+        (pubkey, false),
         (signer0, true), // Missing signer1.
     ];
     let instruction = config_instruction::store(&config, false, keys, &my_config);
@@ -323,7 +388,8 @@ fn test_config_updates() {
         &instruction,
         &[
             (config, updated_config_account.clone()),
-            (signer0, AccountSharedData::default()), // Missing signer1.
+            (signer0, AccountSharedData::default()),
+            // Missing signer1.
         ],
         &[Check::err(ProgramError::MissingRequiredSignature)],
     );
@@ -399,7 +465,7 @@ fn test_config_update_contains_duplicates_fails() {
             (signer0, AccountSharedData::default()),
             (signer1, AccountSharedData::default()),
         ],
-        &[Check::success(), Check::compute_units(3_253)],
+        &[Check::success(), Check::compute_units(3_234)],
     );
 
     // Attempt update with duplicate signer inputs.
@@ -443,7 +509,7 @@ fn test_config_updates_requiring_config() {
         ],
         &[
             Check::success(),
-            Check::compute_units(3_352),
+            Check::compute_units(3_330),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys: keys.clone() }, my_config)).unwrap())
                 .build(),
@@ -464,7 +530,7 @@ fn test_config_updates_requiring_config() {
         ],
         &[
             Check::success(),
-            Check::compute_units(3_352),
+            Check::compute_units(3_330),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, new_config)).unwrap())
                 .build(),
@@ -558,7 +624,7 @@ fn test_maximum_keys_input() {
     let result = mollusk.process_and_validate_instruction(
         &instruction,
         &[(config, config_account)],
-        &[Check::success(), Check::compute_units(25_247)],
+        &[Check::success(), Check::compute_units(25_243)],
     );
 
     // Use this for next invoke.
@@ -571,7 +637,7 @@ fn test_maximum_keys_input() {
     let result = mollusk.process_and_validate_instruction(
         &instruction,
         &[(config, updated_config_account)],
-        &[Check::success(), Check::compute_units(25_247)],
+        &[Check::success(), Check::compute_units(25_243)],
     );
 
     // Use this for next invoke.
