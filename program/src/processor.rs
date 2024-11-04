@@ -49,6 +49,33 @@ fn safe_deserialize_config_keys(input: &[u8]) -> Result<ConfigKeys, ProgramError
     }
 }
 
+// [Core BPF]: Similar to `safe_deserialize_config_keys`, this helper serves to
+// avoid over-allocations of memory, especially when the trailing data is
+// invalid.
+//
+// Consider a case where an account is malformed, and the `ShortU16` vector
+// length actually stores a value larger than the buffer itself. The original
+// Config program builtin can handle the initial memory allocation, eventually
+// returning `ProgramError::InvalidAccountData` when bincode throws an EOF
+// error. However, the BPF version will panic on OOM before it can successfully
+// return `ProgramError::InvalidAccountData`.
+//
+// This helper's purpose is solely to catch malformed `ConfigKeys` data before
+// a memory allocation panic can occur, to ensure maximum backwards
+// compatibility with the original builtin.
+fn safe_deserialize_config_keys_from_state(input: &[u8]) -> Result<ConfigKeys, ProgramError> {
+    let (vector_len, offset) = solana_program::short_vec::decode_shortu16_len(input)
+        .map_err(|_| ProgramError::InvalidAccountData)?;
+    if input[offset..].len() / (32 + 1) < vector_len {
+        Err(ProgramError::InvalidAccountData)
+    } else {
+        bincode::deserialize(input).map_err(|err| {
+            msg!("Unable to deserialize config account: {}", err);
+            ProgramError::InvalidAccountData
+        })
+    }
+}
+
 /// Config program processor.
 pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], input: &[u8]) -> ProgramResult {
     let key_list = safe_deserialize_config_keys(input)?;
@@ -60,11 +87,7 @@ pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], input: &[u8]) -> P
         return Err(ProgramError::InvalidAccountOwner);
     }
 
-    let current_data: ConfigKeys = bincode::deserialize(&config_account.try_borrow_data()?)
-        .map_err(|err| {
-            msg!("Unable to deserialize config account: {}", err);
-            ProgramError::InvalidAccountData
-        })?;
+    let current_data = safe_deserialize_config_keys_from_state(&config_account.try_borrow_data()?)?;
 
     let current_signer_keys: Vec<Pubkey> = current_data
         .keys
