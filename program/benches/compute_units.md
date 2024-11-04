@@ -1,3 +1,44 @@
+#### Compute Units: 2024-11-04 12:41:50.422792 UTC
+
+| Name | CUs | Delta |
+|------|------|-------|
+| config_small_init_0_keys | 612 | +32 |
+| config_small_init_1_keys | 1243 | +32 |
+| config_small_init_5_keys | 2862 | +32 |
+| config_small_init_10_keys | 4932 | +32 |
+| config_small_init_25_keys | 11774 | +32 |
+| config_small_init_37_keys | 16777 | +32 |
+| config_small_store_0_keys | 612 | +32 |
+| config_small_store_1_keys | 1497 | +32 |
+| config_small_store_5_keys | 4032 | +32 |
+| config_small_store_10_keys | 7247 | +32 |
+| config_small_store_25_keys | 17524 | +32 |
+| config_small_store_37_keys | 25275 | +32 |
+| config_medium_init_0_keys | 603 | +32 |
+| config_medium_init_1_keys | 1190 | +32 |
+| config_medium_init_5_keys | 2862 | +32 |
+| config_medium_init_10_keys | 4932 | +32 |
+| config_medium_init_25_keys | 11774 | +32 |
+| config_medium_init_37_keys | 16777 | +32 |
+| config_medium_store_0_keys | 603 | +32 |
+| config_medium_store_1_keys | 1444 | +32 |
+| config_medium_store_5_keys | 4032 | +32 |
+| config_medium_store_10_keys | 7247 | +32 |
+| config_medium_store_25_keys | 17524 | +32 |
+| config_medium_store_37_keys | 25275 | +32 |
+| config_large_init_0_keys | 724 | +32 |
+| config_large_init_1_keys | 1311 | +32 |
+| config_large_init_5_keys | 2983 | +32 |
+| config_large_init_10_keys | 5054 | +32 |
+| config_large_init_25_keys | 11898 | +32 |
+| config_large_init_37_keys | 16902 | +32 |
+| config_large_store_0_keys | 724 | +32 |
+| config_large_store_1_keys | 1565 | +32 |
+| config_large_store_5_keys | 4153 | +32 |
+| config_large_store_10_keys | 7369 | +32 |
+| config_large_store_25_keys | 17648 | +32 |
+| config_large_store_37_keys | 25400 | +32 |
+
 #### Compute Units: 2024-11-01 15:31:11.543055 UTC
 
 | Name | CUs | Delta |
