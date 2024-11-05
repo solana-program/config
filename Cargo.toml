@@ -1,6 +1,8 @@
 [workspace]
 resolver = "2"
 members = ["clients/rust", "program"]
+# Required for CI
+exclude = ["solana-conformance/impl/solfuzz-agave"]
 
 [workspace.metadata.cli]
 solana = "2.0.2"
