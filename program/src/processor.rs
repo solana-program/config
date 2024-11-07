@@ -1,7 +1,7 @@
 //! Config program processor.
 
 use {
-    crate::state::ConfigKeys,
+    crate::{error::ConfigError, state::ConfigKeys},
     solana_program::{
         account_info::AccountInfo, entrypoint::ProgramResult, msg, program_error::ProgramError,
         pubkey::Pubkey,
@@ -158,6 +158,33 @@ pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], input: &[u8]) -> P
     if config_account.data_len() < input.len() {
         msg!("Instruction data too large");
         return Err(ProgramError::InvalidInstructionData);
+    }
+
+    // [Core BPF]:
+    // When a builtin program attempts to write to an executable or read-only
+    // account, it will be immediately rejected by the `TransactionContext`.
+    // However, BPF programs do not query the `TransactionContext` for the
+    // ability to perform a write. Instead, they perform writes at-will, and
+    // the loader will inspect the serialized account memory region for any
+    // account update violations _after_ the VM has completed execution.
+    //
+    // The loader's inspection will catch any unauthorized modifications,
+    // however, when the exact same data is written to the account, thus
+    // rendering the serialized account state unchanged, the program succeeds.
+    //
+    // In order to maximize backwards compatibility between the BPF version and
+    // its original builtin, we add these checks from `TransactionContext` to
+    // the program directly, to throw even when the data being written is the
+    // same as what's currently in the account.
+    //
+    // Unfortunately, the two `InstructionError` variants thrown do not have
+    // `ProgramError` counterparts, so we mock them out with custom error
+    // codes.
+    if config_account.executable {
+        return Err(ConfigError::ExecutableDataModified.into());
+    }
+    if !config_account.is_writable {
+        return Err(ConfigError::ReadonlyDataModified.into());
     }
 
     config_account.try_borrow_mut_data()?[..input.len()].copy_from_slice(input);

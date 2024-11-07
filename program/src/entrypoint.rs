@@ -1,8 +1,11 @@
 //! Program entrypoint.
 
 use {
-    crate::processor,
-    solana_program::{account_info::AccountInfo, entrypoint::ProgramResult, pubkey::Pubkey},
+    crate::{error::ConfigError, processor},
+    solana_program::{
+        account_info::AccountInfo, entrypoint::ProgramResult, program_error::PrintProgramError,
+        pubkey::Pubkey,
+    },
 };
 
 solana_program::entrypoint!(process_instruction);
@@ -11,5 +14,9 @@ fn process_instruction(
     accounts: &[AccountInfo],
     instruction_data: &[u8],
 ) -> ProgramResult {
-    processor::process(program_id, accounts, instruction_data)
+    if let Err(error) = processor::process(program_id, accounts, instruction_data) {
+        error.print::<ConfigError>();
+        return Err(error);
+    }
+    Ok(())
 }
