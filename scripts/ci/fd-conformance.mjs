@@ -16,6 +16,21 @@ await $`git clone https://github.com/firedancer-io/solana-conformance.git`;
 const testVectorsPath = path.join(harnessPath, 'impl', 'test-vectors');
 await $`git clone https://github.com/firedancer-io/test-vectors.git ${testVectorsPath}`;
 
+// Remove the fixtures we want to skip.
+const fixturesPath = path.join(testVectorsPath, 'instr', 'fixtures', 'config');
+const skipFixtures = [
+    // These fixtures provide executable config accounts, which we know is a
+    // case that can't manifest under the Solana protocol.
+    '04a0b782cb1f4b1be044313331edda9dfb4696d6.fix',
+    'c7ec10c03d5faadcebd32dc5b9a4086abef892ca_3157979.fix',
+    '68e8dbf0f31de69a2bd1d2c0fe9af3ba676301d6_3157979.fix',
+    'f84b5ad44f7a253ebc8056d06396694370a7fa4c_3157979.fix',
+    '8bbe900444c675cfc3fbf0f80ae2eb061e536a09.fix',
+];
+for (const fixture of skipFixtures) {
+    await $`rm -f ${path.join(fixturesPath, fixture)}`;
+}
+
 // Clone the SolFuzz-Agave harness.
 const solFuzzAgavePath = path.join(harnessPath, 'impl', 'solfuzz-agave');
 await $`git clone -b agave-v2.1.0 http://github.com/firedancer-io/solfuzz-agave.git ${solFuzzAgavePath}`;
@@ -57,7 +72,6 @@ await $`CORE_BPF_PROGRAM_ID=${getProgramId('program')} \
 await $`mv ${solFuzzAgaveTargetPath} ${testTargetPathCoreBpf}`;
 
 // Run the tests.
-const fixturesPath = path.join(testVectorsPath, 'instr', 'fixtures', 'config');
 await $`source test_suite_env/bin/activate && \
         solana-test-suite run-tests \
         -i ${fixturesPath} -s ${testTargetPathBuiltin} -t ${testTargetPathCoreBpf}`;
