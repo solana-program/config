@@ -13,9 +13,6 @@ use {
 /// Errors that can be returned by the Config program.
 #[derive(Error, Clone, Debug, Eq, PartialEq, FromPrimitive)]
 pub enum ConfigError {
-    /// Instruction changed executable account's data.
-    #[error("Instruction changed executable account's data")]
-    ExecutableDataModified,
     /// Instruction modified data of a read-only account.
     #[error("Instruction modified data of a read-only account")]
     ReadonlyDataModified,

@@ -173,16 +173,12 @@ pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], input: &[u8]) -> P
     // rendering the serialized account state unchanged, the program succeeds.
     //
     // In order to maximize backwards compatibility between the BPF version and
-    // its original builtin, we add these checks from `TransactionContext` to
-    // the program directly, to throw even when the data being written is the
+    // its original builtin, we add this check from `TransactionContext` to the
+    // program directly, to throw even when the data being written is the same
     // same as what's currently in the account.
     //
-    // Unfortunately, the two `InstructionError` variants thrown do not have
-    // `ProgramError` counterparts, so we mock them out with custom error
-    // codes.
-    if config_account.executable {
-        return Err(ConfigError::ExecutableDataModified.into());
-    }
+    // Since the account can never be executable and also owned by the config
+    // program, we'll just focus on readonly.
     if !config_account.is_writable {
         return Err(ConfigError::ReadonlyDataModified.into());
     }
