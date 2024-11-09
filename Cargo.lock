@@ -3842,9 +3842,12 @@ dependencies = [
  "bincode",
  "mollusk-svm",
  "mollusk-svm-bencher",
+ "num-derive 0.4.2",
+ "num-traits",
  "serde",
  "solana-program",
  "solana-sdk",
+ "thiserror",
 ]
 
 [[package]]

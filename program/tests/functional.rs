@@ -5,6 +5,7 @@ use {
     mollusk_svm::{result::Check, Mollusk},
     serde::{Deserialize, Serialize},
     solana_config_program::{
+        error::ConfigError,
         instruction as config_instruction,
         state::{ConfigKeys, ConfigState},
     },
@@ -83,7 +84,7 @@ fn test_process_create_ok() {
         &[(config, config_account)],
         &[
             Check::success(),
-            Check::compute_units(612),
+            Check::compute_units(616),
             Check::account(&config)
                 .data(
                     &bincode::serialize(&(ConfigKeys { keys: vec![] }, MyConfig::default()))
@@ -111,7 +112,7 @@ fn test_process_store_ok() {
         &[(config, config_account)],
         &[
             Check::success(),
-            Check::compute_units(612),
+            Check::compute_units(616),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, my_config)).unwrap())
                 .build(),
@@ -186,7 +187,7 @@ fn test_process_store_with_additional_signers() {
         ],
         &[
             Check::success(),
-            Check::compute_units(3_267),
+            Check::compute_units(3_271),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, my_config)).unwrap())
                 .build(),
@@ -334,7 +335,7 @@ fn test_config_updates() {
             (signer0, AccountSharedData::default()),
             (signer1, AccountSharedData::default()),
         ],
-        &[Check::success(), Check::compute_units(3_267)],
+        &[Check::success(), Check::compute_units(3_271)],
     );
 
     // Use this for next invoke.
@@ -352,7 +353,7 @@ fn test_config_updates() {
         ],
         &[
             Check::success(),
-            Check::compute_units(3_268),
+            Check::compute_units(3_272),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, new_config)).unwrap())
                 .build(),
@@ -465,7 +466,7 @@ fn test_config_update_contains_duplicates_fails() {
             (signer0, AccountSharedData::default()),
             (signer1, AccountSharedData::default()),
         ],
-        &[Check::success(), Check::compute_units(3_267)],
+        &[Check::success(), Check::compute_units(3_271)],
     );
 
     // Attempt update with duplicate signer inputs.
@@ -509,7 +510,7 @@ fn test_config_updates_requiring_config() {
         ],
         &[
             Check::success(),
-            Check::compute_units(3_363),
+            Check::compute_units(3_367),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys: keys.clone() }, my_config)).unwrap())
                 .build(),
@@ -530,7 +531,7 @@ fn test_config_updates_requiring_config() {
         ],
         &[
             Check::success(),
-            Check::compute_units(3_363),
+            Check::compute_units(3_367),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, new_config)).unwrap())
                 .build(),
@@ -624,7 +625,7 @@ fn test_maximum_keys_input() {
     let result = mollusk.process_and_validate_instruction(
         &instruction,
         &[(config, config_account)],
-        &[Check::success(), Check::compute_units(25_275)],
+        &[Check::success(), Check::compute_units(25_279)],
     );
 
     // Use this for next invoke.
@@ -637,7 +638,7 @@ fn test_maximum_keys_input() {
     let result = mollusk.process_and_validate_instruction(
         &instruction,
         &[(config, updated_config_account)],
-        &[Check::success(), Check::compute_units(25_275)],
+        &[Check::success(), Check::compute_units(25_279)],
     );
 
     // Use this for next invoke.
@@ -746,5 +747,33 @@ fn test_safe_deserialize_from_state() {
         &instruction,
         &[(config, config_account)],
         &[Check::err(ProgramError::InvalidAccountData)],
+    );
+}
+
+// Backwards compatibility test case.
+#[test]
+fn test_write_same_data_to_readonly() {
+    let mollusk = setup();
+
+    let config = Pubkey::new_unique();
+    let keys = vec![];
+
+    // Creates a config account with `MyConfig::default()`.
+    let config_account = create_config_account(&mollusk, keys.clone());
+
+    // Pass the exact same data (`MyConfig::default()`) to the instruction,
+    // which we'll attempt to write into the account.
+    let mut instruction =
+        config_instruction::store(&config, true, keys.clone(), &MyConfig::default());
+
+    // Make the config account read-only.
+    instruction.accounts[0].is_writable = false;
+
+    mollusk.process_and_validate_instruction(
+        &instruction,
+        &[(config, config_account)],
+        &[Check::err(ProgramError::Custom(
+            ConfigError::ReadonlyDataModified as u32,
+        ))],
     );
 }
