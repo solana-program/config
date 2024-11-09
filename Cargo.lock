@@ -3837,21 +3837,6 @@ dependencies = [
 
 [[package]]
 name = "solana-config-program"
-version = "0.1.0"
-dependencies = [
- "bincode",
- "mollusk-svm",
- "mollusk-svm-bencher",
- "num-derive 0.4.2",
- "num-traits",
- "serde",
- "solana-program",
- "solana-sdk",
- "thiserror",
-]
-
-[[package]]
-name = "solana-config-program"
 version = "2.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "315b49d8b0a01aae38a5056f13dc0b9001e996d48807a5012c6f7629ced6b7d7"
@@ -3862,6 +3847,21 @@ dependencies = [
  "serde_derive",
  "solana-program-runtime",
  "solana-sdk",
+]
+
+[[package]]
+name = "solana-config-program"
+version = "3.0.0"
+dependencies = [
+ "bincode",
+ "mollusk-svm",
+ "mollusk-svm-bencher",
+ "num-derive 0.4.2",
+ "num-traits",
+ "serde",
+ "solana-program",
+ "solana-sdk",
+ "thiserror",
 ]
 
 [[package]]
