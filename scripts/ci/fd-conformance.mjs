@@ -77,8 +77,8 @@ await $`source test_suite_env/bin/activate && \
         -i ${fixturesPath} -s ${testTargetPathBuiltin} -t ${testTargetPathCoreBpf}`;
 
 // Assert conformance.
-// There should be no `failed_protobufs` directory.
-if (fs.existsSync('test_results/failed_protobufs')) {
+// There should be no fixtures in the `failed_protobufs` directory.
+if (fs.readdirSync('test_results/failed_protobufs').length > 0) {
     throw new Error(`Error: mismatches detected.`);
 } else {
     console.log('All tests passed.');
