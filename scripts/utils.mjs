@@ -70,6 +70,27 @@ export function getAllProgramFolders() {
   );
 }
 
+export function getProgramId(folder) {
+  return getCargoMetadata(folder)?.solana?.['program-id'];
+}
+
+export function getProgramName(folder) {
+  return getCargo(folder).package?.name;
+}
+
+export function getProgramSharedObjectName(folder) {
+  return `${getProgramName(folder).replace(/-/g, '_')}.so`;
+}
+
+export function getProgramSharedObjectPath(folder) {
+  return path.join(
+    workingDirectory,
+    'target',
+    'deploy',
+    getProgramSharedObjectName(folder),
+  );
+}
+
 export function getCargo(folder) {
   return parseToml(
     fs.readFileSync(
