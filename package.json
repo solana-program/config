@@ -7,6 +7,7 @@
     "programs:clean": "zx ./scripts/program/clean.mjs",
     "programs:format": "zx ./scripts/program/format.mjs",
     "programs:lint": "zx ./scripts/program/lint.mjs",
+    "programs:publish": "zx ./scripts/publish-rust.mjs program",
     "solana:check": "zx ./scripts/check-solana-version.mjs",
     "solana:link": "zx ./scripts/link-solana-version.mjs",
     "generate": "pnpm generate:clients",
@@ -20,7 +21,7 @@
     "clients:js:test": "zx ./scripts/client/test-js.mjs",
     "clients:rust:format": "zx ./scripts/client/format-rust.mjs",
     "clients:rust:lint": "zx ./scripts/client/lint-rust.mjs",
-    "clients:rust:publish": "zx ./scripts/publish-rust.mjs",
+    "clients:rust:publish": "zx ./scripts/publish-rust.mjs client",
     "clients:rust:test": "zx ./scripts/client/test-rust.mjs",
     "template:upgrade": "zx ./scripts/upgrade-template.mjs"
   },
