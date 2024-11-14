@@ -71,6 +71,9 @@ await $`CORE_BPF_PROGRAM_ID=${getProgramId('program')} \
         --lib --release --target x86_64-unknown-linux-gnu --features core-bpf`;
 await $`mv ${solFuzzAgaveTargetPath} ${testTargetPathCoreBpf}`;
 
+// Remove any test results if they exist.
+await $`rm -rf test_results`;
+
 // Run the tests.
 await $`source test_suite_env/bin/activate && \
         solana-test-suite run-tests \
@@ -78,8 +81,10 @@ await $`source test_suite_env/bin/activate && \
 
 // Assert conformance.
 // There should be no fixtures in the `failed_protobufs` directory.
-if (fs.readdirSync('test_results/failed_protobufs').length > 0) {
-    throw new Error(`Error: mismatches detected.`);
-} else {
-    console.log('All tests passed.');
+if (fs.existsSync('test_results/failed_protobufs')) {
+    if (fs.readdirSync('test_results/failed_protobufs').length > 0) {
+        throw new Error(`Error: mismatches detected.`);
+    }
 }
+
+console.log('All tests passed.');
