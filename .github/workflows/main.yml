@@ -95,6 +95,9 @@ jobs:
     name: Test Programs
     runs-on: ubuntu-latest
     needs: format_and_lint_programs
+    env:
+      EJECT_FUZZ_FIXTURES_FD: "fuzz/blob"
+      EJECT_FUZZ_FIXTURES_JSON_FD: "fuzz/json"
     steps:
       - name: Git Checkout
         uses: actions/checkout@v4
@@ -106,8 +109,20 @@ jobs:
           cargo-cache-fallback-key: cargo-programs
           solana: true
 
+      - name: Clear Fixtures
+        run: rm -rf program/fuzz
+
       - name: Test Programs
         run: pnpm programs:test
+      
+      - name: Check Working Directory
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            test -z "$(git status --porcelain)"
+            echo "Generated test fixtures have changed. Please set the `EJECT_FUZZ_FIXTURES_FD` and `EJECT_FUZZ_FIXTURES_JSON_FD`, \
+            remove the existing fixtures, run the tests, and commit the updated fixtures.";
+            exit 1;
+          fi
 
   bench_program_compute_units:
     name: Benchmark Program Compute Units
