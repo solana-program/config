@@ -16,24 +16,10 @@ await $`git clone https://github.com/firedancer-io/solana-conformance.git`;
 const testVectorsPath = path.join(harnessPath, 'impl', 'test-vectors');
 await $`git clone https://github.com/firedancer-io/test-vectors.git ${testVectorsPath}`;
 
-// Remove the fixtures we want to skip.
-const fixturesPath = path.join(testVectorsPath, 'instr', 'fixtures', 'config');
-const skipFixtures = [
-    // These fixtures provide executable config accounts, which we know is a
-    // case that can't manifest under the Solana protocol.
-    '04a0b782cb1f4b1be044313331edda9dfb4696d6.fix',
-    'c7ec10c03d5faadcebd32dc5b9a4086abef892ca_3157979.fix',
-    '68e8dbf0f31de69a2bd1d2c0fe9af3ba676301d6_3157979.fix',
-    'f84b5ad44f7a253ebc8056d06396694370a7fa4c_3157979.fix',
-    '8bbe900444c675cfc3fbf0f80ae2eb061e536a09.fix',
-];
-for (const fixture of skipFixtures) {
-    await $`rm -f ${path.join(fixturesPath, fixture)}`;
-}
-
 // Add the Mollusk-generated fixtures to the test inputs.
+const firedancerFixturesPath = path.join(testVectorsPath, 'instr', 'fixtures', 'config');
 const molluskFixturesPath = path.join(workingDirectory, 'program', 'fuzz', 'blob');
-await $`cp -a ${molluskFixturesPath}/. ${fixturesPath}/`;
+await $`cp -a ${molluskFixturesPath}/. ${firedancerFixturesPath}/`;
 
 // Clone the SolFuzz-Agave harness.
 const solFuzzAgavePath = path.join(harnessPath, 'impl', 'solfuzz-agave');
@@ -83,7 +69,8 @@ await $`rm -rf test_results`;
 // Run the tests.
 await $`source test_suite_env/bin/activate && \
         solana-test-suite run-tests \
-        -i ${fixturesPath} -s ${testTargetPathBuiltin} -t ${testTargetPathCoreBpf}`;
+        -i ${firedancerFixturesPath} -s ${testTargetPathBuiltin} -t ${testTargetPathCoreBpf} \
+        --consensus-mode`;
 
 // Assert conformance.
 // There should be no fixtures in the `failed_protobufs` directory.
