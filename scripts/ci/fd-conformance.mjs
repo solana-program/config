@@ -33,11 +33,11 @@ for (const fixture of skipFixtures) {
 
 // Add the Mollusk-generated fixtures to the test inputs.
 const molluskFixturesPath = path.join(workingDirectory, 'program', 'fuzz', 'blob');
-await $`cp -a ${molluskFixturesPath}/. ${fixturesPath}/`; 
+await $`cp -a ${molluskFixturesPath}/. ${fixturesPath}/`;
 
 // Clone the SolFuzz-Agave harness.
 const solFuzzAgavePath = path.join(harnessPath, 'impl', 'solfuzz-agave');
-await $`git clone -b core-bpf-conformance http://github.com/buffalojoec/solfuzz-agave.git ${solFuzzAgavePath}`;
+await $`git clone -b agave-v2.1.3 http://github.com/firedancer-io/solfuzz-agave.git ${solFuzzAgavePath}`;
 
 // Fetch protobuf files.
 await $`make -j -C ${solFuzzAgavePath} fetch_proto`
@@ -73,7 +73,8 @@ await $`CORE_BPF_PROGRAM_ID=${getProgramId('program')} \
         CORE_BPF_TARGET=${getProgramSharedObjectPath('program')} \
         FORCE_RECOMPILE=true \
         cargo build --manifest-path ${solFuzzAgaveManifestPath} \
-        --lib --release --target x86_64-unknown-linux-gnu --features core-bpf-conformance`;
+        --lib --release --target x86_64-unknown-linux-gnu \
+        --features core-bpf-conformance`;
 await $`mv ${solFuzzAgaveTargetPath} ${testTargetPathCoreBpf}`;
 
 // Remove any test results if they exist.
@@ -93,4 +94,3 @@ if (fs.existsSync('test_results/failed_protobufs')) {
 }
 
 console.log('All Firedancer conformance tests passed.');
-
