@@ -70,7 +70,7 @@ await $`rm -rf test_results`;
 await $`source test_suite_env/bin/activate && \
         solana-test-suite run-tests \
         -i ${firedancerFixturesPath} -s ${testTargetPathBuiltin} -t ${testTargetPathCoreBpf} \
-        --consensus-mode`;
+        --consensus-mode --save-failures`;
 
 // Assert conformance.
 // There should be no fixtures in the `failed_protobufs` directory.
