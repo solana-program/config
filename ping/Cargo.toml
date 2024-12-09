@@ -1,0 +1,13 @@
+[package]
+name = "ping"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+borsh = "^0.10"
+clap = { version = "4.5.4", features = ["derive"] }
+kaigan = "0.2.5"
+solana-config-program-client = { path = "../clients/rust" }
+solana-rpc-client = "2.0.1"
+solana-sdk = "2.0.1"
+tokio = { version = "1.37.0", features = ["full"] }

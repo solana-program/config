@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["clients/rust", "program"]
+members = ["clients/rust", "ping", "program"]
 # Required for CI
 exclude = ["solana-conformance/impl/solfuzz-agave"]
 
