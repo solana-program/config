@@ -156,6 +156,11 @@ jobs:
           cargo-cache-fallback-key: cargo-programs
           solana: true
       
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libudev-dev pkg-config
+      
       - name: Restore Program Builds
         uses: actions/cache/restore@v4
         with:
