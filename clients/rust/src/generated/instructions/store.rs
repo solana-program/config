@@ -11,6 +11,7 @@ use {
 };
 
 /// Accounts.
+#[derive(Debug)]
 pub struct Store {
     /// The config account to be modified.
     /// Must sign during the first call to `store` to initialize the account,
@@ -37,8 +38,8 @@ impl Store {
             self.config_account.1,
         ));
         accounts.extend_from_slice(remaining_accounts);
-        let mut data = StoreInstructionData::new().try_to_vec().unwrap();
-        let mut args = args.try_to_vec().unwrap();
+        let mut data = borsh::to_vec(&StoreInstructionData::new()).unwrap();
+        let mut args = borsh::to_vec(&args).unwrap();
         data.append(&mut args);
 
         solana_program::instruction::Instruction {
@@ -49,7 +50,8 @@ impl Store {
     }
 }
 
-#[derive(BorshDeserialize, BorshSerialize)]
+#[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct StoreInstructionData {}
 
 impl StoreInstructionData {
@@ -219,8 +221,8 @@ impl<'a, 'b> StoreCpi<'a, 'b> {
                 is_writable: remaining_account.2,
             })
         });
-        let mut data = StoreInstructionData::new().try_to_vec().unwrap();
-        let mut args = self.__args.try_to_vec().unwrap();
+        let mut data = borsh::to_vec(&StoreInstructionData::new()).unwrap();
+        let mut args = borsh::to_vec(&self.__args).unwrap();
         data.append(&mut args);
 
         let instruction = solana_program::instruction::Instruction {
