@@ -2343,11 +2343,9 @@ dependencies = [
  "bincode",
  "borsh 0.10.3",
  "kaigan",
- "num-derive",
  "serde",
  "solana-program",
  "solana-sdk",
- "thiserror",
 ]
 
 [[package]]

@@ -15,10 +15,8 @@ serde = ["dep:serde"]
 [dependencies]
 borsh = { workspace = true }
 kaigan = { workspace = true, features = ["serde"] }
-num-derive = { workspace = true }
 serde = { workspace = true, features = ["derive"], optional = true }
 solana-program = { workspace = true, features = ["borsh"] }
-thiserror = { workspace = true }
 
 [dev-dependencies]
 assert_matches = { workspace = true }
