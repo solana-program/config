@@ -10,17 +10,13 @@ edition = { workspace = true }
 
 [features]
 test-sbf = []
-serde = ["dep:serde", "dep:serde_with"]
+serde = ["dep:serde"]
 
 [dependencies]
 borsh = { workspace = true }
 kaigan = { workspace = true, features = ["serde"] }
-num-derive = { workspace = true }
-num-traits = { workspace = true }
 serde = { workspace = true, features = ["derive"], optional = true }
-serde_with = { workspace = true, optional = true }
 solana-program = { workspace = true, features = ["borsh"] }
-thiserror = { workspace = true }
 
 [dev-dependencies]
 assert_matches = { workspace = true }
