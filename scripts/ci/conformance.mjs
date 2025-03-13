@@ -8,7 +8,7 @@ import { getProgramId, getProgramSharedObjectPath, workingDirectory } from '../u
 
 const programId = getProgramId('program');
 const programBinaryPath = getProgramSharedObjectPath('program');
-const baseBinaryPath = path.join(workingDirectory, 'base.so');
+const baseBinaryPath = path.join(workingDirectory, 'target', 'dump-solana', 'base.so');
 const molluskFixturesPath = path.join(workingDirectory, 'program', 'fuzz', 'blob');
 
 // Clone the program from mainnet-beta.
