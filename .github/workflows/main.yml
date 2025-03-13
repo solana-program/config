@@ -141,8 +141,8 @@ jobs:
             exit 1;
           fi
   
-  fd_conformance:
-    name: Builtin-BPF Conformance Test
+  conformance:
+    name: Conformance Test
     runs-on: ubuntu-latest
     needs: build_programs
     steps:
@@ -160,6 +160,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libudev-dev pkg-config
+          cargo install mollusk-svm-cli
       
       - name: Restore Program Builds
         uses: actions/cache/restore@v4
@@ -167,9 +168,9 @@ jobs:
           path: ./**/*.so
           key: ${{ runner.os }}-builds-${{ github.sha }}
       
-      - name: Builtin-BPF Conformance Test
+      - name: Conformance Test
         shell: bash
-        run: pnpm zx ./scripts/ci/fd-conformance.mjs
+        run: pnpm zx ./scripts/ci/conformance.mjs
 
   ## SKIP: IDL is hand-cranked here for now.
   ##

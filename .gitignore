@@ -6,5 +6,6 @@
 **/*.rs.bk
 node_modules
 test-ledger
+base.so
 dist
 solana-conformance
