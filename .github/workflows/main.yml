@@ -160,7 +160,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libudev-dev pkg-config
-          cargo install mollusk-svm-cli
+          command -v mollusk >/dev/null 2>&1 || cargo install mollusk-svm-cli
       
       - name: Restore Program Builds
         uses: actions/cache/restore@v4
