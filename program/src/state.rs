@@ -1,7 +1,6 @@
 //! Program state types.
 
 use {
-    bincode::serialized_size,
     serde::{Deserialize, Serialize},
     solana_program::{pubkey::Pubkey, short_vec},
 };
@@ -19,12 +18,4 @@ pub struct ConfigKeys {
     /// and `bool` whether that key is a signer of the data.
     #[serde(with = "short_vec")]
     pub keys: Vec<(Pubkey, bool)>,
-}
-
-impl ConfigKeys {
-    /// Get the serialized size of the `ConfigKeys` struct,
-    /// given a list of keys.
-    pub fn serialized_size(keys: Vec<(Pubkey, bool)>) -> u64 {
-        serialized_size(&ConfigKeys { keys }).unwrap()
-    }
 }

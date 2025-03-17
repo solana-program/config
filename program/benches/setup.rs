@@ -39,7 +39,7 @@ pub trait BenchSetup: ConfigState + Default {
 
     fn default_space(keys: Vec<(Pubkey, bool)>) -> usize {
         (Self::max_space()
-            .checked_add(ConfigKeys::serialized_size(keys))
+            .checked_add(bincode::serialized_size(&ConfigKeys { keys }).unwrap())
             .unwrap()) as usize
     }
 
