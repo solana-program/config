@@ -9,14 +9,17 @@ license-file = { workspace = true }
 edition = { workspace = true }
 
 [features]
-test-sbf = []
+fetch = ["dep:solana-client", "dep:solana-sdk"]
 serde = ["dep:serde"]
+test-sbf = []
 
 [dependencies]
 borsh = { workspace = true }
 kaigan = { workspace = true, features = ["serde"] }
 serde = { workspace = true, features = ["derive"], optional = true }
+solana-client = { workspace = true, optional = true }
 solana-program = { workspace = true, features = ["borsh"] }
+solana-sdk = { workspace = true, optional = true }
 
 [dev-dependencies]
 assert_matches = { workspace = true }
