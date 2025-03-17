@@ -3251,6 +3251,7 @@ dependencies = [
  "num-derive",
  "num-traits",
  "serde",
+ "solana-config-program-client",
  "solana-program",
  "solana-sdk",
  "thiserror",

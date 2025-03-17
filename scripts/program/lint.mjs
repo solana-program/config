@@ -16,7 +16,6 @@ const lintArgs = [
   '--all-features',
   '--',
   '--deny=warnings',
-  '--deny=clippy::arithmetic_side_effects',
   ...cliArguments()
 ];
 

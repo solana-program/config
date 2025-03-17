@@ -1,10 +1,7 @@
 //! Program instruction helpers.
 
 use {
-    crate::{
-        id,
-        state::{ConfigKeys, ConfigState},
-    },
+    crate::{ConfigKeys, ShortVec, ID},
     bincode::serialized_size,
     solana_program::{
         instruction::{AccountMeta, Instruction},
@@ -13,10 +10,21 @@ use {
     },
 };
 
+/// Trait defining config state to be stored at the end of the account data.
+pub trait ConfigState: serde::Serialize + Default {
+    /// Maximum space that the serialized representation will require
+    fn max_space() -> u64;
+}
+
 fn initialize_account<T: ConfigState>(config_pubkey: &Pubkey) -> Instruction {
     let account_metas = vec![AccountMeta::new(*config_pubkey, true)];
-    let account_data = (ConfigKeys { keys: vec![] }, T::default());
-    Instruction::new_with_bincode(id(), &account_data, account_metas)
+    let account_data = (
+        ConfigKeys {
+            keys: ShortVec(vec![]),
+        },
+        T::default(),
+    );
+    Instruction::new_with_bincode(ID, &account_data, account_metas)
 }
 
 /// Create a new, empty configuration account
@@ -26,14 +34,19 @@ pub fn create_account<T: ConfigState>(
     lamports: u64,
     keys: Vec<(Pubkey, bool)>,
 ) -> Vec<Instruction> {
-    let space = T::max_space().saturating_add(serialized_size(&ConfigKeys { keys }).unwrap());
+    let space = T::max_space().saturating_add(
+        serialized_size(&ConfigKeys {
+            keys: ShortVec(keys),
+        })
+        .unwrap(),
+    );
     vec![
         system_instruction::create_account(
             from_account_pubkey,
             config_account_pubkey,
             lamports,
             space,
-            &id(),
+            &ID,
         ),
         initialize_account::<T>(config_account_pubkey),
     ]
@@ -52,6 +65,11 @@ pub fn store<T: ConfigState>(
             account_metas.push(AccountMeta::new(*signer_pubkey, true));
         }
     }
-    let account_data = (ConfigKeys { keys }, data);
-    Instruction::new_with_bincode(id(), &account_data, account_metas)
+    let account_data = (
+        ConfigKeys {
+            keys: ShortVec(keys),
+        },
+        data,
+    );
+    Instruction::new_with_bincode(ID, &account_data, account_metas)
 }

@@ -1,14 +1,12 @@
 #![cfg(feature = "test-sbf")]
+#![allow(clippy::arithmetic_side_effects)]
 
 use {
     bincode::serialized_size,
     mollusk_svm::{result::Check, Mollusk},
     serde::{Deserialize, Serialize},
-    solana_config_program::{
-        error::ConfigError,
-        instruction as config_instruction,
-        state::{ConfigKeys, ConfigState},
-    },
+    solana_config_program::{error::ConfigError, state::ConfigKeys},
+    solana_config_program_client::instruction_helpers::{self as config_instruction, ConfigState},
     solana_sdk::{
         account::AccountSharedData,
         instruction::{AccountMeta, Instruction},

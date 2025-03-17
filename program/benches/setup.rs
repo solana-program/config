@@ -1,10 +1,8 @@
 use {
     mollusk_svm_bencher::Bench,
     serde::Serialize,
-    solana_config_program::{
-        instruction::store,
-        state::{ConfigKeys, ConfigState},
-    },
+    solana_config_program::state::ConfigKeys,
+    solana_config_program_client::instruction_helpers::{store, ConfigState},
     solana_sdk::{
         account::AccountSharedData,
         hash::Hash,
