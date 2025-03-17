@@ -1,7 +1,7 @@
 //! Program state types.
 
 use {
-    bincode::{deserialize, serialized_size},
+    bincode::serialized_size,
     serde::{Deserialize, Serialize},
     solana_program::{pubkey::Pubkey, short_vec},
 };
@@ -27,11 +27,4 @@ impl ConfigKeys {
     pub fn serialized_size(keys: Vec<(Pubkey, bool)>) -> u64 {
         serialized_size(&ConfigKeys { keys }).unwrap()
     }
-}
-
-/// Utility for extracting the `ConfigKeys` data from the account data.
-pub fn get_config_data(bytes: &[u8]) -> Result<&[u8], bincode::Error> {
-    deserialize::<ConfigKeys>(bytes)
-        .and_then(|keys| serialized_size(&keys))
-        .map(|offset| &bytes[offset as usize..])
 }

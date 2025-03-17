@@ -10,10 +10,11 @@ edition = { workspace = true }
 
 [features]
 fetch = ["dep:solana-client", "dep:solana-sdk"]
-serde = ["dep:serde"]
+serde = ["dep:bincode", "dep:serde"]
 test-sbf = []
 
 [dependencies]
+bincode = { workspace = true, optional = true }
 borsh = { workspace = true }
 kaigan = { workspace = true, features = ["serde"] }
 serde = { workspace = true, features = ["derive"], optional = true }
