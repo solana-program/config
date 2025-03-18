@@ -4,7 +4,7 @@ mod generated;
 mod hooked;
 
 #[cfg(feature = "serde")]
-pub mod instruction_helpers;
+pub mod instructions_bincode;
 
 pub use {
     generated::{programs::SOLANA_CONFIG_ID as ID, *},

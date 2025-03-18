@@ -6,7 +6,7 @@ use {
     mollusk_svm::{result::Check, Mollusk},
     serde::{Deserialize, Serialize},
     solana_config_program::{error::ConfigError, state::ConfigKeys},
-    solana_config_program_client::instruction_helpers::{self as config_instruction, ConfigState},
+    solana_config_program_client::instructions_bincode::{self as config_instruction, ConfigState},
     solana_sdk::{
         account::AccountSharedData,
         instruction::{AccountMeta, Instruction},
