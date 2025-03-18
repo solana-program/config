@@ -10,25 +10,25 @@ license-file = "./LICENSE"
 edition = "2021"
 
 [workspace.metadata.cli]
-solana = "2.0.2"
+solana = "2.2.0"
 
 # Specify Rust toolchains for rustfmt, clippy, and build.
 # Any unprovided toolchains default to stable.
 [workspace.metadata.toolchains]
-format = "nightly-2024-05-02"
-lint = "nightly-2024-05-02"
+format = "nightly-2024-11-22"
+lint = "nightly-2024-11-22"
 
 [workspace.dependencies]
 assert_matches = "1.5.0"
 bincode = "1.3.3"
 borsh = "0.10"
 kaigan = "0.2.5"
-mollusk-svm = "0.0.10-solana-2.0"
-mollusk-svm-bencher = "0.0.10-solana-2.0"
+mollusk-svm = "0.1.3"
+mollusk-svm-bencher = "0.1.3"
 num-derive = "0.4"
 num-traits = "0.2"
 serde = "1.0.193"
-solana-client = "2.0.1"
-solana-program = "2.0.1"
-solana-sdk = "2.0.1"
+solana-client = "2.2.1"
+solana-program = "2.2.1"
+solana-sdk = "2.2.1"
 thiserror = "1.0.61"

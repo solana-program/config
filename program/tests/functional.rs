@@ -8,7 +8,7 @@ use {
     solana_config_program::{error::ConfigError, state::ConfigKeys},
     solana_config_program_client::instructions_bincode::{self as config_instruction, ConfigState},
     solana_sdk::{
-        account::AccountSharedData,
+        account::Account,
         instruction::{AccountMeta, Instruction},
         program_error::ProgramError,
         pubkey::Pubkey,
@@ -48,10 +48,10 @@ fn get_config_space(key_len: usize) -> usize {
     serialized_size.checked_add(total_keys_size).unwrap()
 }
 
-fn create_config_account(mollusk: &Mollusk, keys: Vec<(Pubkey, bool)>) -> AccountSharedData {
+fn create_config_account(mollusk: &Mollusk, keys: Vec<(Pubkey, bool)>) -> Account {
     let space = get_config_space(keys.len());
     let lamports = mollusk.sysvars.rent.minimum_balance(space);
-    AccountSharedData::new_data(
+    Account::new_data(
         lamports,
         &(ConfigKeys { keys }, MyConfig::default()),
         &solana_config_program::id(),
@@ -67,7 +67,7 @@ fn test_process_create_ok() {
     let config_account = {
         let space = get_config_space(0);
         let lamports = mollusk.sysvars.rent.minimum_balance(space);
-        AccountSharedData::new(lamports, space, &solana_config_program::id())
+        Account::new(lamports, space, &solana_config_program::id())
     };
 
     // `instruction::initialize_account` without making it public...
@@ -82,7 +82,7 @@ fn test_process_create_ok() {
         &[(config, config_account)],
         &[
             Check::success(),
-            Check::compute_units(600),
+            Check::compute_units(594),
             Check::account(&config)
                 .data(
                     &bincode::serialize(&(ConfigKeys { keys: vec![] }, MyConfig::default()))
@@ -110,7 +110,7 @@ fn test_process_store_ok() {
         &[(config, config_account)],
         &[
             Check::success(),
-            Check::compute_units(600),
+            Check::compute_units(594),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, my_config)).unwrap())
                 .build(),
@@ -180,12 +180,12 @@ fn test_process_store_with_additional_signers() {
         &instruction,
         &[
             (config, config_account),
-            (signer0, AccountSharedData::default()),
-            (signer1, AccountSharedData::default()),
+            (signer0, Account::default()),
+            (signer1, Account::default()),
         ],
         &[
             Check::success(),
-            Check::compute_units(3_241),
+            Check::compute_units(3_209),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, my_config)).unwrap())
                 .build(),
@@ -213,7 +213,7 @@ fn test_process_store_bad_config_account() {
             // Config missing from accounts.
             (
                 signer0,
-                AccountSharedData::new(100_000, 0, &solana_config_program::id()),
+                Account::new(100_000, 0, &solana_config_program::id()),
             ),
         ],
         &[Check::err(ProgramError::InvalidAccountData)],
@@ -242,7 +242,7 @@ fn test_process_store_with_bad_additional_signer() {
         &instruction,
         &[
             (config, config_account.clone()),
-            (bad_signer, AccountSharedData::default()),
+            (bad_signer, Account::default()),
         ],
         &[Check::err(ProgramError::MissingRequiredSignature)],
     );
@@ -253,10 +253,7 @@ fn test_process_store_with_bad_additional_signer() {
 
     mollusk.process_and_validate_instruction(
         &instruction,
-        &[
-            (config, config_account),
-            (signer0, AccountSharedData::default()),
-        ],
+        &[(config, config_account), (signer0, Account::default())],
         &[Check::err(ProgramError::MissingRequiredSignature)],
     );
 }
@@ -277,7 +274,7 @@ fn test_store_requiring_config() {
         // uninitalized.
         let space = get_config_space(new_keys.len());
         let lamports = mollusk.sysvars.rent.minimum_balance(space);
-        AccountSharedData::new(lamports, space, &solana_config_program::id())
+        Account::new(lamports, space, &solana_config_program::id())
     };
 
     let mut instruction = config_instruction::store(&config, true, new_keys, &my_config);
@@ -285,7 +282,7 @@ fn test_store_requiring_config() {
         &instruction,
         &[
             (config, config_account.clone()),
-            (signer, AccountSharedData::default()),
+            (signer, Account::default()),
         ],
         &[Check::err(ProgramError::MissingRequiredSignature)],
     );
@@ -302,10 +299,7 @@ fn test_store_requiring_config() {
     ];
     mollusk.process_and_validate_instruction(
         &instruction,
-        &[
-            (config, config_account),
-            (signer, AccountSharedData::default()),
-        ],
+        &[(config, config_account), (signer, Account::default())],
         &[Check::success()],
     );
 }
@@ -330,10 +324,10 @@ fn test_config_updates() {
         &instruction,
         &[
             (config, config_account),
-            (signer0, AccountSharedData::default()),
-            (signer1, AccountSharedData::default()),
+            (signer0, Account::default()),
+            (signer1, Account::default()),
         ],
-        &[Check::success(), Check::compute_units(3_241)],
+        &[Check::success(), Check::compute_units(3_209)],
     );
 
     // Use this for next invoke.
@@ -346,12 +340,12 @@ fn test_config_updates() {
         &instruction,
         &[
             (config, updated_config_account),
-            (signer0, AccountSharedData::default()),
-            (signer1, AccountSharedData::default()),
+            (signer0, Account::default()),
+            (signer1, Account::default()),
         ],
         &[
             Check::success(),
-            Check::compute_units(3_242),
+            Check::compute_units(3_210),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, new_config)).unwrap())
                 .build(),
@@ -372,7 +366,7 @@ fn test_config_updates() {
         &[
             (config, updated_config_account.clone()),
             // Missing signer0.
-            (signer1, AccountSharedData::default()),
+            (signer1, Account::default()),
         ],
         &[Check::err(ProgramError::MissingRequiredSignature)],
     );
@@ -387,7 +381,7 @@ fn test_config_updates() {
         &instruction,
         &[
             (config, updated_config_account.clone()),
-            (signer0, AccountSharedData::default()),
+            (signer0, Account::default()),
             // Missing signer1.
         ],
         &[Check::err(ProgramError::MissingRequiredSignature)],
@@ -404,8 +398,8 @@ fn test_config_updates() {
         &instruction,
         &[
             (config, updated_config_account.clone()),
-            (signer0, AccountSharedData::default()),
-            (signer2, AccountSharedData::default()), // Incorrect signer1.
+            (signer0, Account::default()),
+            (signer2, Account::default()), // Incorrect signer1.
         ],
         &[Check::err(ProgramError::MissingRequiredSignature)],
     );
@@ -435,8 +429,8 @@ fn test_config_initialize_contains_duplicates_fails() {
         &instruction,
         &[
             (config, config_account),
-            (signer0, AccountSharedData::default()),
-            (signer0, AccountSharedData::default()), // Duplicate signer0.
+            (signer0, Account::default()),
+            (signer0, Account::default()), // Duplicate signer0.
         ],
         &[Check::err(ProgramError::InvalidArgument)],
     );
@@ -461,10 +455,10 @@ fn test_config_update_contains_duplicates_fails() {
         &instruction,
         &[
             (config, config_account.clone()),
-            (signer0, AccountSharedData::default()),
-            (signer1, AccountSharedData::default()),
+            (signer0, Account::default()),
+            (signer1, Account::default()),
         ],
-        &[Check::success(), Check::compute_units(3_241)],
+        &[Check::success(), Check::compute_units(3_209)],
     );
 
     // Attempt update with duplicate signer inputs.
@@ -479,8 +473,8 @@ fn test_config_update_contains_duplicates_fails() {
         &instruction,
         &[
             (config, config_account),
-            (signer0, AccountSharedData::default()),
-            (signer0, AccountSharedData::default()), // Duplicate signer0.
+            (signer0, Account::default()),
+            (signer0, Account::default()), // Duplicate signer0.
         ],
         &[Check::err(ProgramError::InvalidArgument)],
     );
@@ -502,13 +496,10 @@ fn test_config_updates_requiring_config() {
     let instruction = config_instruction::store(&config, true, keys.clone(), &my_config);
     let result = mollusk.process_and_validate_instruction(
         &instruction,
-        &[
-            (config, config_account),
-            (signer0, AccountSharedData::default()),
-        ],
+        &[(config, config_account), (signer0, Account::default())],
         &[
             Check::success(),
-            Check::compute_units(3_338),
+            Check::compute_units(3_303),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys: keys.clone() }, my_config)).unwrap())
                 .build(),
@@ -525,11 +516,11 @@ fn test_config_updates_requiring_config() {
         &instruction,
         &[
             (config, updated_config_account),
-            (signer0, AccountSharedData::default()),
+            (signer0, Account::default()),
         ],
         &[
             Check::success(),
-            Check::compute_units(3_338),
+            Check::compute_units(3_303),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, new_config)).unwrap())
                 .build(),
@@ -547,7 +538,7 @@ fn test_config_updates_requiring_config() {
         &instruction,
         &[
             (config, updated_config_account),
-            (signer0, AccountSharedData::default()),
+            (signer0, Account::default()),
         ],
         &[Check::err(ProgramError::MissingRequiredSignature)],
     );
@@ -586,17 +577,14 @@ fn test_config_bad_owner() {
     let config_account = {
         let space = get_config_space(keys.len());
         let lamports = mollusk.sysvars.rent.minimum_balance(space);
-        AccountSharedData::new(lamports, 0, &Pubkey::new_unique())
+        Account::new(lamports, 0, &Pubkey::new_unique())
     };
 
     let instruction = config_instruction::store(&config, true, keys, &my_config);
 
     mollusk.process_and_validate_instruction(
         &instruction,
-        &[
-            (config, config_account),
-            (signer0, AccountSharedData::default()),
-        ],
+        &[(config, config_account), (signer0, Account::default())],
         &[Check::err(ProgramError::InvalidAccountOwner)],
     );
 }
@@ -623,7 +611,7 @@ fn test_maximum_keys_input() {
     let result = mollusk.process_and_validate_instruction(
         &instruction,
         &[(config, config_account)],
-        &[Check::success(), Check::compute_units(25_193)],
+        &[Check::success(), Check::compute_units(25_756)],
     );
 
     // Use this for next invoke.
@@ -636,7 +624,7 @@ fn test_maximum_keys_input() {
     let result = mollusk.process_and_validate_instruction(
         &instruction,
         &[(config, updated_config_account)],
-        &[Check::success(), Check::compute_units(25_193)],
+        &[Check::success(), Check::compute_units(25_756)],
     );
 
     // Use this for next invoke.
@@ -736,8 +724,8 @@ fn test_safe_deserialize_from_state() {
         bincode::serialize_into(&mut data, &ConfigKeys { keys }).unwrap();
         data[0] = 255; // length of 255.
 
-        let mut account = AccountSharedData::new(lamports, space, &solana_config_program::id());
-        account.set_data_from_slice(&data);
+        let mut account = Account::new(lamports, space, &solana_config_program::id());
+        account.data = data;
         account
     };
 
