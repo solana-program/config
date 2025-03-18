@@ -1,14 +1,12 @@
 #![cfg(feature = "test-sbf")]
+#![allow(clippy::arithmetic_side_effects)]
 
 use {
     bincode::serialized_size,
     mollusk_svm::{result::Check, Mollusk},
     serde::{Deserialize, Serialize},
-    solana_config_program::{
-        error::ConfigError,
-        instruction as config_instruction,
-        state::{ConfigKeys, ConfigState},
-    },
+    solana_config_program::{error::ConfigError, state::ConfigKeys},
+    solana_config_program_client::instructions_bincode::{self as config_instruction, ConfigState},
     solana_sdk::{
         account::AccountSharedData,
         instruction::{AccountMeta, Instruction},
@@ -84,7 +82,7 @@ fn test_process_create_ok() {
         &[(config, config_account)],
         &[
             Check::success(),
-            Check::compute_units(616),
+            Check::compute_units(600),
             Check::account(&config)
                 .data(
                     &bincode::serialize(&(ConfigKeys { keys: vec![] }, MyConfig::default()))
@@ -112,7 +110,7 @@ fn test_process_store_ok() {
         &[(config, config_account)],
         &[
             Check::success(),
-            Check::compute_units(616),
+            Check::compute_units(600),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, my_config)).unwrap())
                 .build(),
@@ -187,7 +185,7 @@ fn test_process_store_with_additional_signers() {
         ],
         &[
             Check::success(),
-            Check::compute_units(3_271),
+            Check::compute_units(3_241),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, my_config)).unwrap())
                 .build(),
@@ -335,7 +333,7 @@ fn test_config_updates() {
             (signer0, AccountSharedData::default()),
             (signer1, AccountSharedData::default()),
         ],
-        &[Check::success(), Check::compute_units(3_271)],
+        &[Check::success(), Check::compute_units(3_241)],
     );
 
     // Use this for next invoke.
@@ -353,7 +351,7 @@ fn test_config_updates() {
         ],
         &[
             Check::success(),
-            Check::compute_units(3_272),
+            Check::compute_units(3_242),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, new_config)).unwrap())
                 .build(),
@@ -466,7 +464,7 @@ fn test_config_update_contains_duplicates_fails() {
             (signer0, AccountSharedData::default()),
             (signer1, AccountSharedData::default()),
         ],
-        &[Check::success(), Check::compute_units(3_271)],
+        &[Check::success(), Check::compute_units(3_241)],
     );
 
     // Attempt update with duplicate signer inputs.
@@ -510,7 +508,7 @@ fn test_config_updates_requiring_config() {
         ],
         &[
             Check::success(),
-            Check::compute_units(3_367),
+            Check::compute_units(3_338),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys: keys.clone() }, my_config)).unwrap())
                 .build(),
@@ -531,7 +529,7 @@ fn test_config_updates_requiring_config() {
         ],
         &[
             Check::success(),
-            Check::compute_units(3_367),
+            Check::compute_units(3_338),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, new_config)).unwrap())
                 .build(),
@@ -625,7 +623,7 @@ fn test_maximum_keys_input() {
     let result = mollusk.process_and_validate_instruction(
         &instruction,
         &[(config, config_account)],
-        &[Check::success(), Check::compute_units(25_279)],
+        &[Check::success(), Check::compute_units(25_193)],
     );
 
     // Use this for next invoke.
@@ -638,7 +636,7 @@ fn test_maximum_keys_input() {
     let result = mollusk.process_and_validate_instruction(
         &instruction,
         &[(config, updated_config_account)],
-        &[Check::success(), Check::compute_units(25_279)],
+        &[Check::success(), Check::compute_units(25_193)],
     );
 
     // Use this for next invoke.

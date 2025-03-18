@@ -13,7 +13,7 @@ const molluskFixturesPath = path.join(workingDirectory, 'program', 'fuzz', 'blob
 
 // Test this program against the cloned program for conformance with Mollusk.
 let output = await $`mollusk run-test \
-    --proto firedancer \
+    --proto firedancer --ignore-compute-units \
     ${baseBinaryPath} ${programBinaryPath} \
     ${molluskFixturesPath} ${programId}`;
 

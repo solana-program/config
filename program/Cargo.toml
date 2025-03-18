@@ -26,6 +26,7 @@ thiserror = { workspace = true }
 [dev-dependencies]
 mollusk-svm = { workspace = true, features = ["fuzz-fd"] }
 mollusk-svm-bencher = { workspace = true }
+solana-config-program-client = { path = "../clients/rust", features = ["serde"] }
 solana-sdk = { workspace = true }
 
 [lib]

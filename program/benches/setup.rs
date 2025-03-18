@@ -1,10 +1,8 @@
 use {
     mollusk_svm_bencher::Bench,
     serde::Serialize,
-    solana_config_program::{
-        instruction::store,
-        state::{ConfigKeys, ConfigState},
-    },
+    solana_config_program::state::ConfigKeys,
+    solana_config_program_client::instructions_bincode::{store, ConfigState},
     solana_sdk::{
         account::AccountSharedData,
         hash::Hash,
@@ -39,7 +37,7 @@ pub trait BenchSetup: ConfigState + Default {
 
     fn default_space(keys: Vec<(Pubkey, bool)>) -> usize {
         (Self::max_space()
-            .checked_add(ConfigKeys::serialized_size(keys))
+            .checked_add(bincode::serialized_size(&ConfigKeys { keys }).unwrap())
             .unwrap()) as usize
     }
 

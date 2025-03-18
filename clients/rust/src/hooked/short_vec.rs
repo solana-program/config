@@ -93,8 +93,21 @@ impl<'de, T: Deserialize<'de>> Deserialize<'de> for ShortVec<T> {
     }
 }
 
-/// ConfigKeys type - uses short vec.
-pub type ConfigKeys = ShortVec<(Pubkey, bool)>;
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(BorshDeserialize, BorshSerialize, Clone, Debug, Eq, PartialEq)]
+pub struct ConfigKeys {
+    /// Each key tuple comprises a unique `Pubkey` identifier,
+    /// and `bool` whether that key is a signer of the data.
+    pub keys: ShortVec<(Pubkey, bool)>,
+}
+
+/// Utility for extracting the `ConfigKeys` data from the account data.
+#[cfg(feature = "serde")]
+pub fn get_config_data(bytes: &[u8]) -> Result<&[u8], bincode::Error> {
+    bincode::deserialize::<ConfigKeys>(bytes)
+        .and_then(|keys| bincode::serialized_size(&keys))
+        .map(|offset| &bytes[offset as usize..])
+}
 
 #[cfg(test)]
 mod tests {
