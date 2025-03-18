@@ -1,7 +1,7 @@
 //! Program instruction helpers.
 
 use {
-    crate::{ConfigKeys, ShortVec, ID},
+    crate::{ConfigKeys, ID},
     bincode::serialized_size,
     solana_program::{
         instruction::{AccountMeta, Instruction},
@@ -18,12 +18,7 @@ pub trait ConfigState: serde::Serialize + Default {
 
 fn initialize_account<T: ConfigState>(config_pubkey: &Pubkey) -> Instruction {
     let account_metas = vec![AccountMeta::new(*config_pubkey, true)];
-    let account_data = (
-        ConfigKeys {
-            keys: ShortVec(vec![]),
-        },
-        T::default(),
-    );
+    let account_data = (ConfigKeys { keys: vec![] }, T::default());
     Instruction::new_with_bincode(ID, &account_data, account_metas)
 }
 
@@ -34,12 +29,7 @@ pub fn create_account<T: ConfigState>(
     lamports: u64,
     keys: Vec<(Pubkey, bool)>,
 ) -> Vec<Instruction> {
-    let space = T::max_space().saturating_add(
-        serialized_size(&ConfigKeys {
-            keys: ShortVec(keys),
-        })
-        .unwrap(),
-    );
+    let space = T::max_space().saturating_add(serialized_size(&ConfigKeys { keys }).unwrap());
     vec![
         system_instruction::create_account(
             from_account_pubkey,
@@ -65,11 +55,6 @@ pub fn store<T: ConfigState>(
             account_metas.push(AccountMeta::new(*signer_pubkey, true));
         }
     }
-    let account_data = (
-        ConfigKeys {
-            keys: ShortVec(keys),
-        },
-        data,
-    );
+    let account_data = (ConfigKeys { keys }, data);
     Instruction::new_with_bincode(ID, &account_data, account_metas)
 }

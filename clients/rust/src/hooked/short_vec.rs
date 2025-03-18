@@ -1,8 +1,11 @@
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use {
     borsh::{BorshDeserialize, BorshSerialize},
     solana_program::pubkey::Pubkey,
+};
+#[cfg(feature = "serde")]
+use {
+    serde::{Deserialize, Deserializer, Serialize, Serializer},
+    solana_program::short_vec,
 };
 
 struct ShortU16(u16);
@@ -79,7 +82,7 @@ impl<T: Serialize> Serialize for ShortVec<T> {
     where
         S: Serializer,
     {
-        solana_program::short_vec::serialize(&self.0, serializer)
+        short_vec::serialize(&self.0, serializer)
     }
 }
 
@@ -89,16 +92,31 @@ impl<'de, T: Deserialize<'de>> Deserialize<'de> for ShortVec<T> {
     where
         D: Deserializer<'de>,
     {
-        solana_program::short_vec::deserialize(deserializer).map(ShortVec)
+        short_vec::deserialize(deserializer).map(ShortVec)
     }
 }
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(BorshDeserialize, BorshSerialize, Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ConfigKeys {
     /// Each key tuple comprises a unique `Pubkey` identifier,
     /// and `bool` whether that key is a signer of the data.
-    pub keys: ShortVec<(Pubkey, bool)>,
+    #[cfg_attr(feature = "serde", serde(with = "short_vec"))]
+    pub keys: Vec<(Pubkey, bool)>,
+}
+
+impl BorshSerialize for ConfigKeys {
+    fn serialize<W: std::io::Write>(&self, writer: &mut W) -> std::io::Result<()> {
+        BorshSerialize::serialize(&self.keys, writer)
+    }
+}
+
+impl BorshDeserialize for ConfigKeys {
+    fn deserialize_reader<R: std::io::Read>(reader: &mut R) -> std::io::Result<Self> {
+        Ok(ConfigKeys {
+            keys: ShortVec::deserialize_reader(reader)?.0,
+        })
+    }
 }
 
 /// Utility for extracting the `ConfigKeys` data from the account data.
