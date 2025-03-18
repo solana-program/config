@@ -4,7 +4,7 @@ use {
     solana_config_program::state::ConfigKeys,
     solana_config_program_client::instructions_bincode::{store, ConfigState},
     solana_sdk::{
-        account::AccountSharedData,
+        account::Account,
         hash::Hash,
         instruction::{AccountMeta, Instruction},
         pubkey::Pubkey,
@@ -16,7 +16,7 @@ use {
 pub struct BenchContext {
     label: String,
     instruction: Instruction,
-    accounts: Vec<(Pubkey, AccountSharedData)>,
+    accounts: Vec<(Pubkey, Account)>,
 }
 
 impl BenchContext {
@@ -61,7 +61,7 @@ pub trait BenchSetup: ConfigState + Default {
 
         let accounts = vec![(
             config_pubkey,
-            AccountSharedData::new(lamports, space, &solana_config_program::id()),
+            Account::new(lamports, space, &solana_config_program::id()),
         )];
 
         BenchContext {
@@ -81,7 +81,7 @@ pub trait BenchSetup: ConfigState + Default {
 
         let accounts = vec![(
             config_pubkey,
-            AccountSharedData::new_data(
+            Account::new_data(
                 lamports,
                 &Self::default_account_state(keys),
                 &solana_config_program::id(),
