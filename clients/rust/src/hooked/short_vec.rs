@@ -1,8 +1,11 @@
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use {
     borsh::{BorshDeserialize, BorshSerialize},
     solana_program::pubkey::Pubkey,
+};
+#[cfg(feature = "serde")]
+use {
+    serde::{Deserialize, Deserializer, Serialize, Serializer},
+    solana_program::short_vec,
 };
 
 struct ShortU16(u16);
@@ -52,13 +55,20 @@ impl BorshDeserialize for ShortU16 {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ShortVec<T>(pub Vec<T>);
 
+fn borsh_serialize_as_short_vec<T: BorshSerialize, W: std::io::Write>(
+    vec: &Vec<T>,
+    writer: &mut W,
+) -> std::io::Result<()> {
+    ShortU16(vec.len() as u16).serialize(writer)?;
+    for item in vec {
+        item.serialize(writer)?;
+    }
+    Ok(())
+}
+
 impl<T: BorshSerialize> BorshSerialize for ShortVec<T> {
     fn serialize<W: std::io::Write>(&self, writer: &mut W) -> std::io::Result<()> {
-        ShortU16(self.0.len() as u16).serialize(writer)?;
-        for item in &self.0 {
-            item.serialize(writer)?;
-        }
-        Ok(())
+        borsh_serialize_as_short_vec(&self.0, writer)
     }
 }
 
@@ -79,7 +89,7 @@ impl<T: Serialize> Serialize for ShortVec<T> {
     where
         S: Serializer,
     {
-        solana_program::short_vec::serialize(&self.0, serializer)
+        short_vec::serialize(&self.0, serializer)
     }
 }
 
@@ -89,16 +99,31 @@ impl<'de, T: Deserialize<'de>> Deserialize<'de> for ShortVec<T> {
     where
         D: Deserializer<'de>,
     {
-        solana_program::short_vec::deserialize(deserializer).map(ShortVec)
+        short_vec::deserialize(deserializer).map(ShortVec)
     }
 }
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(BorshDeserialize, BorshSerialize, Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ConfigKeys {
     /// Each key tuple comprises a unique `Pubkey` identifier,
     /// and `bool` whether that key is a signer of the data.
-    pub keys: ShortVec<(Pubkey, bool)>,
+    #[cfg_attr(feature = "serde", serde(with = "short_vec"))]
+    pub keys: Vec<(Pubkey, bool)>,
+}
+
+impl BorshSerialize for ConfigKeys {
+    fn serialize<W: std::io::Write>(&self, writer: &mut W) -> std::io::Result<()> {
+        borsh_serialize_as_short_vec(&self.keys, writer)
+    }
+}
+
+impl BorshDeserialize for ConfigKeys {
+    fn deserialize_reader<R: std::io::Read>(reader: &mut R) -> std::io::Result<Self> {
+        Ok(ConfigKeys {
+            keys: ShortVec::deserialize_reader(reader)?.0,
+        })
+    }
 }
 
 /// Utility for extracting the `ConfigKeys` data from the account data.
@@ -111,12 +136,16 @@ pub fn get_config_data(bytes: &[u8]) -> Result<&[u8], bincode::Error> {
 
 #[cfg(test)]
 mod tests {
-    #[cfg(feature = "serde")]
-    use {super::*, assert_matches::assert_matches, bincode::serialize};
     use {
+        super::*,
         bincode::deserialize,
-        solana_program::short_vec::{decode_shortu16_len, ShortU16},
+        solana_program::{
+            pubkey::Pubkey,
+            short_vec::{decode_shortu16_len, ShortU16},
+        },
     };
+    #[cfg(feature = "serde")]
+    use {assert_matches::assert_matches, bincode::serialize};
 
     /// Return the serialized length.
     fn encode_len(len: u16) -> Vec<u8> {
@@ -224,5 +253,35 @@ mod tests {
             0x00,
         ];
         assert!(deserialize::<ShortVec<u8>>(&bytes).is_err());
+    }
+
+    #[test]
+    fn test_serialization_borsh() {
+        fn test_serialization(data: ConfigKeys) {
+            let bytes = data.try_to_vec().unwrap();
+            let data1 = ConfigKeys::try_from_slice(&bytes).unwrap();
+            assert_eq!(data, data1);
+        }
+
+        test_serialization(ConfigKeys { keys: vec![] });
+
+        test_serialization(ConfigKeys {
+            keys: vec![(Pubkey::new_unique(), false)],
+        });
+
+        test_serialization(ConfigKeys {
+            keys: vec![(Pubkey::new_unique(), true), (Pubkey::new_unique(), false)],
+        });
+
+        test_serialization(ConfigKeys {
+            keys: vec![
+                (Pubkey::new_unique(), true),
+                (Pubkey::new_unique(), false),
+                (Pubkey::new_unique(), true),
+                (Pubkey::new_unique(), true),
+                (Pubkey::new_unique(), false),
+                (Pubkey::new_unique(), true),
+            ],
+        });
     }
 }
