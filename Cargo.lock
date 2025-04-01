@@ -3693,7 +3693,7 @@ dependencies = [
 
 [[package]]
 name = "solana-config-program-client"
-version = "0.0.2"
+version = "1.0.0"
 dependencies = [
  "assert_matches",
  "bincode",
