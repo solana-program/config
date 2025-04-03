@@ -1,7 +1,7 @@
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 #![allow(clippy::arithmetic_side_effects)]
 #[cfg(feature = "bincode")]
-pub mod config_instruction;
+pub mod instruction;
 
 use solana_pubkey::Pubkey;
 pub use solana_sdk_ids::config::id;
