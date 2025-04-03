@@ -1,5 +1,8 @@
 use {
-    crate::{id, ConfigKeys, ConfigState},
+    crate::{
+        id,
+        state::{ConfigKeys, ConfigState},
+    },
     solana_instruction::{AccountMeta, Instruction},
     solana_pubkey::Pubkey,
     solana_system_interface::instruction as system_instruction,
