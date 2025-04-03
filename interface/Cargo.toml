@@ -13,7 +13,9 @@ bincode = { workspace = true, optional = true }
 serde = { workspace = true, optional = true }
 serde_derive = { workspace = true, optional = true }
 solana-account = { workspace = true, optional = true }
-solana-instruction = { workspace = true, optional = true }
+solana-instruction = { workspace = true, optional = true, features = [
+    "bincode",
+] }
 solana-pubkey = { workspace = true }
 solana-sdk-ids = { workspace = true }
 solana-short-vec = { workspace = true, optional = true }
