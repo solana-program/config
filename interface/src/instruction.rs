@@ -21,7 +21,7 @@ pub fn create_account<T: ConfigState>(
     lamports: u64,
     keys: Vec<(Pubkey, bool)>,
 ) -> Vec<Instruction> {
-    let space = T::max_space() + ConfigKeys::serialized_size(keys);
+    let space = T::max_space() + bincode::serialized_size(&ConfigKeys { keys }).unwrap();
     vec![
         system_instruction::create_account(
             from_account_pubkey,

@@ -2,8 +2,7 @@ use solana_pubkey::Pubkey;
 #[cfg(feature = "bincode")]
 #[allow(deprecated)]
 use {
-    bincode::{deserialize, serialize, serialized_size},
-    solana_account::{Account, AccountSharedData},
+    bincode::{deserialize, serialized_size},
     solana_stake_interface::config::Config as StakeConfig,
 };
 #[cfg(feature = "serde")]
@@ -38,32 +37,8 @@ pub struct ConfigKeys {
 }
 
 #[cfg(feature = "bincode")]
-impl ConfigKeys {
-    pub fn serialized_size(keys: Vec<(Pubkey, bool)>) -> u64 {
-        serialized_size(&ConfigKeys { keys }).unwrap()
-    }
-}
-
-#[cfg(feature = "bincode")]
 pub fn get_config_data(bytes: &[u8]) -> Result<&[u8], bincode::Error> {
     deserialize::<ConfigKeys>(bytes)
         .and_then(|keys| serialized_size(&keys))
         .map(|offset| &bytes[offset as usize..])
-}
-
-#[cfg(feature = "bincode")]
-// utility for pre-made Accounts
-pub fn create_config_account<T: ConfigState>(
-    keys: Vec<(Pubkey, bool)>,
-    config_data: &T,
-    lamports: u64,
-) -> AccountSharedData {
-    let mut data = serialize(&ConfigKeys { keys }).unwrap();
-    data.extend_from_slice(&serialize(config_data).unwrap());
-    AccountSharedData::from(Account {
-        lamports,
-        data,
-        owner: crate::id(),
-        ..Account::default()
-    })
 }
