@@ -1,7 +1,8 @@
 //! Config program processor.
 
 use {
-    crate::{error::ConfigError, state::ConfigKeys},
+    crate::error::ConfigError,
+    solana_config_interface::state::ConfigKeys,
     solana_program::{
         account_info::AccountInfo, entrypoint::ProgramResult, msg, program_error::ProgramError,
         pubkey::Pubkey,

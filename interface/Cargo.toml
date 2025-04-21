@@ -19,9 +19,6 @@ solana-instruction = { workspace = true, optional = true, features = [
 solana-pubkey = { workspace = true }
 solana-sdk-ids = { workspace = true }
 solana-short-vec = { workspace = true, optional = true }
-solana-stake-interface = { workspace = true, optional = true, features = [
-    "bincode",
-] }
 solana-system-interface = { workspace = true, optional = true, features = [
     "bincode",
 ] }
@@ -31,7 +28,6 @@ bincode = [
     "dep:bincode",
     "dep:solana-account",
     "dep:solana-instruction",
-    "dep:solana-stake-interface",
     "dep:solana-system-interface",
     "serde",
 ]

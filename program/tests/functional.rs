@@ -5,8 +5,11 @@ use {
     bincode::serialized_size,
     mollusk_svm::{result::Check, Mollusk},
     serde::{Deserialize, Serialize},
-    solana_config_program::{error::ConfigError, state::ConfigKeys},
-    solana_config_program_client::instructions_bincode::{self as config_instruction},
+    solana_config_interface::{
+        instruction::{self as config_instruction},
+        state::ConfigKeys,
+    },
+    solana_config_program::error::ConfigError,
     solana_sdk::{
         account::Account,
         instruction::{AccountMeta, Instruction},

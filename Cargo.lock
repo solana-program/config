@@ -3687,7 +3687,6 @@ dependencies = [
  "solana-pubkey",
  "solana-sdk-ids",
  "solana-short-vec",
- "solana-stake-interface",
  "solana-system-interface",
 ]
 
@@ -3702,7 +3701,6 @@ dependencies = [
  "num-traits",
  "serde",
  "solana-config-interface",
- "solana-config-program-client",
  "solana-program",
  "solana-sdk",
  "thiserror 1.0.64",
@@ -3718,6 +3716,7 @@ dependencies = [
  "kaigan",
  "serde",
  "solana-client",
+ "solana-config-interface",
  "solana-program",
  "solana-sdk",
 ]
