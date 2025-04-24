@@ -6,7 +6,7 @@ use {
     mollusk_svm::{result::Check, Mollusk},
     serde::{Deserialize, Serialize},
     solana_config_program::{error::ConfigError, state::ConfigKeys},
-    solana_config_program_client::instructions_bincode::{self as config_instruction, ConfigState},
+    solana_config_program_client::instructions_bincode::{self as config_instruction},
     solana_sdk::{
         account::Account,
         instruction::{AccountMeta, Instruction},
@@ -27,12 +27,6 @@ impl Default for MyConfig {
 impl MyConfig {
     pub fn new(item: u64) -> Self {
         Self { item }
-    }
-}
-
-impl ConfigState for MyConfig {
-    fn max_space() -> u64 {
-        serialized_size(&Self::default()).unwrap()
     }
 }
 
@@ -549,9 +543,15 @@ fn test_config_initialize_no_panic() {
     let mollusk = setup();
 
     let config = Pubkey::new_unique();
+    let max_space = serialized_size(&MyConfig::default()).unwrap();
 
-    let instructions =
-        config_instruction::create_account::<MyConfig>(&Pubkey::new_unique(), &config, 1, vec![]);
+    let instructions = config_instruction::create_account::<MyConfig>(
+        &Pubkey::new_unique(),
+        &config,
+        1,
+        max_space,
+        vec![],
+    );
     let mut instruction = instructions[1].clone();
     instruction.accounts = vec![];
 
