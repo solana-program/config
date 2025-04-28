@@ -545,7 +545,7 @@ fn test_config_initialize_no_panic() {
     let config = Pubkey::new_unique();
     let max_space = serialized_size(&MyConfig::default()).unwrap();
 
-    let instructions = config_instruction::create_account::<MyConfig>(
+    let instructions = config_instruction::create_account_with_max_config_space::<MyConfig>(
         &Pubkey::new_unique(),
         &config,
         1,

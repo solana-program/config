@@ -24,14 +24,35 @@ fn initialize_account<T: Default + serde::Serialize>(config_pubkey: &Pubkey) -> 
 }
 
 /// Create a new, empty configuration account
-pub fn create_account<T: Default + serde::Serialize>(
+#[deprecated(
+    since = "1.0.0",
+    note = "The `ConfigState` trait is no longer supported"
+)]
+#[allow(deprecated)]
+pub fn create_account<T: ConfigState>(
     from_account_pubkey: &Pubkey,
     config_account_pubkey: &Pubkey,
     lamports: u64,
-    max_space: u64,
     keys: Vec<(Pubkey, bool)>,
 ) -> Vec<Instruction> {
-    let space = max_space.saturating_add(serialized_size(&ConfigKeys { keys }).unwrap());
+    create_account_with_max_config_space::<T>(
+        from_account_pubkey,
+        config_account_pubkey,
+        lamports,
+        T::max_space(),
+        keys,
+    )
+}
+
+/// Create a new, empty configuration account
+pub fn create_account_with_max_config_space<T: Default + serde::Serialize>(
+    from_account_pubkey: &Pubkey,
+    config_account_pubkey: &Pubkey,
+    lamports: u64,
+    max_config_space: u64,
+    keys: Vec<(Pubkey, bool)>,
+) -> Vec<Instruction> {
+    let space = max_config_space.saturating_add(serialized_size(&ConfigKeys { keys }).unwrap());
     vec![
         system_instruction::create_account(
             from_account_pubkey,
