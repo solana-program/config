@@ -2,7 +2,7 @@ use {
     mollusk_svm_bencher::Bench,
     serde::Serialize,
     solana_config_program::state::ConfigKeys,
-    solana_config_program_client::instructions_bincode::{store, ConfigState},
+    solana_config_program_client::instructions_bincode::store,
     solana_sdk::{
         account::Account,
         hash::Hash,
@@ -28,7 +28,7 @@ impl BenchContext {
 
 /// Trait to avoid re-defining the same instruction and account constructors
 /// for each `ConfigState`.
-pub trait BenchSetup: ConfigState + Default {
+pub trait BenchSetup: Default + serde::Serialize {
     const BENCH_ID: &'static str;
 
     fn default_account_state(keys: Vec<(Pubkey, bool)>) -> (ConfigKeys, Self) {
@@ -36,9 +36,9 @@ pub trait BenchSetup: ConfigState + Default {
     }
 
     fn default_space(keys: Vec<(Pubkey, bool)>) -> usize {
-        (Self::max_space()
-            .checked_add(bincode::serialized_size(&ConfigKeys { keys }).unwrap())
-            .unwrap()) as usize
+        let config_keys_space = bincode::serialized_size(&ConfigKeys { keys }).unwrap();
+        let config_state_space = bincode::serialized_size(&Self::default()).unwrap();
+        (config_keys_space.checked_add(config_state_space).unwrap()) as usize
     }
 
     fn keys(keys_len: usize) -> Vec<(Pubkey, bool)> {
@@ -103,12 +103,6 @@ pub struct ConfigSmall {
     pub item: u64,
 }
 
-impl ConfigState for ConfigSmall {
-    fn max_space() -> u64 {
-        bincode::serialized_size(&Self::default()).unwrap()
-    }
-}
-
 impl BenchSetup for ConfigSmall {
     const BENCH_ID: &'static str = "config_small";
 }
@@ -119,12 +113,6 @@ pub struct ConfigMedium {
     pub hashes: [Hash; 32], // 32 x 32 = 1024 bytes
 }
 
-impl ConfigState for ConfigMedium {
-    fn max_space() -> u64 {
-        bincode::serialized_size(&Self::default()).unwrap()
-    }
-}
-
 impl BenchSetup for ConfigMedium {
     const BENCH_ID: &'static str = "config_medium";
 }
@@ -133,12 +121,6 @@ impl BenchSetup for ConfigMedium {
 #[derive(Debug, Default, PartialEq, Serialize)]
 pub struct ConfigLarge {
     pub hashes: [[Hash; 32]; 32], // 32 x 32 x 32 = 32_768 bytes
-}
-
-impl ConfigState for ConfigLarge {
-    fn max_space() -> u64 {
-        bincode::serialized_size(&Self::default()).unwrap()
-    }
 }
 
 impl BenchSetup for ConfigLarge {
