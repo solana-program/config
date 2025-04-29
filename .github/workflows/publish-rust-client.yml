@@ -79,7 +79,7 @@ jobs:
           rustfmt: true
 
       - name: Install Cargo Release
-        run: which cargo-release || cargo install cargo-release
+        run: which cargo-release || cargo install cargo-release --locked --version 0.25.17
 
       - name: Ensure CARGO_REGISTRY_TOKEN variable is set
         env:
