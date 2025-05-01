@@ -4,6 +4,5 @@
 mod entrypoint;
 pub mod error;
 pub mod processor;
-pub mod state;
 
 solana_program::declare_id!("Config1111111111111111111111111111111111111");

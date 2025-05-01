@@ -1,8 +1,7 @@
 use {
     mollusk_svm_bencher::Bench,
     serde::Serialize,
-    solana_config_program::state::ConfigKeys,
-    solana_config_program_client::instructions_bincode::store,
+    solana_config_interface::{instruction::store, state::ConfigKeys},
     solana_sdk::{
         account::Account,
         hash::Hash,
@@ -27,7 +26,7 @@ impl BenchContext {
 }
 
 /// Trait to avoid re-defining the same instruction and account constructors
-/// for each `ConfigState`.
+/// for each config state.
 pub trait BenchSetup: Default + serde::Serialize {
     const BENCH_ID: &'static str;
 
