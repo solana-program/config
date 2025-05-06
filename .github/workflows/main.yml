@@ -4,28 +4,8 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
 
 jobs:
-  format_and_lint_programs:
-    name: Format & Lint Programs
-    runs-on: ubuntu-latest
-    steps:
-      - name: Git Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Environment
-        uses: ./.github/actions/setup
-        with:
-          clippy: true
-          rustfmt: true
-
-      - name: Format Programs
-        run: pnpm programs:format
-
-      - name: Lint Programs
-        run: pnpm programs:lint
-
   format_and_lint_client_js:
     name: Format & Lint Client JS
     runs-on: ubuntu-latest
@@ -35,12 +15,14 @@ jobs:
 
       - name: Setup Environment
         uses: ./.github/actions/setup
+        with:
+          pnpm: true
 
       - name: Format Client JS
-        run: pnpm clients:js:format
+        run: make format-js
 
       - name: Lint Client JS
-        run: pnpm clients:js:lint
+        run: make lint-js
 
   format_and_lint_client_rust:
     name: Format & Lint Client Rust
@@ -52,19 +34,23 @@ jobs:
       - name: Setup Environment
         uses: ./.github/actions/setup
         with:
-          clippy: true
-          rustfmt: true
+          toolchain: format, lint
 
-      - name: Format Client Rust
-        run: pnpm clients:rust:format
+      - name: Format
+        run: make format-clients-rust
 
-      - name: Lint Client Rust
-        run: pnpm clients:rust:lint
+      - name: Lint / Clippy
+        run: make clippy-clients-rust
 
-  build_programs:
-    name: Build programs
+      - name: Lint / Docs
+        run: make lint-docs-clients-rust
+
+      - name: Lint / Features
+        run: make lint-features-clients-rust
+
+  format_and_lint_interface:
+    name: Format & Lint Interface
     runs-on: ubuntu-latest
-    needs: format_and_lint_programs
     steps:
       - name: Git Checkout
         uses: actions/checkout@v4
@@ -72,29 +58,23 @@ jobs:
       - name: Setup Environment
         uses: ./.github/actions/setup
         with:
-          cargo-cache-key: cargo-programs
-          solana: true
+          toolchain: format, lint
 
-      - name: Build Programs
-        run: pnpm programs:build
+      - name: Format
+        run: make format-interface
 
-      - name: Upload Program Builds
-        uses: actions/upload-artifact@v4
-        with:
-          name: program-builds
-          path: ./target/deploy/*.so
-          if-no-files-found: error
+      - name: Lint / Clippy
+        run: make clippy-interface
 
-      - name: Save Program Builds For Client Jobs
-        uses: actions/cache/save@v4
-        with:
-          path: ./**/*.so
-          key: ${{ runner.os }}-builds-${{ github.sha }}
+      - name: Lint / Docs
+        run: make lint-docs-interface
 
-  test_programs:
-    name: Test Programs
+      - name: Lint / Features
+        run: make lint-features-interface
+
+  format_and_lint_program:
+    name: Format & Lint Program
     runs-on: ubuntu-latest
-    needs: format_and_lint_programs
     steps:
       - name: Git Checkout
         uses: actions/checkout@v4
@@ -102,17 +82,23 @@ jobs:
       - name: Setup Environment
         uses: ./.github/actions/setup
         with:
-          cargo-cache-key: cargo-program-tests
-          cargo-cache-fallback-key: cargo-programs
-          solana: true
+          toolchain: format, lint
 
-      - name: Test Programs
-        run: pnpm programs:test
+      - name: Format
+        run: make format-program
 
-  bench_program_compute_units:
-    name: Benchmark Program Compute Units
+      - name: Lint / Clippy
+        run: make clippy-program
+
+      - name: Lint / Docs
+        run: make lint-docs-program
+
+      - name: Lint / Features
+        run: make lint-features-program
+
+  test_interface:
+    name: Test Interface
     runs-on: ubuntu-latest
-    needs: build_programs # Cargo Bench won't build the SBPF binary...
     steps:
       - name: Git Checkout
         uses: actions/checkout@v4
@@ -120,86 +106,50 @@ jobs:
       - name: Setup Environment
         uses: ./.github/actions/setup
         with:
-          cargo-cache-key: cargo-program-benches
-          cargo-cache-fallback-key: cargo-programs
+          toolchain: test
+          cargo-cache-key: cargo-interface
           solana: true
-      
-      - name: Restore Program Builds
-        uses: actions/cache/restore@v4
-        with:
-          path: ./**/*.so
-          key: ${{ runner.os }}-builds-${{ github.sha }}
 
-      - name: Benchmark Compute Units
-        run: pnpm programs:bench
-      
-      - name: Check Working Directory
-        run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            test -z "$(git status --porcelain)"
-            echo "CU usage has changed. Please run `cargo bench` and commit the new results.";
-            exit 1;
-          fi
+      - name: Test Interface
+        run: make test-interface
   
-  conformance:
-    name: Conformance Test
+  build_program:
+    name: Build Program
     runs-on: ubuntu-latest
-    needs: build_programs
     steps:
       - name: Git Checkout
         uses: actions/checkout@v4
-      
+
       - name: Setup Environment
         uses: ./.github/actions/setup
         with:
-          cargo-cache-key: cargo-program-conformance
-          cargo-cache-fallback-key: cargo-programs
+          toolchain: build
+          cargo-cache-key: cargo-program
           solana: true
-      
-      - name: Install System Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libudev-dev pkg-config
-          command -v mollusk >/dev/null 2>&1 || cargo install mollusk-svm-cli
-      
-      - name: Restore Program Builds
-        uses: actions/cache/restore@v4
+
+      - name: Build Program
+        run: make build-program
+
+  test_program:
+    name: Test Program
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup
         with:
-          path: ./**/*.so
-          key: ${{ runner.os }}-builds-${{ github.sha }}
-      
-      - name: Conformance Test
-        shell: bash
-        run: pnpm zx ./scripts/ci/conformance.mjs
+          toolchain: test
+          cargo-cache-key: cargo-program
+          solana: true
 
-  ## SKIP: IDL is hand-cranked here for now.
-  ##
-  # generate_idls:
-  #   name: Check IDL Generation
-  #   runs-on: ubuntu-latest
-  #   needs: format_and_lint_programs
-  #   steps:
-  #     - name: Git Checkout
-  #       uses: actions/checkout@v4
-
-  #     - name: Setup Environment
-  #       uses: ./.github/actions/setup
-  #       with:
-  #         cargo-cache-key: cargo-programs
-  #         cargo-cache-local-key: cargo-local
-
-  #     - name: Generate IDLs
-  #       run: pnpm generate:idls
-
-  #     - name: Check Working Directory
-  #       run: |
-  #         git status --porcelain
-  #         test -z "$(git status --porcelain)"
-
+      - name: Test Program
+        run: make test-program
+  
   generate_clients:
     name: Check Client Generation
     runs-on: ubuntu-latest
-    needs: format_and_lint_programs
     steps:
       - name: Git Checkout
         uses: actions/checkout@v4
@@ -207,7 +157,8 @@ jobs:
       - name: Setup Environment
         uses: ./.github/actions/setup
         with:
-          rustfmt: true
+          pnpm: true
+          toolchain: format
 
       - name: Generate Clients
         run: pnpm generate:clients
@@ -220,7 +171,6 @@ jobs:
   test_client_js:
     name: Test Client JS
     runs-on: ubuntu-latest
-    needs: build_programs
     steps:
       - name: Git Checkout
         uses: actions/checkout@v4
@@ -228,21 +178,15 @@ jobs:
       - name: Setup Environment
         uses: ./.github/actions/setup
         with:
+          pnpm: true
           solana: true
 
-      - name: Restore Program Builds
-        uses: actions/cache/restore@v4
-        with:
-          path: ./**/*.so
-          key: ${{ runner.os }}-builds-${{ github.sha }}
-
       - name: Test Client JS
-        run: pnpm clients:js:test
+        run: make test-js
 
   test_client_rust:
     name: Test Client Rust
     runs-on: ubuntu-latest
-    needs: build_programs
     steps:
       - name: Git Checkout
         uses: actions/checkout@v4
@@ -251,13 +195,8 @@ jobs:
         uses: ./.github/actions/setup
         with:
           cargo-cache-key: cargo-rust-client
+          toolchain: test
           solana: true
 
-      - name: Restore Program Builds
-        uses: actions/cache/restore@v4
-        with:
-          path: ./**/*.so
-          key: ${{ runner.os }}-builds-${{ github.sha }}
-
       - name: Test Client Rust
-        run: pnpm clients:rust:test
+        run: make test-clients-rust

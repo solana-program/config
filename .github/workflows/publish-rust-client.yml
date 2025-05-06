@@ -48,17 +48,17 @@ jobs:
           rustfmt: true
           solana: true
 
-      - name: Format Rust Client
-        run: pnpm clients:rust:format
+      - name: Format
+        run: make format-clients-rust
 
-      - name: Lint Rust Client
-        run: pnpm clients:rust:lint
+      - name: Lint
+        run: make clippy-clients-rust
 
-      - name: Build Programs
-        run: pnpm programs:build
+      - name: Build program
+        run: make build-program
 
-      - name: Test Rust Client
-        run: pnpm clients:rust:test
+      - name: Test
+        run: make test-clients-rust
 
   publish_rust:
     name: Publish Rust Client
@@ -112,7 +112,7 @@ jobs:
             OPTIONS=""
           fi
 
-          pnpm clients:rust:publish $LEVEL $OPTIONS
+          ./scripts/publish-rust.sh clients/rust $LEVEL $OPTIONS
 
       - name: Push Commit and Tag
         if: github.event.inputs.dry_run != 'true'
