@@ -32,6 +32,9 @@ build-program:
 test-program:
 	cargo test-sbf --manifest-path program/Cargo.toml --features bpf-entrypoint
 
+bench-program-compute-units:
+	cargo bench --manifest-path program/Cargo.toml
+
 format-js:
 	cd ./clients/js && pnpm install && pnpm format
 
