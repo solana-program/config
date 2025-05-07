@@ -35,6 +35,9 @@ test-program:
 bench-program-compute-units:
 	cargo bench --manifest-path program/Cargo.toml
 
+conformance:
+	./scripts/conformance.sh
+
 format-js:
 	cd ./clients/js && pnpm install && pnpm format
 
