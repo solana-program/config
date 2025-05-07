@@ -7,7 +7,9 @@
   "devDependencies": {
     "@codama/renderers-js": "^1.2.8",
     "@codama/renderers-rust": "^1.0.17",
-    "codama": "^1.2.9"
+    "@codama/visitors-core": "^1.2.13",
+    "codama": "^1.2.9",
+    "dotenv": "^16.5.0"
   },
   "engines": {
     "node": ">=v20.0.0"

@@ -1,4 +1,7 @@
 import path from 'node:path';
+import { config } from 'dotenv';
+
+config({ path: path.resolve(process.cwd(), 'vars.env') });
 
 const { default: prettierOptions } = await import(
   path.resolve('clients', 'js', '.prettierrc.json'),
@@ -7,12 +10,17 @@ const { default: prettierOptions } = await import(
 
 export default {
   idl: 'program/idl.json',
-  before: [],
-  scripts: {
-    js: {
+  before: [
+    {
       from: '@codama/renderers-js',
       args: ['clients/js/src/generated', { prettierOptions }],
     },
+    {
+      from: '@codama/visitors-core#deleteNodesVisitor',
+      args: [['[definedTypeNode]configKeys']],
+    },
+  ],
+  scripts: {
     rust: {
       from: '@codama/renderers-rust',
       args: [
@@ -21,6 +29,12 @@ export default {
           anchorTraits: false,
           crateFolder: 'clients/rust',
           formatCode: true,
+          linkOverrides: {
+            definedTypes: {
+              configKeys: 'hooked',
+            },
+          },
+          toolchain: `+${process.env.RUST_TOOLCHAIN_NIGHTLY}`,
         },
       ],
     },
