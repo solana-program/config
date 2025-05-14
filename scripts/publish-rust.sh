@@ -14,25 +14,21 @@ fi
 
 cd "$library_path"
 
+# Extract crate name using cargo metadata
+metadata=$(cargo metadata --no-deps --format-version 1)
+crate_name=$(echo "$metadata" | jq -r '.packages[0].name')
+
 # Run cargo-release
 if [[ "$dry_run" != "true" ]]; then
-    cargo release "$level" --no-push --no-tag --no-confirm --execute
+    cargo release "$level" --tag-name "${crate_name}@v{{version}}" --no-confirm --execute --dependent-version fix
 else
     cargo release "$level"
     exit 0
 fi
 
-# Extract crate name and version using cargo metadata
-metadata=$(cargo metadata --no-deps --format-version 1)
-crate_name=$(echo "$metadata" | jq -r '.packages[0].name')
-new_version=$(echo "$metadata" | jq -r '.packages[0].version')
-
 # CI output
 if [[ -n "${CI:-}" ]]; then
+    metadata=$(cargo metadata --no-deps --format-version 1)
+    new_version=$(echo "$metadata" | jq -r '.packages[0].version')
     echo "new_version=${new_version}" >> "$GITHUB_OUTPUT"
 fi
-
-# Rebuild commit and tag
-git reset --soft HEAD~1
-git commit -am "Publish ${crate_name} v${new_version}"
-git tag -a "${crate_name}@v${new_version}" -m "${crate_name} v${new_version}"

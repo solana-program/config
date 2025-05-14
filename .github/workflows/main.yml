@@ -108,7 +108,6 @@ jobs:
         with:
           toolchain: test
           cargo-cache-key: cargo-interface
-          solana: true
 
       - name: Test Interface
         run: make test-interface

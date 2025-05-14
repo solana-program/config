@@ -50,7 +50,7 @@ runs:
       if: ${{ contains(inputs.toolchain, 'build') }}
       uses: dtolnay/rust-toolchain@master
       with:
-        toolchain: ${{ env.RUST_TOOLCHAIN_NIGHTLY }}
+        toolchain: stable
 
     - name: Install Rust 'format' Toolchain
       if: ${{ contains(inputs.toolchain, 'format') }}
@@ -70,7 +70,7 @@ runs:
       if: ${{ contains(inputs.toolchain, 'test') }}
       uses: dtolnay/rust-toolchain@master
       with:
-        toolchain: ${{ env.RUST_TOOLCHAIN_NIGHTLY }}
+        toolchain: stable
 
     - name: Install Solana
       if: ${{ inputs.solana == 'true' }}
