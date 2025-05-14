@@ -23,11 +23,14 @@ lint-docs-%:
 lint-features-%:
 	cargo $(nightly) hack check --feature-powerset --all-targets --manifest-path $(subst -,/,$*)/Cargo.toml
 
-test-%:
-	cargo $(nightly) test --manifest-path $(subst -,/,$*)/Cargo.toml
+build-%:
+	cargo build --manifest-path $(subst -,/,$*)/Cargo.toml
 
 build-program:
 	cargo build-sbf --manifest-path program/Cargo.toml --features bpf-entrypoint
+
+test-%:
+	cargo $(nightly) test --manifest-path $(subst -,/,$*)/Cargo.toml
 
 test-program:
 	cargo test-sbf --manifest-path program/Cargo.toml --features bpf-entrypoint
