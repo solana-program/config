@@ -6,7 +6,12 @@ on:
       package_path:
         description: Path to directory with package to release
         required: true
-        type: string
+        default: 'clients/rust'
+        type: choice
+        options:
+          - clients/rust
+          - interface
+          - program
       level:
         description: Level
         required: true
@@ -47,14 +52,14 @@ jobs:
       - name: Setup Environment
         uses: ./.github/actions/setup
         with:
-          cargo-cache-key: cargo-rust-${{ github.event.inputs.package_path }}
+          cargo-cache-key: cargo-rust-${{ inputs.package_path }}
           clippy: true
           rustfmt: true
           solana: true
       
       - name: Convert package_path to required variables
         run: |
-          PACKAGE_PATH="${{ github.event.inputs.package_path }}"
+          PACKAGE_PATH="${{ inputs.package_path }}"
           RECIPE_SUFFIX="${PACKAGE_PATH//\//-}"
           TAG_PREFIX="$(basename "$PACKAGE_PATH")"
 
@@ -67,8 +72,8 @@ jobs:
       - name: Lint
         run: make clippy-${{ env.RECIPE_SUFFIX }}
 
-      - name: Build
-        run: make build-${{ env.RECIPE_SUFFIX }}
+      - name: Build Program
+        run: make build-program
 
       - name: Test
         run: make test-${{ env.RECIPE_SUFFIX }}
@@ -86,8 +91,8 @@ jobs:
       - name: Setup Environment
         uses: ./.github/actions/setup
         with:
-          cargo-cache-key: cargo-publish-rust-${{ github.event.inputs.package_path }}
-          cargo-cache-fallback-key: cargo-rust-${{ github.event.inputs.package_path }}
+          cargo-cache-key: cargo-publish-rust-${{ inputs.package_path }}
+          cargo-cache-fallback-key: cargo-rust-${{ inputs.package_path }}
           clippy: true
           rustfmt: true
 
@@ -125,10 +130,10 @@ jobs:
             OPTIONS=""
           fi
 
-          ./scripts/publish-rust.sh ${{ github.event.inputs.package_path }} $LEVEL $OPTIONS
+          ./scripts/publish-rust.sh ${{ inputs.package_path }} $LEVEL $OPTIONS
 
       - name: Create GitHub release
-        if: github.event.inputs.create_release == 'true' && github.event.inputs.dry_run != 'true'
+        if: inputs.create_release == 'true' && inputs.dry_run != 'true'
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ env.TAG_PREFIX }}@v${{ steps.publish.outputs.new_version }}

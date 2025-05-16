@@ -122,7 +122,6 @@ jobs:
       - name: Setup Environment
         uses: ./.github/actions/setup
         with:
-          toolchain: build
           cargo-cache-key: cargo-program
           solana: true
 
