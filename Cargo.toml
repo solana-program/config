@@ -13,15 +13,6 @@ readme = "./README.md"
 license-file = "./LICENSE"
 edition = "2021"
 
-[workspace.metadata.cli]
-solana = "2.2.0"
-
-# Specify Rust toolchains for rustfmt, clippy, and build.
-# Any unprovided toolchains default to stable.
-[workspace.metadata.toolchains]
-format = "nightly-2024-11-22"
-lint = "nightly-2024-11-22"
-
 [workspace.dependencies]
 assert_matches = "1.5.0"
 bincode = "1.3.3"
