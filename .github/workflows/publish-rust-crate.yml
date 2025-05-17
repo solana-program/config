@@ -53,8 +53,7 @@ jobs:
         uses: ./.github/actions/setup
         with:
           cargo-cache-key: cargo-rust-${{ inputs.package_path }}
-          clippy: true
-          rustfmt: true
+          toolchain: format, lint, test
           solana: true
       
       - name: Convert package_path to required variables
