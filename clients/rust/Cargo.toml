@@ -1,6 +1,6 @@
 [package]
 name = "solana-config-program-client"
-version = "1.0.0"
+version = "1.1.0"
 description = "A generated Rust library for the Config program"
 authors = { workspace = true }
 repository = { workspace = true }
