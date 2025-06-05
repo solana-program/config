@@ -123,13 +123,7 @@ jobs:
             LEVEL=${{ inputs.level }}
           fi
 
-          if [ "${{ inputs.dry_run }}" == "true" ]; then
-            OPTIONS="--dry-run"
-          else
-            OPTIONS=""
-          fi
-
-          ./scripts/publish-rust.sh ${{ inputs.package_path }} $LEVEL $OPTIONS
+          DRY_RUN="${{ inputs.dry_run }}" ./scripts/publish-rust.sh ${{ inputs.package_path }} $LEVEL $OPTIONS
 
       - name: Create GitHub release
         if: inputs.create_release == 'true' && inputs.dry_run != 'true'
