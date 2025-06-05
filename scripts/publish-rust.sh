@@ -12,11 +12,19 @@ if [[ -z "$library_path" || -z "$level" ]]; then
     exit 1
 fi
 
+ABS_MANIFEST_PATH=$(realpath $library_path/Cargo.toml)
+
+# Function for obtaining manifest fields from the Cargo.toml.
+get_manifest_field() {
+    local field="$1"
+    cargo metadata --no-deps --format-version 1 \
+        | jq --arg path "$ABS_MANIFEST_PATH" -r ".packages[] | select(.manifest_path == \$path) | .${field}"
+}
+
 cd "$library_path"
 
-# Extract crate name using cargo metadata
-metadata=$(cargo metadata --no-deps --format-version 1)
-crate_name=$(echo "$metadata" | jq -r '.packages[0].name')
+# Extract crate name
+crate_name=$(get_manifest_field "name")
 
 # Run cargo-release
 if [[ "$dry_run" != "true" ]]; then
@@ -28,7 +36,6 @@ fi
 
 # CI output
 if [[ -n "${CI:-}" ]]; then
-    metadata=$(cargo metadata --no-deps --format-version 1)
-    new_version=$(echo "$metadata" | jq -r '.packages[0].version')
+    new_version=$(get_manifest_field "version")
     echo "new_version=${new_version}" >> "$GITHUB_OUTPUT"
 fi
