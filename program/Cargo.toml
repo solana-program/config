@@ -25,7 +25,7 @@ solana-program = { workspace = true }
 thiserror = { workspace = true }
 
 [dev-dependencies]
-mollusk-svm = { workspace = true, features = ["fuzz-fd"] }
+mollusk-svm = { workspace = true, features = ["fuzz"] }
 mollusk-svm-bencher = { workspace = true }
 solana-config-interface = { workspace = true, features = ["bincode", "serde"] }
 solana-sdk = { workspace = true }
