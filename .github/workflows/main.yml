@@ -128,6 +128,19 @@ jobs:
       - name: Build Program
         run: make build-program
 
+      - name: Upload Program Builds
+        uses: actions/upload-artifact@v4
+        with:
+          name: program-builds
+          path: ./target/deploy/*.so
+          if-no-files-found: error
+
+      - name: Save Program Builds For Client Jobs
+        uses: actions/cache/save@v4
+        with:
+          path: ./**/*.so
+          key: ${{ runner.os }}-builds-${{ github.sha }}
+
   test_program:
     name: Test Program
     runs-on: ubuntu-latest
@@ -177,8 +190,8 @@ jobs:
             exit 1;
           fi
   
-  conformance:
-    name: Conformance Test
+  regression:
+    name: Regression Test
     runs-on: ubuntu-latest
     needs: build_program
     steps:
@@ -188,7 +201,7 @@ jobs:
       - name: Setup Environment
         uses: ./.github/actions/setup
         with:
-          cargo-cache-key: cargo-program-conformance
+          cargo-cache-key: cargo-program-regression
           cargo-cache-fallback-key: cargo-program
           solana: true
       
@@ -204,8 +217,8 @@ jobs:
           path: ./**/*.so
           key: ${{ runner.os }}-builds-${{ github.sha }}
       
-      - name: Conformance Test
-        run: make conformance
+      - name: Regression Test
+        run: make regression
 
   generate_clients:
     name: Check Client Generation
