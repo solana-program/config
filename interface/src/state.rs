@@ -14,3 +14,11 @@ pub struct ConfigKeys {
     #[cfg_attr(feature = "serde", serde(with = "short_vec"))]
     pub keys: Vec<(Pubkey, bool)>,
 }
+
+/// Utility for extracting the `ConfigKeys` data from the account data.
+#[cfg(feature = "bincode")]
+pub fn get_config_data(bytes: &[u8]) -> Result<&[u8], bincode::Error> {
+    bincode::deserialize::<ConfigKeys>(bytes)
+        .and_then(|keys| bincode::serialized_size(&keys))
+        .map(|offset| &bytes[offset as usize..])
+}
