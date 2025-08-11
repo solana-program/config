@@ -2,7 +2,7 @@
 name = "solana-config-interface"
 description = "Solana config program interface."
 documentation = "https://docs.rs/solana-config-interface"
-version = "1.0.0"
+version = "2.0.0"
 authors = { workspace = true }
 repository = { workspace = true }
 license-file = { workspace = true }
