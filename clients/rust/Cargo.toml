@@ -11,10 +11,10 @@ edition = { workspace = true }
 [features]
 fetch = ["dep:solana-client", "dep:solana-sdk"]
 serde = [
-    "dep:bincode", 
-    "dep:serde", 
-    "dep:solana-config-interface", 
-    "kaigan/serde", 
+    "dep:bincode",
+    "dep:serde",
+    "dep:solana-config-interface",
+    "kaigan/serde",
     "solana-config-interface/bincode"
 ]
 test-sbf = []
