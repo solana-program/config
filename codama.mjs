@@ -10,33 +10,32 @@ const { default: prettierOptions } = await import(
 
 export default {
   idl: 'program/idl.json',
-  before: [
-    {
+  before: [],
+  scripts: {
+    js: {
       from: '@codama/renderers-js',
       args: ['clients/js/src/generated', { prettierOptions }],
     },
-    {
-      from: '@codama/visitors-core#deleteNodesVisitor',
-      args: [['[definedTypeNode]configKeys']],
-    },
-  ],
-  scripts: {
-    rust: {
-      from: '@codama/renderers-rust',
-      args: [
-        'clients/rust/src/generated',
-        {
-          anchorTraits: false,
-          crateFolder: 'clients/rust',
-          formatCode: true,
-          linkOverrides: {
-            definedTypes: {
-              configKeys: 'hooked',
+    rust: [
+      {
+        from: '@codama/visitors-core#deleteNodesVisitor',
+        args: [['[definedTypeNode]configKeys']],
+      },
+      {
+        from: '@codama/renderers-rust',
+        args: [
+          'clients/rust/src/generated',
+          {
+            anchorTraits: false,
+            crateFolder: 'clients/rust',
+            formatCode: true,
+            linkOverrides: {
+              definedTypes: { configKeys: 'hooked' },
             },
+            toolchain: `+${process.env.RUST_TOOLCHAIN_NIGHTLY}`,
           },
-          toolchain: `+${process.env.RUST_TOOLCHAIN_NIGHTLY}`,
-        },
-      ],
-    },
+        ],
+      },
+    ],
   },
 };
