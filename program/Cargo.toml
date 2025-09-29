@@ -27,7 +27,7 @@ solana-config-interface = { workspace = true, features = ["bincode", "serde"] }
 solana-sdk = { workspace = true }
 
 [lib]
-crate-type = ["cdylib"]
+crate-type = ["cdylib", "lib"]
 
 [[bench]]
 name = "compute_units"
