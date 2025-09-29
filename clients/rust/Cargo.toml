@@ -17,7 +17,6 @@ serde = [
     "kaigan/serde",
     "solana-config-interface/bincode"
 ]
-test-sbf = []
 
 [dependencies]
 bincode = { workspace = true, optional = true }

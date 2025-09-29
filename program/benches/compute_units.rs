@@ -10,7 +10,7 @@ use {
 
 fn main() {
     std::env::set_var("SBF_OUT_DIR", "../target/deploy");
-    let mollusk = Mollusk::new(&solana_config_program::id(), "solana_config_program");
+    let mollusk = Mollusk::new(&solana_config_interface::id(), "solana_config_program");
 
     MolluskComputeUnitBencher::new(mollusk)
         .bench(ConfigSmall::init(0).bench())

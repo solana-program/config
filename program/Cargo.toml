@@ -11,10 +11,6 @@ edition = { workspace = true }
 [package.metadata.solana]
 program-id = "Config1111111111111111111111111111111111111"
 
-[features]
-bpf-entrypoint = []
-test-sbf = []
-
 [dependencies]
 bincode = { workspace = true }
 num-derive = { workspace = true }
@@ -31,7 +27,7 @@ solana-config-interface = { workspace = true, features = ["bincode", "serde"] }
 solana-sdk = { workspace = true }
 
 [lib]
-crate-type = ["cdylib", "lib"]
+crate-type = ["cdylib"]
 
 [[bench]]
 name = "compute_units"
