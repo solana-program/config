@@ -4,272 +4,56 @@ on:
   push:
     branches: [main]
   pull_request:
+    branches: [main]
+
+env:
+  JS_PACKAGES: "['clients-js']"
+  SBPF_PROGRAM_PACKAGES: "['program']"
+  RUST_PACKAGES: "['clients-rust', 'interface', 'program']"
+  WASM_PACKAGES: "['interface', 'program']"
+  BENCH_PACKAGES: "['program']"
+  REGRESSION_PACKAGES: "['program']"
 
 jobs:
-  format_and_lint_client_js:
-    name: Format & Lint Client JS
+  set_env:
+    name: Set variables to be used in strategy definitions in reusable workflow
     runs-on: ubuntu-latest
+    outputs:
+      JS_PACKAGES: ${{ steps.compute.outputs.JS_PACKAGES }}
+      SBPF_PROGRAM_PACKAGES: ${{ steps.compute.outputs.SBPF_PROGRAM_PACKAGES }}
+      RUST_PACKAGES: ${{ steps.compute.outputs.RUST_PACKAGES }}
+      WASM_PACKAGES: ${{ steps.compute.outputs.WASM_PACKAGES }}
+      BENCH_PACKAGES: ${{ steps.compute.outputs.BENCH_PACKAGES }}
+      REGRESSION_PACKAGES: ${{ steps.compute.outputs.REGRESSION_PACKAGES }}
+      RUST_TOOLCHAIN_NIGHTLY: ${{ steps.compute.outputs.RUST_TOOLCHAIN_NIGHTLY }}
+      SOLANA_CLI_VERSION: ${{ steps.compute.outputs.SOLANA_CLI_VERSION }}
     steps:
       - name: Git Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Environment
-        uses: ./.github/actions/setup
-        with:
-          pnpm: true
-
-      - name: Format Client JS
-        run: make format-js
-
-      - name: Lint Client JS
-        run: make lint-js
-
-  format_and_lint_client_rust:
-    name: Format & Lint Client Rust
-    runs-on: ubuntu-latest
-    steps:
-      - name: Git Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Environment
-        uses: ./.github/actions/setup
-        with:
-          toolchain: format, lint
-
-      - name: Format
-        run: make format-clients-rust
-
-      - name: Lint / Clippy
-        run: make clippy-clients-rust
-
-      - name: Lint / Docs
-        run: make lint-docs-clients-rust
-
-      - name: Lint / Features
-        run: make lint-features-clients-rust
-
-  format_and_lint_interface:
-    name: Format & Lint Interface
-    runs-on: ubuntu-latest
-    steps:
-      - name: Git Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Environment
-        uses: ./.github/actions/setup
-        with:
-          toolchain: format, lint
-
-      - name: Format
-        run: make format-interface
-
-      - name: Lint / Clippy
-        run: make clippy-interface
-
-      - name: Lint / Docs
-        run: make lint-docs-interface
-
-      - name: Lint / Features
-        run: make lint-features-interface
-
-  format_and_lint_program:
-    name: Format & Lint Program
-    runs-on: ubuntu-latest
-    steps:
-      - name: Git Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Environment
-        uses: ./.github/actions/setup
-        with:
-          toolchain: format, lint
-
-      - name: Format
-        run: make format-program
-
-      - name: Lint / Clippy
-        run: make clippy-program
-
-      - name: Lint / Docs
-        run: make lint-docs-program
-
-      - name: Lint / Features
-        run: make lint-features-program
-
-  test_interface:
-    name: Test Interface
-    runs-on: ubuntu-latest
-    steps:
-      - name: Git Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Environment
-        uses: ./.github/actions/setup
-        with:
-          toolchain: test
-          cargo-cache-key: cargo-interface
-
-      - name: Test Interface
-        run: make test-interface
-  
-  build_program:
-    name: Build Program
-    runs-on: ubuntu-latest
-    steps:
-      - name: Git Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Environment
-        uses: ./.github/actions/setup
-        with:
-          cargo-cache-key: cargo-program
-          solana: true
-
-      - name: Build Program
-        run: make build-program
-
-      - name: Upload Program Builds
-        uses: actions/upload-artifact@v4
-        with:
-          name: program-builds
-          path: ./target/deploy/*.so
-          if-no-files-found: error
-
-      - name: Save Program Builds For Client Jobs
-        uses: actions/cache/save@v4
-        with:
-          path: ./**/*.so
-          key: ${{ runner.os }}-builds-${{ github.sha }}
-
-  test_program:
-    name: Test Program
-    runs-on: ubuntu-latest
-    steps:
-      - name: Git Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Environment
-        uses: ./.github/actions/setup
-        with:
-          toolchain: test
-          cargo-cache-key: cargo-program
-          solana: true
-
-      - name: Test Program
-        run: make test-program
-  
-  bench_program_compute_units:
-    name: Benchmark Program Compute Units
-    runs-on: ubuntu-latest
-    needs: build_program # Cargo Bench won't build the SBPF binary...
-    steps:
-      - name: Git Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Environment
-        uses: ./.github/actions/setup
-        with:
-          cargo-cache-key: cargo-program-benches
-          cargo-cache-fallback-key: cargo-program
-          solana: true
-      
-      - name: Restore Program Builds
-        uses: actions/cache/restore@v4
-        with:
-          path: ./**/*.so
-          key: ${{ runner.os }}-builds-${{ github.sha }}
-
-      - name: Benchmark Compute Units
-        run: make bench-program-compute-units
-      
-      - name: Check Working Directory
+      - name: Compute variables
+        id: compute
+        shell: bash
         run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            test -z "$(git status --porcelain)"
-            echo "CU usage has changed. Please run `cargo bench` and commit the new results.";
-            exit 1;
-          fi
-  
-  regression:
-    name: Regression Test
-    runs-on: ubuntu-latest
-    needs: build_program
-    steps:
-      - name: Git Checkout
-        uses: actions/checkout@v4
-      
-      - name: Setup Environment
-        uses: ./.github/actions/setup
-        with:
-          cargo-cache-key: cargo-program-regression
-          cargo-cache-fallback-key: cargo-program
-          solana: true
-      
-      - name: Install System Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libudev-dev pkg-config
-          command -v mollusk >/dev/null 2>&1 || cargo install mollusk-svm-cli
-      
-      - name: Restore Program Builds
-        uses: actions/cache/restore@v4
-        with:
-          path: ./**/*.so
-          key: ${{ runner.os }}-builds-${{ github.sha }}
-      
-      - name: Regression Test
-        run: make regression
+          echo "JS_PACKAGES=${{ env.JS_PACKAGES }}" >> $GITHUB_OUTPUT
+          echo "SBPF_PROGRAM_PACKAGES=${{ env.SBPF_PROGRAM_PACKAGES }}" >> $GITHUB_OUTPUT
+          echo "RUST_PACKAGES=${{ env.RUST_PACKAGES }}" >> $GITHUB_OUTPUT
+          echo "WASM_PACKAGES=${{ env.WASM_PACKAGES }}" >> $GITHUB_OUTPUT
+          echo "BENCH_PACKAGES=${{ env.BENCH_PACKAGES }}" >> $GITHUB_OUTPUT
+          echo "REGRESSION_PACKAGES=${{ env.REGRESSION_PACKAGES }}" >> $GITHUB_OUTPUT
+          echo "RUST_TOOLCHAIN_NIGHTLY=$(make rust-toolchain-nightly)" >> "$GITHUB_OUTPUT"
+          echo "SOLANA_CLI_VERSION=$(make solana-cli-version)" >> "$GITHUB_OUTPUT"
 
-  generate_clients:
-    name: Check Client Generation
-    runs-on: ubuntu-latest
-    steps:
-      - name: Git Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Environment
-        uses: ./.github/actions/setup
-        with:
-          pnpm: true
-          toolchain: format
-
-      - name: Generate Clients
-        run: pnpm generate:clients
-
-      - name: Check Working Directory
-        run: |
-          git status --porcelain
-          test -z "$(git status --porcelain)"
-
-  test_client_js:
-    name: Test Client JS
-    runs-on: ubuntu-latest
-    steps:
-      - name: Git Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Environment
-        uses: ./.github/actions/setup
-        with:
-          pnpm: true
-          solana: true
-
-      - name: Test Client JS
-        run: make test-js
-
-  test_client_rust:
-    name: Test Client Rust
-    runs-on: ubuntu-latest
-    steps:
-      - name: Git Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Environment
-        uses: ./.github/actions/setup
-        with:
-          cargo-cache-key: cargo-rust-client
-          toolchain: test
-          solana: true
-
-      - name: Test Client Rust
-        run: make test-clients-rust
+  main:
+    needs: set_env
+    uses: solana-program/actions/.github/workflows/main.yml@main
+    with:
+      js-packages: ${{ needs.set_env.outputs.JS_PACKAGES }}
+      sbpf-program-packages: ${{ needs.set_env.outputs.SBPF_PROGRAM_PACKAGES }}
+      rust-packages: ${{ needs.set_env.outputs.RUST_PACKAGES }}
+      wasm-packages: ${{ needs.set_env.outputs.WASM_PACKAGES }}
+      bench-packages: ${{ needs.set_env.outputs.BENCH_PACKAGES }}
+      regression-packages: ${{ needs.set_env.outputs.REGRESSION_PACKAGES }}
+      rustfmt-toolchain: ${{ needs.set_env.outputs.RUST_TOOLCHAIN_NIGHTLY }}
+      clippy-toolchain: ${{ needs.set_env.outputs.RUST_TOOLCHAIN_NIGHTLY }}
+      solana-cli-version: ${{ needs.set_env.outputs.SOLANA_CLI_VERSION }}

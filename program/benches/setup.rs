@@ -55,12 +55,16 @@ pub trait BenchSetup: Default + serde::Serialize {
         let instruction = {
             let account_metas = vec![AccountMeta::new(config_pubkey, true)];
             let account_data = Self::default_account_state(keys);
-            Instruction::new_with_bincode(solana_config_program::id(), &account_data, account_metas)
+            Instruction::new_with_bincode(
+                solana_config_interface::id(),
+                &account_data,
+                account_metas,
+            )
         };
 
         let accounts = vec![(
             config_pubkey,
-            Account::new(lamports, space, &solana_config_program::id()),
+            Account::new(lamports, space, &solana_config_interface::id()),
         )];
 
         BenchContext {
@@ -83,7 +87,7 @@ pub trait BenchSetup: Default + serde::Serialize {
             Account::new_data(
                 lamports,
                 &Self::default_account_state(keys),
-                &solana_config_program::id(),
+                &solana_config_interface::id(),
             )
             .unwrap(),
         )];

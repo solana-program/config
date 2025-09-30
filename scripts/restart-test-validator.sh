@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
 
-PORT=8899
-LOG_FILE="./test-ledger/validator.log"
+here="$(dirname "$0")"
+src_root="$(readlink -f "${here}/..")"
+cd "${src_root}"
 
+ARGS=(
+  -r
+  -q
+  --bpf-program Config1111111111111111111111111111111111111 ./target/deploy/solana_config_program.so
+)
+PORT=8899
 PID=$(lsof -t -i:$PORT)
 
 if [ -n "$PID" ]; then
@@ -12,7 +19,7 @@ if [ -n "$PID" ]; then
 fi
 
 echo "Starting Solana test validator..."
-solana-test-validator > /dev/null 2>&1 &
+solana-test-validator "${ARGS[@]}" &
 VALIDATOR_PID=$!
 
 # Wait for test validator to move past slot 0.
@@ -24,7 +31,7 @@ for i in {1..8}; do
   fi
 
   SLOT=$(solana slot -ul 2>/dev/null)
-  if [[ "$SLOT" =~ ^[0-9]+$ ]] && [ "$SLOT" -gt 0 ]; then
+  if [[ "$SLOT" =~ ^[0-9]+$ ]] && [ "$SLOT" -gt 8 ]; then
     echo -e "\nTest validator is ready. Slot: $SLOT"
     exit 0
   fi

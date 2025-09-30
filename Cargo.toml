@@ -35,3 +35,6 @@ solana-sdk-ids = "2.2.1"
 solana-short-vec = "2.2.1"
 solana-system-interface = "1.0.0"
 thiserror = "1.0.61"
+
+[workspace.metadata.spellcheck]
+config = "scripts/spellcheck.toml"

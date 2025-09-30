@@ -1,6 +1,6 @@
 //! Config Program.
 
-#[cfg(all(target_os = "solana", feature = "bpf-entrypoint"))]
+#[cfg(target_os = "solana")]
 mod entrypoint;
 pub mod error;
 pub mod processor;

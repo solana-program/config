@@ -1,7 +1,6 @@
 {
   "private": true,
   "scripts": {
-    "generate": "pnpm generate:clients",
     "generate:clients": "codama run --all"
   },
   "devDependencies": {
