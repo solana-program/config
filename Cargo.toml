@@ -33,7 +33,7 @@ solana-pubkey = "2.2.1"
 solana-sdk = "2.2.1"
 solana-sdk-ids = "3.0.0"
 solana-short-vec = "3.0.0"
-solana-system-interface = "1.0.0"
+solana-system-interface = "2.0.0"
 thiserror = "2.0.12"
 
 [workspace.metadata.spellcheck]
