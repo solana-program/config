@@ -3851,24 +3851,24 @@ dependencies = [
 
 [[package]]
 name = "solana-config-interface"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3fbdbcfedb467322ac9686ca61da0a1fdede2fd99a01fb2ed52b49452abd22e0"
+version = "2.0.0"
 dependencies = [
  "bincode",
  "serde",
  "serde_derive",
- "solana-account 2.2.1",
- "solana-instruction 2.3.0",
- "solana-pubkey 2.4.0",
- "solana-sdk-ids 2.2.1",
- "solana-short-vec 2.2.1",
- "solana-system-interface 1.0.0",
+ "solana-account 3.0.0",
+ "solana-instruction 3.0.0",
+ "solana-pubkey 3.0.0",
+ "solana-sdk-ids 3.0.0",
+ "solana-short-vec 3.0.0",
+ "solana-system-interface 2.0.0",
 ]
 
 [[package]]
 name = "solana-config-interface"
 version = "2.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "63e401ae56aed512821cc7a0adaa412ff97fecd2dff4602be7b1330d2daec0c4"
 dependencies = [
  "bincode",
  "serde",
@@ -3891,7 +3891,7 @@ dependencies = [
  "num-derive",
  "num-traits",
  "serde",
- "solana-config-interface 1.0.0",
+ "solana-config-interface 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "solana-program",
  "solana-sdk",
  "thiserror 2.0.17",
@@ -3907,7 +3907,7 @@ dependencies = [
  "kaigan",
  "serde",
  "solana-client",
- "solana-config-interface 1.0.0",
+ "solana-config-interface 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "solana-program",
  "solana-sdk",
 ]
