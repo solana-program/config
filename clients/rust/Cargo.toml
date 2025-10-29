@@ -24,7 +24,7 @@ borsh = { workspace = true }
 kaigan = { workspace = true }
 serde = { workspace = true, features = ["derive"], optional = true }
 solana-client = { workspace = true, optional = true }
-solana-config-interface = { workspace = true, optional = true }
+solana-config-interface = { version = "1", optional = true }
 solana-program = { workspace = true, features = ["borsh"] }
 solana-sdk = { workspace = true, optional = true }
 

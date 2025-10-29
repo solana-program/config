@@ -1,14 +1,12 @@
 use {
     mollusk_svm_bencher::Bench,
     serde::Serialize,
+    solana_account::Account,
     solana_config_interface::{instruction::store, state::ConfigKeys},
-    solana_sdk::{
-        account::Account,
-        hash::Hash,
-        instruction::{AccountMeta, Instruction},
-        pubkey::Pubkey,
-        rent::Rent,
-    },
+    solana_hash::Hash,
+    solana_instruction::{AccountMeta, Instruction},
+    solana_pubkey::Pubkey,
+    solana_rent::Rent,
 };
 
 /// Helper struct to convert to a `Bench`.
