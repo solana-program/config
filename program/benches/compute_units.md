@@ -1,3 +1,46 @@
+#### 2025-10-29 22:42:22.511198962 UTC
+
+Solana CLI Version: solana-cli 3.0.7 (src:ea24c1fd; feat:3604001754, client:Agave)
+
+| Name | CUs | Delta |
+|------|------|-------|
+| config_small_init_0_keys | 655 | +11 |
+| config_small_init_1_keys | 1131 | +2 |
+| config_small_init_5_keys | 2763 | -150 |
+| config_small_init_10_keys | 4783 | -335 |
+| config_small_init_25_keys | 11289 | -1,043 |
+| config_small_init_37_keys | 16199 | -1,560 |
+| config_small_store_0_keys | 655 | +11 |
+| config_small_store_1_keys | 1414 | +4 |
+| config_small_store_5_keys | 4066 | -128 |
+| config_small_store_10_keys | 7361 | -288 |
+| config_small_store_25_keys | 17692 | -921 |
+| config_small_store_37_keys | 25662 | -1,378 |
+| config_medium_init_0_keys | 655 | +11 |
+| config_medium_init_1_keys | 1131 | +2 |
+| config_medium_init_5_keys | 2763 | -150 |
+| config_medium_init_10_keys | 4783 | -335 |
+| config_medium_init_25_keys | 11289 | -1,043 |
+| config_medium_init_37_keys | 16199 | -1,560 |
+| config_medium_store_0_keys | 655 | +11 |
+| config_medium_store_1_keys | 1414 | +4 |
+| config_medium_store_5_keys | 4066 | -128 |
+| config_medium_store_10_keys | 7361 | -288 |
+| config_medium_store_25_keys | 17692 | -921 |
+| config_medium_store_37_keys | 25662 | -1,378 |
+| config_large_init_0_keys | 776 | +11 |
+| config_large_init_1_keys | 1252 | +2 |
+| config_large_init_5_keys | 2884 | -150 |
+| config_large_init_10_keys | 4905 | -335 |
+| config_large_init_25_keys | 11413 | -1,043 |
+| config_large_init_37_keys | 16324 | -1,560 |
+| config_large_store_0_keys | 776 | +11 |
+| config_large_store_1_keys | 1535 | +4 |
+| config_large_store_5_keys | 4187 | -128 |
+| config_large_store_10_keys | 7483 | -288 |
+| config_large_store_25_keys | 17816 | -921 |
+| config_large_store_37_keys | 25787 | -1,378 |
+
 #### 2025-07-14 17:12:46.523897668 UTC
 
 Solana CLI Version: solana-cli 2.3.4 (src:bbf10bfb; feat:3640012085, client:Agave)

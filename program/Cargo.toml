@@ -16,15 +16,24 @@ bincode = { workspace = true }
 num-derive = { workspace = true }
 num-traits = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
+solana-account-info = { workspace = true }
+solana-bincode = { workspace = true }
 solana-config-interface = { workspace = true, features = ["serde"] }
-solana-program = { workspace = true }
+solana-msg = { workspace = true }
+solana-program-entrypoint = { workspace = true }
+solana-program-error = { workspace = true }
+solana-pubkey = { workspace = true }
+solana-short-vec = { workspace = true }
 thiserror = { workspace = true }
 
 [dev-dependencies]
 mollusk-svm = { workspace = true, features = ["fuzz"] }
 mollusk-svm-bencher = { workspace = true }
+solana-account = { workspace = true }
 solana-config-interface = { workspace = true, features = ["bincode", "serde"] }
-solana-sdk = { workspace = true }
+solana-hash = { workspace = true }
+solana-instruction = { workspace = true }
+solana-rent = { workspace = true }
 
 [lib]
 crate-type = ["cdylib", "lib"]

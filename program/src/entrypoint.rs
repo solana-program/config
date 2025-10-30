@@ -2,20 +2,20 @@
 
 use {
     crate::{error::ConfigError, processor},
-    solana_program::{
-        account_info::AccountInfo, entrypoint::ProgramResult, program_error::PrintProgramError,
-        pubkey::Pubkey,
-    },
+    solana_account_info::AccountInfo,
+    solana_msg::msg,
+    solana_program_error::ProgramResult,
+    solana_pubkey::Pubkey,
 };
 
-solana_program::entrypoint!(process_instruction);
+solana_program_entrypoint::entrypoint!(process_instruction);
 fn process_instruction(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
     instruction_data: &[u8],
 ) -> ProgramResult {
     if let Err(error) = processor::process(program_id, accounts, instruction_data) {
-        error.print::<ConfigError>();
+        msg!(error.to_str::<ConfigError>());
         return Err(error);
     }
     Ok(())

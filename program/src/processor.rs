@@ -2,11 +2,11 @@
 
 use {
     crate::error::ConfigError,
+    solana_account_info::AccountInfo,
     solana_config_interface::state::ConfigKeys,
-    solana_program::{
-        account_info::AccountInfo, entrypoint::ProgramResult, msg, program_error::ProgramError,
-        pubkey::Pubkey,
-    },
+    solana_msg::msg,
+    solana_program_error::{ProgramError, ProgramResult},
+    solana_pubkey::Pubkey,
     std::collections::BTreeSet,
 };
 
@@ -21,7 +21,7 @@ const MAX_INPUT_LEN: usize = 1232;
 const MAX_VECTOR_LEN: usize = (MAX_INPUT_LEN - 3) / (32 + 1);
 
 // [Core BPF]: The original Config builtin leverages the
-// `solana_sdk::program_utils::limited_deserialize` method to cap the length of
+// `solana_bincode::limited_deserialize` method to cap the length of
 // the input buffer at `MAX_INPUT_LEN` (1232). As a result, any input buffer
 // larger than `MAX_INPUT_LEN` will abort deserialization and return
 // `InstructionError::InvalidInstructionData`.
@@ -40,11 +40,8 @@ const MAX_VECTOR_LEN: usize = (MAX_INPUT_LEN - 3) / (32 + 1);
 fn safe_deserialize_config_keys(input: &[u8]) -> Result<ConfigKeys, ProgramError> {
     match input.first() {
         Some(first_byte) if *first_byte as usize <= MAX_VECTOR_LEN => {
-            solana_program::program_utils::limited_deserialize::<ConfigKeys>(
-                input,
-                MAX_INPUT_LEN as u64,
-            )
-            .map_err(|_| ProgramError::InvalidInstructionData)
+            solana_bincode::limited_deserialize::<ConfigKeys>(input, MAX_INPUT_LEN as u64)
+                .map_err(|_| ProgramError::InvalidInstructionData)
         }
         _ => Err(ProgramError::InvalidInstructionData),
     }
@@ -65,7 +62,7 @@ fn safe_deserialize_config_keys(input: &[u8]) -> Result<ConfigKeys, ProgramError
 // a memory allocation panic can occur, to ensure maximum backwards
 // compatibility with the original builtin.
 fn safe_deserialize_config_keys_from_state(input: &[u8]) -> Result<ConfigKeys, ProgramError> {
-    let (vector_len, offset) = solana_program::short_vec::decode_shortu16_len(input)
+    let (vector_len, offset) = solana_short_vec::decode_shortu16_len(input)
         .map_err(|_| ProgramError::InvalidAccountData)?;
     if input[offset..].len() / (32 + 1) < vector_len {
         Err(ProgramError::InvalidAccountData)
