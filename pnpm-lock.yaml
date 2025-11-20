@@ -18,16 +18,16 @@ importers:
         specifier: ^1.3.8
         version: 1.3.8
       codama:
-        specifier: ^1.3
-        version: 1.3.8
+        specifier: ^1.4
+        version: 1.4.0
       dotenv:
         specifier: ^17.2.3
         version: 17.2.3
 
 packages:
 
-  '@codama/cli@1.3.6':
-    resolution: {integrity: sha512-tBOokOuMcAwtil2synB5zPGDgvPSWlIP4tRm+OR8vS3gHacEO1pOAYizzs2sB62f7dy122tFovt8l2kbFhkDew==}
+  '@codama/cli@1.3.7':
+    resolution: {integrity: sha512-6YhMVFgShlcQYDRG/2+iS+iaFOEZoBg91370hU62ypfioQRanDYAbM7JjVNeNrf3eP1mYoaAOnCgke7/F2YbIQ==}
     hasBin: true
 
   '@codama/errors@1.2.9':
@@ -42,6 +42,10 @@ packages:
     resolution: {integrity: sha512-jI4/ZfERPKkpBNuvv7GOZSXPjSWj2eng5bKv2uE43gJH6LGM7v3h0egNGCt31pMFAddSme0NYVyymwEHgbeZiQ==}
     hasBin: true
 
+  '@codama/errors@1.4.0':
+    resolution: {integrity: sha512-w0WUrFJhIZUoYuyMTX1ls+qYaU6e3hrTzyeu/KS818wYY50HvdyLxLXhDAhHR/CF9MdNz6XyZpKAMOZDPmxqOw==}
+    hasBin: true
+
   '@codama/node-types@1.2.9':
     resolution: {integrity: sha512-tW3uPzldFTv5I5tkW2WZvdXIxc/JT+JIwYERfvtlTwRzleEfPOeC1EDE4LUUUtRx7qRfa3Gga8I2/CWZWvfbJQ==}
 
@@ -51,6 +55,9 @@ packages:
   '@codama/node-types@1.3.8':
     resolution: {integrity: sha512-seWqt37DUm3bkqI9sZZ3x/Ujyfbjndgg2jtcXRz6vWATQ6ofnWv4UT7BWBO/gEMXAAVisSscA8eRalnkURWZaA==}
 
+  '@codama/node-types@1.4.0':
+    resolution: {integrity: sha512-h5yNdI6CmSWwjyVQ03b15faI6xC35ytqOzTQQ09uA6GUnsQyESce3nZGbrwGy9Gape12JfFdmsxziVtLB0Ldkg==}
+
   '@codama/nodes@1.2.9':
     resolution: {integrity: sha512-qkKNrt+ntgMmprOtqbPHsOKve8mHaov/QIp89fAygCOxfniVFt+JSBnZTgmgYZhTtK60X7sp0kAD7uWDRKS+vg==}
 
@@ -59,6 +66,9 @@ packages:
 
   '@codama/nodes@1.3.8':
     resolution: {integrity: sha512-rEffpMmhxicc4i7jVBhEBslKzw9JTGp8UocCspvYu/vI9NQyxd3e2P1eJd1j4XlYsEnyNv2zZS2/UKsVgLCVEA==}
+
+  '@codama/nodes@1.4.0':
+    resolution: {integrity: sha512-4v51bD/awhDqKzKjTOf84f4wzkLrs4WodU0HNT33BcsP+gcbC+z+HSHBqVaDofjHpbkP8YlMP+4SRqU8utff8A==}
 
   '@codama/renderers-core@1.0.11':
     resolution: {integrity: sha512-fnZgjub3MDCpEnWQ3+vlzu9razNF3/kqJsgvMfqX2w4shJLO5a9lNlyPMDi0wL85sDazjVx488dFg+AfibNtVA==}
@@ -72,8 +82,8 @@ packages:
   '@codama/renderers-rust@1.0.17':
     resolution: {integrity: sha512-2UCfHD+x4PWRq2a/TWQG+yZ0YP7v2x1V3UeMTQloQ2mflA9fiD1LeizZ1zlFqNcOeYBx46RzFF8bjaQvb6YTBQ==}
 
-  '@codama/validators@1.3.8':
-    resolution: {integrity: sha512-J/en85ivhBkXawcgB/iJYgy3QxjRuGrADTZemKoJzeJX4LzyNfE/J2hM4O6LDJsdSLShhHS6KpgC4sCNzkQpsg==}
+  '@codama/validators@1.4.0':
+    resolution: {integrity: sha512-zvUnGS0Q/uUG7rFWQMIeEjwhlPTg2+5xZ+mfHJWnsbJKPhiGMFwTm6/F9Plnl6rloTaHAZ/7X3qqvKG0xouxyA==}
 
   '@codama/visitors-core@1.2.9':
     resolution: {integrity: sha512-qQwpAl7RjyupMhMuWVHIbSaVhqbiUtGLJsxs7YDlfKUo7kz9+vF4cS96n7HY3mFF+PCtyDzEiFHFu+JYEemHgg==}
@@ -84,8 +94,11 @@ packages:
   '@codama/visitors-core@1.3.8':
     resolution: {integrity: sha512-JVA3Lf9/M/STgc3t/2HiI3cvUKjyByBhcjlOcOI6RrhaLIX2g418REyGdsJz9aRwKNNSzADzX3dhlDyLq0h6lQ==}
 
-  '@codama/visitors@1.3.8':
-    resolution: {integrity: sha512-X+x3vQnkM6zA5dWj4X9KLAKF7+2BstwLBPJUCnOrUfn3k0cEqJov2NxnmtgHi0VQNFYKbVEilWVVP3YTOdTvbA==}
+  '@codama/visitors-core@1.4.0':
+    resolution: {integrity: sha512-971xAqXuBbfGLB5DUNIB2X66MEWE+NF22blkNgoXgOCm1XfKr50MTkvF1nYiFxa4+09AS621rybppqQRmOqPsw==}
+
+  '@codama/visitors@1.4.0':
+    resolution: {integrity: sha512-KM/dWSV7a/zet7blGtiyMQHIUmFmJDtbAFY9ISRmaSuCJ9RsfoF4RyjjKjY1ON5GVsG25bGUdXdnqXd1JTFM7g==}
 
   '@solana/codecs-core@2.0.0-rc.4':
     resolution: {integrity: sha512-JIrTSps032mSE3wBxW3bXOqWfoy4CMy1CX/XeVCijyh5kLVxZTSDIdRTYdePdL1yzaOZF1Xysvt1DhOUgBdM+A==}
@@ -169,8 +182,8 @@ packages:
     resolution: {integrity: sha512-7NzBL0rN6fMUW+f7A6Io4h40qQlG+xGmtMxfbnH/K7TAtt8JQWVQK+6g0UXKMeVJoyV5EkkNsErQ8pVD3bLHbA==}
     engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
 
-  codama@1.3.8:
-    resolution: {integrity: sha512-Gf7o1NJGuRTbEMhKKn6fKDItzTq9NSzcpU+g6bCnkn4lVxMeFc8A1RA/ookBhHyOAv/Pt4PhzL1tXDMIkxKDRg==}
+  codama@1.4.0:
+    resolution: {integrity: sha512-T4VQ5X1tONUDy+aa7noQeIxqiXuX4d9wJSAZgR0kPS03rl2LIF/pp9GgoeENevC/aX9xF7JJ8LH6Qu/Ogx6+aw==}
     hasBin: true
 
   commander@12.1.0:
@@ -304,11 +317,11 @@ packages:
 
 snapshots:
 
-  '@codama/cli@1.3.6':
+  '@codama/cli@1.3.7':
     dependencies:
-      '@codama/nodes': 1.3.8
-      '@codama/visitors': 1.3.8
-      '@codama/visitors-core': 1.3.8
+      '@codama/nodes': 1.4.0
+      '@codama/visitors': 1.4.0
+      '@codama/visitors-core': 1.4.0
       commander: 14.0.2
       picocolors: 1.1.1
       prompts: 2.4.2
@@ -331,11 +344,19 @@ snapshots:
       commander: 14.0.2
       picocolors: 1.1.1
 
+  '@codama/errors@1.4.0':
+    dependencies:
+      '@codama/node-types': 1.4.0
+      commander: 14.0.2
+      picocolors: 1.1.1
+
   '@codama/node-types@1.2.9': {}
 
   '@codama/node-types@1.3.3': {}
 
   '@codama/node-types@1.3.8': {}
+
+  '@codama/node-types@1.4.0': {}
 
   '@codama/nodes@1.2.9':
     dependencies:
@@ -351,6 +372,11 @@ snapshots:
     dependencies:
       '@codama/errors': 1.3.8
       '@codama/node-types': 1.3.8
+
+  '@codama/nodes@1.4.0':
+    dependencies:
+      '@codama/errors': 1.4.0
+      '@codama/node-types': 1.4.0
 
   '@codama/renderers-core@1.0.11':
     dependencies:
@@ -391,11 +417,11 @@ snapshots:
       - fastestsmallesttextencoderdecoder
       - typescript
 
-  '@codama/validators@1.3.8':
+  '@codama/validators@1.4.0':
     dependencies:
-      '@codama/errors': 1.3.8
-      '@codama/nodes': 1.3.8
-      '@codama/visitors-core': 1.3.8
+      '@codama/errors': 1.4.0
+      '@codama/nodes': 1.4.0
+      '@codama/visitors-core': 1.4.0
 
   '@codama/visitors-core@1.2.9':
     dependencies:
@@ -415,11 +441,17 @@ snapshots:
       '@codama/nodes': 1.3.8
       json-stable-stringify: 1.3.0
 
-  '@codama/visitors@1.3.8':
+  '@codama/visitors-core@1.4.0':
     dependencies:
-      '@codama/errors': 1.3.8
-      '@codama/nodes': 1.3.8
-      '@codama/visitors-core': 1.3.8
+      '@codama/errors': 1.4.0
+      '@codama/nodes': 1.4.0
+      json-stable-stringify: 1.3.0
+
+  '@codama/visitors@1.4.0':
+    dependencies:
+      '@codama/errors': 1.4.0
+      '@codama/nodes': 1.4.0
+      '@codama/visitors-core': 1.4.0
 
   '@solana/codecs-core@2.0.0-rc.4(typescript@5.5.4)':
     dependencies:
@@ -498,13 +530,13 @@ snapshots:
 
   chalk@5.6.2: {}
 
-  codama@1.3.8:
+  codama@1.4.0:
     dependencies:
-      '@codama/cli': 1.3.6
-      '@codama/errors': 1.3.8
-      '@codama/nodes': 1.3.8
-      '@codama/validators': 1.3.8
-      '@codama/visitors': 1.3.8
+      '@codama/cli': 1.3.7
+      '@codama/errors': 1.4.0
+      '@codama/nodes': 1.4.0
+      '@codama/validators': 1.4.0
+      '@codama/visitors': 1.4.0
 
   commander@12.1.0: {}
 
