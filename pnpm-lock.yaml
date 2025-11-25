@@ -15,8 +15,8 @@ importers:
         specifier: ~1.0
         version: 1.0.17(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)
       '@codama/visitors-core':
-        specifier: ^1.4.0
-        version: 1.4.0
+        specifier: ^1.4.1
+        version: 1.4.1
       codama:
         specifier: ^1.4
         version: 1.4.1
@@ -366,7 +366,7 @@ snapshots:
       '@codama/errors': 1.4.0
       '@codama/nodes': 1.4.0
       '@codama/renderers-core': 1.2.4
-      '@codama/visitors-core': 1.4.0
+      '@codama/visitors-core': 1.4.1
       '@solana/codecs-strings': 5.0.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)
       prettier: 3.6.2
     transitivePeerDependencies:
