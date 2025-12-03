@@ -6,7 +6,7 @@
   "devDependencies": {
     "@codama/renderers-js": "^1.5",
     "@codama/renderers-rust": "~1.0",
-    "@codama/visitors-core": "^1.4.2",
+    "@codama/visitors-core": "^1.4.4",
     "codama": "^1.4",
     "dotenv": "^17.2.3"
   },
