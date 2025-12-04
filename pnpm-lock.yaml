@@ -10,7 +10,7 @@ importers:
     devDependencies:
       '@codama/renderers-js':
         specifier: ^1.5
-        version: 1.5.4(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)
+        version: 1.5.5(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)
       '@codama/renderers-rust':
         specifier: ~1.0
         version: 1.0.17(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)
@@ -53,11 +53,11 @@ packages:
   '@codama/renderers-core@1.0.11':
     resolution: {integrity: sha512-fnZgjub3MDCpEnWQ3+vlzu9razNF3/kqJsgvMfqX2w4shJLO5a9lNlyPMDi0wL85sDazjVx488dFg+AfibNtVA==}
 
-  '@codama/renderers-core@1.3.3':
-    resolution: {integrity: sha512-L2gvsgB9ZGwA0q2F9u8AgNJf2aqAWzyRjokhLNoS9IPEQaV6ALQ4Z9FQ7/snNzEg3OvFbCg21jUynMN0brfjcw==}
+  '@codama/renderers-core@1.3.4':
+    resolution: {integrity: sha512-+qEPsvpCjUElohgJTcVNsjy6u1LjoCcwo72NbcffLF9QU5mUjNwL8EhFouEq2K60H/QKmNaiVKLQfJcQ/xCT9A==}
 
-  '@codama/renderers-js@1.5.4':
-    resolution: {integrity: sha512-mR9j00VlTlpGDe5qKmsO8tbuycPJVHGyBYd6BbsKkfPthv0gyivRgd2fwQQzEDSU+jLa44N8avPXpTKAfg13kw==}
+  '@codama/renderers-js@1.5.5':
+    resolution: {integrity: sha512-zYVw8KGRHFzrpPKAv8PJI1pMy28qc/iEMspMC6Iw915Vsg0od75FUmUhDAvrTwgc28oyCmlrsWv6BNON4AKmqQ==}
     engines: {node: '>=20.18.0'}
 
   '@codama/renderers-rust@1.0.17':
@@ -334,17 +334,17 @@ snapshots:
       '@codama/nodes': 1.2.9
       '@codama/visitors-core': 1.2.9
 
-  '@codama/renderers-core@1.3.3':
+  '@codama/renderers-core@1.3.4':
     dependencies:
       '@codama/errors': 1.4.4
       '@codama/nodes': 1.4.4
       '@codama/visitors-core': 1.4.4
 
-  '@codama/renderers-js@1.5.4(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)':
+  '@codama/renderers-js@1.5.5(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)':
     dependencies:
       '@codama/errors': 1.4.4
       '@codama/nodes': 1.4.4
-      '@codama/renderers-core': 1.3.3
+      '@codama/renderers-core': 1.3.4
       '@codama/visitors-core': 1.4.4
       '@solana/codecs-strings': 5.0.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)
       prettier: 3.7.4
