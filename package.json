@@ -4,7 +4,7 @@
     "generate:clients": "codama run --all"
   },
   "devDependencies": {
-    "@codama/renderers-js": "^1.5",
+    "@codama/renderers-js": "^1.6",
     "@codama/renderers-rust": "~1.0",
     "@codama/visitors-core": "^1.5.0",
     "codama": "^1.5",
