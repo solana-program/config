@@ -7,125 +7,117 @@
  */
 
 import {
-  assertAccountExists,
-  assertAccountsExist,
-  combineCodec,
-  decodeAccount,
-  fetchEncodedAccount,
-  fetchEncodedAccounts,
-  getBytesDecoder,
-  getBytesEncoder,
-  getStructDecoder,
-  getStructEncoder,
-  type Account,
-  type Address,
-  type Codec,
-  type Decoder,
-  type EncodedAccount,
-  type Encoder,
-  type FetchAccountConfig,
-  type FetchAccountsConfig,
-  type MaybeAccount,
-  type MaybeEncodedAccount,
-  type ReadonlyUint8Array,
+    assertAccountExists,
+    assertAccountsExist,
+    combineCodec,
+    decodeAccount,
+    fetchEncodedAccount,
+    fetchEncodedAccounts,
+    getBytesDecoder,
+    getBytesEncoder,
+    getStructDecoder,
+    getStructEncoder,
+    type Account,
+    type Address,
+    type Codec,
+    type Decoder,
+    type EncodedAccount,
+    type Encoder,
+    type FetchAccountConfig,
+    type FetchAccountsConfig,
+    type MaybeAccount,
+    type MaybeEncodedAccount,
+    type ReadonlyUint8Array,
 } from '@solana/kit';
-import {
-  getConfigKeysDecoder,
-  getConfigKeysEncoder,
-  type ConfigKeys,
-  type ConfigKeysArgs,
-} from '../types';
+import { getConfigKeysDecoder, getConfigKeysEncoder, type ConfigKeys, type ConfigKeysArgs } from '../types';
 
 export type Config = {
-  /**
-   * List of pubkeys stored in the config account,
-   * and whether each pubkey needs to sign subsequent calls to `store`.
-   */
-  keys: ConfigKeys;
-  /** Arbitrary data to store in the config account. */
-  data: ReadonlyUint8Array;
+    /**
+     * List of pubkeys stored in the config account,
+     * and whether each pubkey needs to sign subsequent calls to `store`.
+     */
+    keys: ConfigKeys;
+    /** Arbitrary data to store in the config account. */
+    data: ReadonlyUint8Array;
 };
 
 export type ConfigArgs = {
-  /**
-   * List of pubkeys stored in the config account,
-   * and whether each pubkey needs to sign subsequent calls to `store`.
-   */
-  keys: ConfigKeysArgs;
-  /** Arbitrary data to store in the config account. */
-  data: ReadonlyUint8Array;
+    /**
+     * List of pubkeys stored in the config account,
+     * and whether each pubkey needs to sign subsequent calls to `store`.
+     */
+    keys: ConfigKeysArgs;
+    /** Arbitrary data to store in the config account. */
+    data: ReadonlyUint8Array;
 };
 
 /** Gets the encoder for {@link ConfigArgs} account data. */
 export function getConfigEncoder(): Encoder<ConfigArgs> {
-  return getStructEncoder([
-    ['keys', getConfigKeysEncoder()],
-    ['data', getBytesEncoder()],
-  ]);
+    return getStructEncoder([
+        ['keys', getConfigKeysEncoder()],
+        ['data', getBytesEncoder()],
+    ]);
 }
 
 /** Gets the decoder for {@link Config} account data. */
 export function getConfigDecoder(): Decoder<Config> {
-  return getStructDecoder([
-    ['keys', getConfigKeysDecoder()],
-    ['data', getBytesDecoder()],
-  ]);
+    return getStructDecoder([
+        ['keys', getConfigKeysDecoder()],
+        ['data', getBytesDecoder()],
+    ]);
 }
 
 /** Gets the codec for {@link Config} account data. */
 export function getConfigCodec(): Codec<ConfigArgs, Config> {
-  return combineCodec(getConfigEncoder(), getConfigDecoder());
+    return combineCodec(getConfigEncoder(), getConfigDecoder());
 }
 
 export function decodeConfig<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>
+    encodedAccount: EncodedAccount<TAddress>,
 ): Account<Config, TAddress>;
 export function decodeConfig<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>
+    encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<Config, TAddress>;
 export function decodeConfig<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
+    encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ): Account<Config, TAddress> | MaybeAccount<Config, TAddress> {
-  return decodeAccount(
-    encodedAccount as MaybeEncodedAccount<TAddress>,
-    getConfigDecoder()
-  );
+    return decodeAccount(encodedAccount as MaybeEncodedAccount<TAddress>, getConfigDecoder());
 }
 
 export async function fetchConfig<TAddress extends string = string>(
-  rpc: Parameters<typeof fetchEncodedAccount>[0],
-  address: Address<TAddress>,
-  config?: FetchAccountConfig
+    rpc: Parameters<typeof fetchEncodedAccount>[0],
+    address: Address<TAddress>,
+    config?: FetchAccountConfig,
 ): Promise<Account<Config, TAddress>> {
-  const maybeAccount = await fetchMaybeConfig(rpc, address, config);
-  assertAccountExists(maybeAccount);
-  return maybeAccount;
+    const maybeAccount = await fetchMaybeConfig(rpc, address, config);
+    assertAccountExists(maybeAccount);
+    return maybeAccount;
 }
 
 export async function fetchMaybeConfig<TAddress extends string = string>(
-  rpc: Parameters<typeof fetchEncodedAccount>[0],
-  address: Address<TAddress>,
-  config?: FetchAccountConfig
+    rpc: Parameters<typeof fetchEncodedAccount>[0],
+    address: Address<TAddress>,
+    config?: FetchAccountConfig,
 ): Promise<MaybeAccount<Config, TAddress>> {
-  const maybeAccount = await fetchEncodedAccount(rpc, address, config);
-  return decodeConfig(maybeAccount);
+    const maybeAccount = await fetchEncodedAccount(rpc, address, config);
+    return decodeConfig(maybeAccount);
 }
 
 export async function fetchAllConfig(
-  rpc: Parameters<typeof fetchEncodedAccounts>[0],
-  addresses: Array<Address>,
-  config?: FetchAccountsConfig
+    rpc: Parameters<typeof fetchEncodedAccounts>[0],
+    addresses: Array<Address>,
+    config?: FetchAccountsConfig,
 ): Promise<Account<Config>[]> {
-  const maybeAccounts = await fetchAllMaybeConfig(rpc, addresses, config);
-  assertAccountsExist(maybeAccounts);
-  return maybeAccounts;
+    const maybeAccounts = await fetchAllMaybeConfig(rpc, addresses, config);
+    assertAccountsExist(maybeAccounts);
+    return maybeAccounts;
 }
 
 export async function fetchAllMaybeConfig(
-  rpc: Parameters<typeof fetchEncodedAccounts>[0],
-  addresses: Array<Address>,
-  config?: FetchAccountsConfig
+    rpc: Parameters<typeof fetchEncodedAccounts>[0],
+    addresses: Array<Address>,
+    config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<Config>[]> {
-  const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
-  return maybeAccounts.map((maybeAccount) => decodeConfig(maybeAccount));
+    const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
+    return maybeAccounts.map(maybeAccount => decodeConfig(maybeAccount));
 }

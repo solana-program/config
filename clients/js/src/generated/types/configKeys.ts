@@ -7,21 +7,21 @@
  */
 
 import {
-  combineCodec,
-  getAddressDecoder,
-  getAddressEncoder,
-  getArrayDecoder,
-  getArrayEncoder,
-  getBooleanDecoder,
-  getBooleanEncoder,
-  getShortU16Decoder,
-  getShortU16Encoder,
-  getTupleDecoder,
-  getTupleEncoder,
-  type Address,
-  type Codec,
-  type Decoder,
-  type Encoder,
+    combineCodec,
+    getAddressDecoder,
+    getAddressEncoder,
+    getArrayDecoder,
+    getArrayEncoder,
+    getBooleanDecoder,
+    getBooleanEncoder,
+    getShortU16Decoder,
+    getShortU16Encoder,
+    getTupleDecoder,
+    getTupleEncoder,
+    type Address,
+    type Codec,
+    type Decoder,
+    type Encoder,
 } from '@solana/kit';
 
 /**
@@ -34,19 +34,13 @@ export type ConfigKeys = Array<readonly [Address, boolean]>;
 export type ConfigKeysArgs = ConfigKeys;
 
 export function getConfigKeysEncoder(): Encoder<ConfigKeysArgs> {
-  return getArrayEncoder(
-    getTupleEncoder([getAddressEncoder(), getBooleanEncoder()]),
-    { size: getShortU16Encoder() }
-  );
+    return getArrayEncoder(getTupleEncoder([getAddressEncoder(), getBooleanEncoder()]), { size: getShortU16Encoder() });
 }
 
 export function getConfigKeysDecoder(): Decoder<ConfigKeys> {
-  return getArrayDecoder(
-    getTupleDecoder([getAddressDecoder(), getBooleanDecoder()]),
-    { size: getShortU16Decoder() }
-  );
+    return getArrayDecoder(getTupleDecoder([getAddressDecoder(), getBooleanDecoder()]), { size: getShortU16Decoder() });
 }
 
 export function getConfigKeysCodec(): Codec<ConfigKeysArgs, ConfigKeys> {
-  return combineCodec(getConfigKeysEncoder(), getConfigKeysDecoder());
+    return combineCodec(getConfigKeysEncoder(), getConfigKeysDecoder());
 }

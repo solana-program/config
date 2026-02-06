@@ -1,5 +1,5 @@
 import test from 'ava';
 
-test('placeholder', (t) => {
-  t.true(true);
+test('placeholder', t => {
+    t.true(true);
 });

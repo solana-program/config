@@ -7,201 +7,171 @@
  */
 
 import {
-  AccountRole,
-  combineCodec,
-  getBytesDecoder,
-  getBytesEncoder,
-  getStructDecoder,
-  getStructEncoder,
-  type AccountMeta,
-  type AccountSignerMeta,
-  type Address,
-  type Codec,
-  type Decoder,
-  type Encoder,
-  type Instruction,
-  type InstructionWithAccounts,
-  type InstructionWithData,
-  type ReadonlyUint8Array,
-  type TransactionSigner,
-  type WritableAccount,
-  type WritableSignerAccount,
+    AccountRole,
+    combineCodec,
+    getBytesDecoder,
+    getBytesEncoder,
+    getStructDecoder,
+    getStructEncoder,
+    type AccountMeta,
+    type AccountSignerMeta,
+    type Address,
+    type Codec,
+    type Decoder,
+    type Encoder,
+    type Instruction,
+    type InstructionWithAccounts,
+    type InstructionWithData,
+    type ReadonlyUint8Array,
+    type TransactionSigner,
+    type WritableAccount,
+    type WritableSignerAccount,
 } from '@solana/kit';
 import { SOLANA_CONFIG_PROGRAM_ADDRESS } from '../programs';
 import { getAccountMetaFactory, type ResolvedAccount } from '../shared';
-import {
-  getConfigKeysDecoder,
-  getConfigKeysEncoder,
-  type ConfigKeys,
-  type ConfigKeysArgs,
-} from '../types';
+import { getConfigKeysDecoder, getConfigKeysEncoder, type ConfigKeys, type ConfigKeysArgs } from '../types';
 
 export type StoreInstruction<
-  TProgram extends string = typeof SOLANA_CONFIG_PROGRAM_ADDRESS,
-  TAccountConfigAccount extends string | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+    TProgram extends string = typeof SOLANA_CONFIG_PROGRAM_ADDRESS,
+    TAccountConfigAccount extends string | AccountMeta<string> = string,
+    TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
-  InstructionWithData<ReadonlyUint8Array> &
-  InstructionWithAccounts<
-    [
-      TAccountConfigAccount extends string
-        ? WritableAccount<TAccountConfigAccount>
-        : TAccountConfigAccount,
-      ...TRemainingAccounts,
-    ]
-  >;
+    InstructionWithData<ReadonlyUint8Array> &
+    InstructionWithAccounts<
+        [
+            TAccountConfigAccount extends string ? WritableAccount<TAccountConfigAccount> : TAccountConfigAccount,
+            ...TRemainingAccounts,
+        ]
+    >;
 
 export type StoreInstructionData = {
-  /**
-   * List of pubkeys to store in the config account,
-   * and whether each pubkey needs to sign subsequent calls to `store`.
-   * Non-signer pubkeys do not need to be passed to the program as accounts.
-   */
-  keys: ConfigKeys;
-  /** Arbitrary data to store in the config account. */
-  data: ReadonlyUint8Array;
+    /**
+     * List of pubkeys to store in the config account,
+     * and whether each pubkey needs to sign subsequent calls to `store`.
+     * Non-signer pubkeys do not need to be passed to the program as accounts.
+     */
+    keys: ConfigKeys;
+    /** Arbitrary data to store in the config account. */
+    data: ReadonlyUint8Array;
 };
 
 export type StoreInstructionDataArgs = {
-  /**
-   * List of pubkeys to store in the config account,
-   * and whether each pubkey needs to sign subsequent calls to `store`.
-   * Non-signer pubkeys do not need to be passed to the program as accounts.
-   */
-  keys: ConfigKeysArgs;
-  /** Arbitrary data to store in the config account. */
-  data: ReadonlyUint8Array;
+    /**
+     * List of pubkeys to store in the config account,
+     * and whether each pubkey needs to sign subsequent calls to `store`.
+     * Non-signer pubkeys do not need to be passed to the program as accounts.
+     */
+    keys: ConfigKeysArgs;
+    /** Arbitrary data to store in the config account. */
+    data: ReadonlyUint8Array;
 };
 
 export function getStoreInstructionDataEncoder(): Encoder<StoreInstructionDataArgs> {
-  return getStructEncoder([
-    ['keys', getConfigKeysEncoder()],
-    ['data', getBytesEncoder()],
-  ]);
+    return getStructEncoder([
+        ['keys', getConfigKeysEncoder()],
+        ['data', getBytesEncoder()],
+    ]);
 }
 
 export function getStoreInstructionDataDecoder(): Decoder<StoreInstructionData> {
-  return getStructDecoder([
-    ['keys', getConfigKeysDecoder()],
-    ['data', getBytesDecoder()],
-  ]);
+    return getStructDecoder([
+        ['keys', getConfigKeysDecoder()],
+        ['data', getBytesDecoder()],
+    ]);
 }
 
-export function getStoreInstructionDataCodec(): Codec<
-  StoreInstructionDataArgs,
-  StoreInstructionData
-> {
-  return combineCodec(
-    getStoreInstructionDataEncoder(),
-    getStoreInstructionDataDecoder()
-  );
+export function getStoreInstructionDataCodec(): Codec<StoreInstructionDataArgs, StoreInstructionData> {
+    return combineCodec(getStoreInstructionDataEncoder(), getStoreInstructionDataDecoder());
 }
 
 export type StoreInput<TAccountConfigAccount extends string = string> = {
-  /**
-   * The config account to be modified.
-   * Must sign during the first call to `store` to initialize the account,
-   * or if no signers are configured in the config data.
-   */
-  configAccount:
-    | Address<TAccountConfigAccount>
-    | TransactionSigner<TAccountConfigAccount>;
-  keys: StoreInstructionDataArgs['keys'];
-  data: StoreInstructionDataArgs['data'];
-  signers?: Array<TransactionSigner>;
-};
-
-export function getStoreInstruction<
-  TAccountConfigAccount extends string,
-  TProgramAddress extends Address = typeof SOLANA_CONFIG_PROGRAM_ADDRESS,
->(
-  input: StoreInput<TAccountConfigAccount>,
-  config?: { programAddress?: TProgramAddress }
-): StoreInstruction<
-  TProgramAddress,
-  (typeof input)['configAccount'] extends TransactionSigner<TAccountConfigAccount>
-    ? WritableSignerAccount<TAccountConfigAccount> &
-        AccountSignerMeta<TAccountConfigAccount>
-    : TAccountConfigAccount
-> {
-  // Program address.
-  const programAddress =
-    config?.programAddress ?? SOLANA_CONFIG_PROGRAM_ADDRESS;
-
-  // Original accounts.
-  const originalAccounts = {
-    configAccount: { value: input.configAccount ?? null, isWritable: true },
-  };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
-
-  // Original args.
-  const args = { ...input };
-
-  // Remaining accounts.
-  const remainingAccounts: AccountMeta[] = (args.signers ?? []).map(
-    (signer) => ({
-      address: signer.address,
-      role: AccountRole.READONLY_SIGNER,
-      signer,
-    })
-  );
-
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'omitted');
-  return Object.freeze({
-    accounts: [getAccountMeta(accounts.configAccount), ...remainingAccounts],
-    data: getStoreInstructionDataEncoder().encode(
-      args as StoreInstructionDataArgs
-    ),
-    programAddress,
-  } as StoreInstruction<
-    TProgramAddress,
-    (typeof input)['configAccount'] extends TransactionSigner<TAccountConfigAccount>
-      ? WritableSignerAccount<TAccountConfigAccount> &
-          AccountSignerMeta<TAccountConfigAccount>
-      : TAccountConfigAccount
-  >);
-}
-
-export type ParsedStoreInstruction<
-  TProgram extends string = typeof SOLANA_CONFIG_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
-> = {
-  programAddress: Address<TProgram>;
-  accounts: {
     /**
      * The config account to be modified.
      * Must sign during the first call to `store` to initialize the account,
      * or if no signers are configured in the config data.
      */
-    configAccount: TAccountMetas[0];
-  };
-  data: StoreInstructionData;
+    configAccount: Address<TAccountConfigAccount> | TransactionSigner<TAccountConfigAccount>;
+    keys: StoreInstructionDataArgs['keys'];
+    data: StoreInstructionDataArgs['data'];
+    signers?: Array<TransactionSigner>;
 };
 
-export function parseStoreInstruction<
-  TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
+export function getStoreInstruction<
+    TAccountConfigAccount extends string,
+    TProgramAddress extends Address = typeof SOLANA_CONFIG_PROGRAM_ADDRESS,
 >(
-  instruction: Instruction<TProgram> &
-    InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    input: StoreInput<TAccountConfigAccount>,
+    config?: { programAddress?: TProgramAddress },
+): StoreInstruction<
+    TProgramAddress,
+    (typeof input)['configAccount'] extends TransactionSigner<TAccountConfigAccount>
+        ? WritableSignerAccount<TAccountConfigAccount> & AccountSignerMeta<TAccountConfigAccount>
+        : TAccountConfigAccount
+> {
+    // Program address.
+    const programAddress = config?.programAddress ?? SOLANA_CONFIG_PROGRAM_ADDRESS;
+
+    // Original accounts.
+    const originalAccounts = { configAccount: { value: input.configAccount ?? null, isWritable: true } };
+    const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedAccount>;
+
+    // Original args.
+    const args = { ...input };
+
+    // Remaining accounts.
+    const remainingAccounts: AccountMeta[] = (args.signers ?? []).map(signer => ({
+        address: signer.address,
+        role: AccountRole.READONLY_SIGNER,
+        signer,
+    }));
+
+    const getAccountMeta = getAccountMetaFactory(programAddress, 'omitted');
+    return Object.freeze({
+        accounts: [getAccountMeta(accounts.configAccount), ...remainingAccounts],
+        data: getStoreInstructionDataEncoder().encode(args as StoreInstructionDataArgs),
+        programAddress,
+    } as StoreInstruction<
+        TProgramAddress,
+        (typeof input)['configAccount'] extends TransactionSigner<TAccountConfigAccount>
+            ? WritableSignerAccount<TAccountConfigAccount> & AccountSignerMeta<TAccountConfigAccount>
+            : TAccountConfigAccount
+    >);
+}
+
+export type ParsedStoreInstruction<
+    TProgram extends string = typeof SOLANA_CONFIG_PROGRAM_ADDRESS,
+    TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+> = {
+    programAddress: Address<TProgram>;
+    accounts: {
+        /**
+         * The config account to be modified.
+         * Must sign during the first call to `store` to initialize the account,
+         * or if no signers are configured in the config data.
+         */
+        configAccount: TAccountMetas[0];
+    };
+    data: StoreInstructionData;
+};
+
+export function parseStoreInstruction<TProgram extends string, TAccountMetas extends readonly AccountMeta[]>(
+    instruction: Instruction<TProgram> &
+        InstructionWithAccounts<TAccountMetas> &
+        InstructionWithData<ReadonlyUint8Array>,
 ): ParsedStoreInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 1) {
-    // TODO: Coded error.
-    throw new Error('Not enough accounts');
-  }
-  let accountIndex = 0;
-  const getNextAccount = () => {
-    const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
-    accountIndex += 1;
-    return accountMeta;
-  };
-  return {
-    programAddress: instruction.programAddress,
-    accounts: { configAccount: getNextAccount() },
-    data: getStoreInstructionDataDecoder().decode(instruction.data),
-  };
+    if (instruction.accounts.length < 1) {
+        // TODO: Coded error.
+        throw new Error('Not enough accounts');
+    }
+    let accountIndex = 0;
+    const getNextAccount = () => {
+        const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
+        accountIndex += 1;
+        return accountMeta;
+    };
+    return {
+        programAddress: instruction.programAddress,
+        accounts: { configAccount: getNextAccount() },
+        data: getStoreInstructionDataDecoder().decode(instruction.data),
+    };
 }
