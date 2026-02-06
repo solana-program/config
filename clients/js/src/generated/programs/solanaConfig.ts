@@ -10,18 +10,16 @@ import { type Address } from '@solana/kit';
 import { type ParsedStoreInstruction } from '../instructions';
 
 export const SOLANA_CONFIG_PROGRAM_ADDRESS =
-  'Config1111111111111111111111111111111111111' as Address<'Config1111111111111111111111111111111111111'>;
+    'Config1111111111111111111111111111111111111' as Address<'Config1111111111111111111111111111111111111'>;
 
 export enum SolanaConfigAccount {
-  Config,
+    Config,
 }
 
 export enum SolanaConfigInstruction {
-  Store,
+    Store,
 }
 
-export type ParsedSolanaConfigInstruction<
-  TProgram extends string = 'Config1111111111111111111111111111111111111',
-> = {
-  instructionType: SolanaConfigInstruction.Store;
+export type ParsedSolanaConfigInstruction<TProgram extends string = 'Config1111111111111111111111111111111111111'> = {
+    instructionType: SolanaConfigInstruction.Store;
 } & ParsedStoreInstruction<TProgram>;

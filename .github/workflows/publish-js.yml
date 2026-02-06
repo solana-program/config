@@ -57,7 +57,7 @@ jobs:
     needs: set_env
     uses: solana-program/actions/.github/workflows/publish-js.yml@main
     with:
-      sbpf-program-packages: "program"
+      sbpf-program-packages: 'program'
       solana-cli-version: ${{ needs.set_env.outputs.SOLANA_CLI_VERSION }}
       target: ${{ needs.set_env.outputs.TARGET }}
       package-path: ${{ inputs.package-path }}

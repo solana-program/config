@@ -3,39 +3,40 @@ import { config } from 'dotenv';
 
 config({ path: path.resolve(process.cwd(), 'vars.env') });
 
-const { default: prettierOptions } = await import(
-  path.resolve('clients', 'js', '.prettierrc.json'),
-  { with: { type: 'json' } }
-);
-
 export default {
-  idl: 'program/idl.json',
-  before: [],
-  scripts: {
-    js: {
-      from: '@codama/renderers-js',
-      args: ['clients/js/src/generated', { prettierOptions }],
-    },
-    rust: [
-      {
-        from: '@codama/visitors-core#deleteNodesVisitor',
-        args: [['[definedTypeNode]configKeys']],
-      },
-      {
-        from: '@codama/renderers-rust',
-        args: [
-          'clients/rust/src/generated',
-          {
-            anchorTraits: false,
-            crateFolder: 'clients/rust',
-            formatCode: true,
-            linkOverrides: {
-              definedTypes: { configKeys: 'hooked' },
+    idl: 'program/idl.json',
+    before: [],
+    scripts: {
+        js: {
+            from: '@codama/renderers-js',
+            args: [
+                'clients/js/src/generated',
+                {
+                    packageFolder: 'clients/js',
+                    syncPackageJson: true,
+                },
+            ],
+        },
+        rust: [
+            {
+                from: '@codama/visitors-core#deleteNodesVisitor',
+                args: [['[definedTypeNode]configKeys']],
             },
-            toolchain: `+${process.env.RUST_TOOLCHAIN_NIGHTLY}`,
-          },
+            {
+                from: '@codama/renderers-rust',
+                args: [
+                    'clients/rust/src/generated',
+                    {
+                        anchorTraits: false,
+                        crateFolder: 'clients/rust',
+                        formatCode: true,
+                        linkOverrides: {
+                            definedTypes: { configKeys: 'hooked' },
+                        },
+                        toolchain: `+${process.env.RUST_TOOLCHAIN_NIGHTLY}`,
+                    },
+                ],
+            },
         ],
-      },
-    ],
-  },
+    },
 };
