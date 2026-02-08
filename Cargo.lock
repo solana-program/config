@@ -4184,7 +4184,7 @@ dependencies = [
  "solana-account-info 3.0.0",
  "solana-bincode 3.0.0",
  "solana-config-interface 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "solana-hash 3.0.0",
+ "solana-hash 4.0.0",
  "solana-instruction 3.0.0",
  "solana-msg 3.0.0",
  "solana-program-entrypoint 3.1.0",
@@ -4563,6 +4563,12 @@ dependencies = [
  "solana-atomic-u64 3.0.0",
  "solana-sanitize 3.0.0",
 ]
+
+[[package]]
+name = "solana-hash"
+version = "4.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ff2672d370be2deb51fc3cfeca8c8d9327b84e7db9418ad90d190defb6afbe36"
 
 [[package]]
 name = "solana-inflation"
