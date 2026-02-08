@@ -32,7 +32,7 @@ solana-config-interface = { version = "2.0.0" }
 solana-hash = "3.0.0"
 solana-instruction = "3.0.0"
 solana-msg = "3.0.0"
-solana-program = "2.0.0"
+solana-program = "3.0.0"
 solana-program-entrypoint = "3.0.0"
 solana-program-error = "3.0.0"
 solana-pubkey = "3.0.0"
