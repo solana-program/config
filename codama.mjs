@@ -25,7 +25,7 @@ export default {
             {
                 from: '@codama/renderers-rust',
                 args: [
-                    'clients/rust/src/generated',
+                    'clients/rust',
                     {
                         anchorTraits: false,
                         crateFolder: 'clients/rust',
