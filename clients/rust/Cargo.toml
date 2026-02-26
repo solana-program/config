@@ -23,9 +23,15 @@ bincode = { workspace = true, optional = true }
 borsh = { workspace = true }
 kaigan = { workspace = true }
 serde = { workspace = true, features = ["derive"], optional = true }
+solana-account = { workspace = true }
+solana-account-info = { workspace = true }
 solana-client = { workspace = true, optional = true }
 solana-config-interface = { version = "1", optional = true }
+solana-cpi = { workspace = true }
+solana-instruction = { workspace = true }
 solana-program = { workspace = true, features = ["borsh"] }
+solana-program-error = { workspace = true }
+solana-pubkey = { workspace = true }
 solana-sdk = { workspace = true, optional = true }
 
 [dev-dependencies]
