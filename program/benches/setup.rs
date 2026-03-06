@@ -18,7 +18,7 @@ pub struct BenchContext {
 
 impl BenchContext {
     /// Convert to a `Bench`.
-    pub fn bench(&self) -> Bench {
+    pub fn bench(&self) -> Bench<'_> {
         (self.label.as_str(), &self.instruction, &self.accounts)
     }
 }

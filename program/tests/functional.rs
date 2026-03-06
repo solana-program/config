@@ -76,7 +76,7 @@ fn test_process_create_ok() {
         &[(config, config_account)],
         &[
             Check::success(),
-            Check::compute_units(655),
+            Check::compute_units(646),
             Check::account(&config)
                 .data(
                     &bincode::serialize(&(ConfigKeys { keys: vec![] }, MyConfig::default()))
@@ -104,7 +104,7 @@ fn test_process_store_ok() {
         &[(config, config_account)],
         &[
             Check::success(),
-            Check::compute_units(655),
+            Check::compute_units(646),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, my_config)).unwrap())
                 .build(),
@@ -179,7 +179,7 @@ fn test_process_store_with_additional_signers() {
         ],
         &[
             Check::success(),
-            Check::compute_units(3_325),
+            Check::compute_units(3_324),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, my_config)).unwrap())
                 .build(),
@@ -321,7 +321,7 @@ fn test_config_updates() {
             (signer0, Account::default()),
             (signer1, Account::default()),
         ],
-        &[Check::success(), Check::compute_units(3_325)],
+        &[Check::success(), Check::compute_units(3_324)],
     );
 
     // Use this for next invoke.
@@ -339,7 +339,7 @@ fn test_config_updates() {
         ],
         &[
             Check::success(),
-            Check::compute_units(3_327),
+            Check::compute_units(3_326),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, new_config)).unwrap())
                 .build(),
@@ -452,7 +452,7 @@ fn test_config_update_contains_duplicates_fails() {
             (signer0, Account::default()),
             (signer1, Account::default()),
         ],
-        &[Check::success(), Check::compute_units(3_325)],
+        &[Check::success(), Check::compute_units(3_324)],
     );
 
     // Attempt update with duplicate signer inputs.
@@ -493,7 +493,7 @@ fn test_config_updates_requiring_config() {
         &[(config, config_account), (signer0, Account::default())],
         &[
             Check::success(),
-            Check::compute_units(3_169),
+            Check::compute_units(3_141),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys: keys.clone() }, my_config)).unwrap())
                 .build(),
@@ -514,7 +514,7 @@ fn test_config_updates_requiring_config() {
         ],
         &[
             Check::success(),
-            Check::compute_units(3_169),
+            Check::compute_units(3_141),
             Check::account(&config)
                 .data(&bincode::serialize(&(ConfigKeys { keys }, new_config)).unwrap())
                 .build(),
@@ -611,7 +611,7 @@ fn test_maximum_keys_input() {
     let result = mollusk.process_and_validate_instruction(
         &instruction,
         &[(config, config_account)],
-        &[Check::success(), Check::compute_units(25_662)],
+        &[Check::success(), Check::compute_units(25_103)],
     );
 
     // Use this for next invoke.
@@ -624,7 +624,7 @@ fn test_maximum_keys_input() {
     let result = mollusk.process_and_validate_instruction(
         &instruction,
         &[(config, updated_config_account)],
-        &[Check::success(), Check::compute_units(25_662)],
+        &[Check::success(), Check::compute_units(25_103)],
     );
 
     // Use this for next invoke.
