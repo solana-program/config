@@ -4600,7 +4600,7 @@ dependencies = [
  "solana-account-info 3.0.0",
  "solana-bincode 3.0.0",
  "solana-config-interface 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "solana-hash 3.1.0",
+ "solana-hash 4.1.0",
  "solana-instruction 3.0.0",
  "solana-msg 3.0.0",
  "solana-program-entrypoint 3.1.0",
