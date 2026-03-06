@@ -1,45 +1,45 @@
-#### 2026-03-05 23:00:25.920913340 UTC
+#### 2026-03-06 10:20:46.913352811 UTC
 
-Solana CLI Version: solana-cli 3.1.8 (src:416d86e6; feat:1620780344, client:Agave)
+Solana CLI Version: solana-cli 3.1.8 (src:e7ee8b6f; feat:1620780344, client:Agave)
 
 | Name | CUs | Delta |
 |------|------|-------|
-| config_small_init_0_keys | 680 | +25 |
-| config_small_init_1_keys | 1138 | +7 |
-| config_small_init_5_keys | 2604 | -159 |
-| config_small_init_10_keys | 4414 | -369 |
-| config_small_init_25_keys | 10173 | -1,116 |
-| config_small_init_37_keys | 14514 | -1,685 |
-| config_small_store_0_keys | 680 | +25 |
-| config_small_store_1_keys | 1420 | +6 |
-| config_small_store_5_keys | 3894 | -172 |
-| config_small_store_10_keys | 6964 | -397 |
-| config_small_store_25_keys | 16503 | -1,189 |
-| config_small_store_37_keys | 23868 | -1,794 |
-| config_medium_init_0_keys | 680 | +25 |
-| config_medium_init_1_keys | 1138 | +7 |
-| config_medium_init_5_keys | 2604 | -159 |
-| config_medium_init_10_keys | 4414 | -369 |
-| config_medium_init_25_keys | 10173 | -1,116 |
-| config_medium_init_37_keys | 14514 | -1,685 |
-| config_medium_store_0_keys | 680 | +25 |
-| config_medium_store_1_keys | 1420 | +6 |
-| config_medium_store_5_keys | 3894 | -172 |
-| config_medium_store_10_keys | 6964 | -397 |
-| config_medium_store_25_keys | 16503 | -1,189 |
-| config_medium_store_37_keys | 23868 | -1,794 |
-| config_large_init_0_keys | 801 | +25 |
-| config_large_init_1_keys | 1259 | +7 |
-| config_large_init_5_keys | 2725 | -159 |
-| config_large_init_10_keys | 4536 | -369 |
-| config_large_init_25_keys | 10297 | -1,116 |
-| config_large_init_37_keys | 14639 | -1,685 |
-| config_large_store_0_keys | 801 | +25 |
-| config_large_store_1_keys | 1541 | +6 |
-| config_large_store_5_keys | 4015 | -172 |
-| config_large_store_10_keys | 7086 | -397 |
-| config_large_store_25_keys | 16627 | -1,189 |
-| config_large_store_37_keys | 23993 | -1,794 |
+| config_small_init_0_keys | 646 | -9 |
+| config_small_init_1_keys | 1123 | -8 |
+| config_small_init_5_keys | 2710 | -53 |
+| config_small_init_10_keys | 4675 | -108 |
+| config_small_init_25_keys | 10988 | -301 |
+| config_small_init_37_keys | 15747 | -452 |
+| config_small_store_0_keys | 646 | -9 |
+| config_small_store_1_keys | 1407 | -7 |
+| config_small_store_5_keys | 4002 | -64 |
+| config_small_store_10_keys | 7227 | -134 |
+| config_small_store_25_keys | 17320 | -372 |
+| config_small_store_37_keys | 25103 | -559 |
+| config_medium_init_0_keys | 646 | -9 |
+| config_medium_init_1_keys | 1123 | -8 |
+| config_medium_init_5_keys | 2710 | -53 |
+| config_medium_init_10_keys | 4675 | -108 |
+| config_medium_init_25_keys | 10988 | -301 |
+| config_medium_init_37_keys | 15747 | -452 |
+| config_medium_store_0_keys | 646 | -9 |
+| config_medium_store_1_keys | 1407 | -7 |
+| config_medium_store_5_keys | 4002 | -64 |
+| config_medium_store_10_keys | 7227 | -134 |
+| config_medium_store_25_keys | 17320 | -372 |
+| config_medium_store_37_keys | 25103 | -559 |
+| config_large_init_0_keys | 767 | -9 |
+| config_large_init_1_keys | 1244 | -8 |
+| config_large_init_5_keys | 2831 | -53 |
+| config_large_init_10_keys | 4797 | -108 |
+| config_large_init_25_keys | 11112 | -301 |
+| config_large_init_37_keys | 15872 | -452 |
+| config_large_store_0_keys | 767 | -9 |
+| config_large_store_1_keys | 1528 | -7 |
+| config_large_store_5_keys | 4123 | -64 |
+| config_large_store_10_keys | 7349 | -134 |
+| config_large_store_25_keys | 17444 | -372 |
+| config_large_store_37_keys | 25228 | -559 |
 
 #### 2025-10-29 22:42:22.511198962 UTC
 
