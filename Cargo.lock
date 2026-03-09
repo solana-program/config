@@ -90,7 +90,7 @@ dependencies = [
  "solana-keccak-hasher 3.0.0",
  "solana-loader-v3-interface 6.1.0",
  "solana-poseidon",
- "solana-program-entrypoint 3.1.0",
+ "solana-program-entrypoint 3.1.1",
  "solana-program-runtime",
  "solana-pubkey 3.0.0",
  "solana-sbpf",
@@ -4345,7 +4345,7 @@ dependencies = [
  "solana-loader-v3-interface 6.1.0",
  "solana-loader-v4-interface 3.1.0",
  "solana-packet 3.0.0",
- "solana-program-entrypoint 3.1.0",
+ "solana-program-entrypoint 3.1.1",
  "solana-program-runtime",
  "solana-pubkey 3.0.0",
  "solana-sbpf",
@@ -4603,7 +4603,7 @@ dependencies = [
  "solana-hash 4.1.0",
  "solana-instruction 3.0.0",
  "solana-msg 3.0.0",
- "solana-program-entrypoint 3.1.0",
+ "solana-program-entrypoint 3.1.1",
  "solana-program-error 3.0.0",
  "solana-pubkey 4.0.0",
  "solana-rent 3.0.0",
@@ -5726,15 +5726,14 @@ dependencies = [
 
 [[package]]
 name = "solana-program-entrypoint"
-version = "3.1.0"
+version = "3.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6557cf5b5e91745d1667447438a1baa7823c6086e4ece67f8e6ebfa7a8f72660"
+checksum = "84c9b0a1ff494e05f503a08b3d51150b73aa639544631e510279d6375f290997"
 dependencies = [
  "solana-account-info 3.0.0",
- "solana-define-syscall 3.0.0",
- "solana-msg 3.0.0",
+ "solana-define-syscall 4.0.1",
  "solana-program-error 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
 ]
 
 [[package]]
@@ -5833,7 +5832,7 @@ dependencies = [
  "solana-instruction 3.0.0",
  "solana-last-restart-slot 3.0.0",
  "solana-loader-v3-interface 6.1.0",
- "solana-program-entrypoint 3.1.0",
+ "solana-program-entrypoint 3.1.1",
  "solana-pubkey 3.0.0",
  "solana-rent 3.0.0",
  "solana-sbpf",
@@ -6928,7 +6927,7 @@ dependencies = [
  "solana-hash 3.1.0",
  "solana-instruction 3.0.0",
  "solana-last-restart-slot 3.0.0",
- "solana-program-entrypoint 3.1.0",
+ "solana-program-entrypoint 3.1.1",
  "solana-program-error 3.0.0",
  "solana-program-memory 3.0.0",
  "solana-pubkey 3.0.0",
