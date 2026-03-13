@@ -3683,7 +3683,7 @@ dependencies = [
  "security-framework",
  "security-framework-sys",
  "webpki-root-certs",
- "windows-sys 0.60.2",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -4565,7 +4565,7 @@ dependencies = [
  "solana-instruction 3.0.0",
  "solana-pubkey 4.0.0",
  "solana-sdk-ids 3.1.0",
- "solana-short-vec 3.0.0",
+ "solana-short-vec 3.2.0",
  "solana-system-interface 2.0.0",
 ]
 
@@ -4582,7 +4582,7 @@ dependencies = [
  "solana-instruction 3.0.0",
  "solana-pubkey 3.0.0",
  "solana-sdk-ids 3.1.0",
- "solana-short-vec 3.0.0",
+ "solana-short-vec 3.2.0",
  "solana-system-interface 2.0.0",
 ]
 
@@ -4607,7 +4607,7 @@ dependencies = [
  "solana-program-error 3.0.0",
  "solana-pubkey 4.0.0",
  "solana-rent 3.0.0",
- "solana-short-vec 3.0.0",
+ "solana-short-vec 3.2.0",
  "thiserror 2.0.17",
 ]
 
@@ -5365,7 +5365,7 @@ dependencies = [
  "solana-instruction 3.0.0",
  "solana-sanitize 3.0.1",
  "solana-sdk-ids 3.1.0",
- "solana-short-vec 3.0.0",
+ "solana-short-vec 3.2.0",
  "solana-transaction-error 3.0.0",
 ]
 
@@ -5555,7 +5555,7 @@ dependencies = [
  "solana-pubkey 3.0.0",
  "solana-rayon-threadlimit",
  "solana-sdk-ids 3.1.0",
- "solana-short-vec 3.0.0",
+ "solana-short-vec 3.2.0",
  "solana-signature 3.1.0",
  "solana-time-utils 3.0.0",
  "solana-transaction-context 3.1.9",
@@ -6502,11 +6502,11 @@ dependencies = [
 
 [[package]]
 name = "solana-short-vec"
-version = "3.0.0"
+version = "3.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b69d029da5428fc1c57f7d49101b2077c61f049d4112cd5fb8456567cc7d2638"
+checksum = "de3bd991c2cc415291c86bb0b6b4d53e93d13bb40344e4c5a2884e0e4f5fa93f"
 dependencies = [
- "serde",
+ "serde_core",
 ]
 
 [[package]]
@@ -7061,7 +7061,7 @@ dependencies = [
  "solana-message 3.0.1",
  "solana-sanitize 3.0.1",
  "solana-sdk-ids 3.1.0",
- "solana-short-vec 3.0.0",
+ "solana-short-vec 3.2.0",
  "solana-signature 3.1.0",
  "solana-signer 3.0.0",
  "solana-transaction-error 3.0.0",
@@ -7138,7 +7138,7 @@ dependencies = [
  "rand 0.8.5",
  "solana-packet 3.0.0",
  "solana-perf",
- "solana-short-vec 3.0.0",
+ "solana-short-vec 3.2.0",
  "solana-signature 3.1.0",
 ]
 
@@ -7248,7 +7248,7 @@ dependencies = [
  "solana-sdk-ids 3.1.0",
  "solana-serde-varint 3.0.1",
  "solana-serialize-utils 3.1.0",
- "solana-short-vec 3.0.0",
+ "solana-short-vec 3.2.0",
  "solana-system-interface 2.0.0",
 ]
 
