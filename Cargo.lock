@@ -3683,7 +3683,7 @@ dependencies = [
  "security-framework",
  "security-framework-sys",
  "webpki-root-certs",
- "windows-sys 0.60.2",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -4248,12 +4248,12 @@ dependencies = [
 
 [[package]]
 name = "solana-bincode"
-version = "3.0.0"
+version = "3.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "534a37aecd21986089224d0c01006a75b96ac6fb2f418c24edc15baf0d2a4c99"
+checksum = "278a1a5bad62cd9da89ac8d4b7ec444e83caa8ae96aa656dfc27684b28d49a5d"
 dependencies = [
  "bincode",
- "serde",
+ "serde_core",
  "solana-instruction-error",
 ]
 
@@ -4339,7 +4339,7 @@ dependencies = [
  "bincode",
  "qualifier_attr",
  "solana-account 3.4.0",
- "solana-bincode 3.0.0",
+ "solana-bincode 3.1.0",
  "solana-clock 3.0.0",
  "solana-instruction 3.0.0",
  "solana-loader-v3-interface 6.1.0",
@@ -4598,7 +4598,7 @@ dependencies = [
  "serde",
  "solana-account 3.4.0",
  "solana-account-info 3.0.0",
- "solana-bincode 3.0.0",
+ "solana-bincode 3.1.0",
  "solana-config-interface 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "solana-hash 4.1.0",
  "solana-instruction 3.0.0",
@@ -6839,7 +6839,7 @@ dependencies = [
  "log",
  "serde",
  "solana-account 3.4.0",
- "solana-bincode 3.0.0",
+ "solana-bincode 3.1.0",
  "solana-fee-calculator 3.0.0",
  "solana-instruction 3.0.0",
  "solana-nonce 3.0.0",
