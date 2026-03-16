@@ -15,7 +15,7 @@ edition = "2021"
 
 [workspace.dependencies]
 assert_matches = "1.5.0"
-bincode = "1.3.3"
+bincode = "3.0.0"
 borsh = "0.10"
 kaigan = "0.2.6"
 mollusk-svm = "0.10.3"
