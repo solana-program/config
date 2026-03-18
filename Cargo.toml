@@ -42,7 +42,7 @@ solana-sdk-ids = "3.1.0"
 solana-short-vec = "3.2.0"
 solana-system-interface = "2.0.0"
 solana-rent = "3.0.0"
-thiserror = "2.0.17"
+thiserror = "2.0.18"
 
 [workspace.metadata.spellcheck]
 config = "scripts/spellcheck.toml"
