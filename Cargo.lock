@@ -4171,7 +4171,7 @@ dependencies = [
  "solana-program-error 3.0.0",
  "solana-sanitize 3.0.1",
  "solana-sha256-hasher 3.1.0",
- "wincode 0.4.8",
+ "wincode",
 ]
 
 [[package]]
@@ -4614,7 +4614,7 @@ dependencies = [
  "solana-account-info 3.1.0",
  "solana-bincode 3.1.0",
  "solana-config-interface 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "solana-hash 4.1.0",
+ "solana-hash 4.2.0",
  "solana-instruction 3.2.0",
  "solana-msg 3.0.0",
  "solana-program-entrypoint 3.1.1",
@@ -5037,14 +5037,14 @@ version = "3.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "337c246447142f660f778cf6cb582beba8e28deb05b3b24bfb9ffd7c562e5f41"
 dependencies = [
- "solana-hash 4.1.0",
+ "solana-hash 4.2.0",
 ]
 
 [[package]]
 name = "solana-hash"
-version = "4.1.0"
+version = "4.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5b6100d68f90726ddb4d2ac7d00e8b6cf9ce8e4ccdfbb9112b1d766045753241"
+checksum = "8064ea1d591ec791be95245058ca40f4f5345d390c200069d0f79bbf55bfae55"
 dependencies = [
  "borsh 1.6.0",
  "bytemuck",
@@ -5054,7 +5054,7 @@ dependencies = [
  "serde_derive",
  "solana-atomic-u64 3.0.0",
  "solana-sanitize 3.0.1",
- "wincode 0.2.5",
+ "wincode",
 ]
 
 [[package]]
@@ -6503,7 +6503,7 @@ checksum = "db7dc3011ea4c0334aaaa7e7128cb390ecf546b28d412e9bf2064680f57f588f"
 dependencies = [
  "sha2 0.10.8",
  "solana-define-syscall 4.0.1",
- "solana-hash 4.1.0",
+ "solana-hash 4.2.0",
 ]
 
 [[package]]
@@ -7070,7 +7070,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "solana-address 2.3.0",
- "solana-hash 4.1.0",
+ "solana-hash 4.2.0",
  "solana-instruction 3.2.0",
  "solana-instruction-error",
  "solana-message 3.0.1",
@@ -8233,18 +8233,6 @@ checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 
 [[package]]
 name = "wincode"
-version = "0.2.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d5cec722a3274e47d1524cbe2cea762f2c19d615bd9d73ada21db9066349d57e"
-dependencies = [
- "proc-macro2",
- "quote",
- "thiserror 2.0.18",
- "wincode-derive 0.2.3",
-]
-
-[[package]]
-name = "wincode"
 version = "0.4.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dc91ddd8c932a38bbec58ed536d9e93ce9cd01b6af9b6de3c501132cf98ddec6"
@@ -8253,19 +8241,7 @@ dependencies = [
  "proc-macro2",
  "quote",
  "thiserror 2.0.18",
- "wincode-derive 0.4.3",
-]
-
-[[package]]
-name = "wincode-derive"
-version = "0.2.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8961eb04054a1b2e026b5628e24da7e001350249a787e1a85aa961f33dc5f286"
-dependencies = [
- "darling 0.21.3",
- "proc-macro2",
- "quote",
- "syn 2.0.117",
+ "wincode-derive",
 ]
 
 [[package]]
