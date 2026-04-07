@@ -1,7 +1,7 @@
 //! Program instruction helpers.
 
 pub use solana_config_interface::instruction::{create_account_with_max_config_space, store};
-use solana_program::{instruction::Instruction, pubkey::Pubkey};
+use {solana_instruction::Instruction, solana_pubkey::Pubkey};
 
 /// Trait defining config state to be stored at the end of the account data.
 #[deprecated(since = "1.0.0", note = "This trait is no longer supported")]

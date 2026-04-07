@@ -1,11 +1,8 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use {
     borsh::{BorshDeserialize, BorshSerialize},
-    solana_program::pubkey::Pubkey,
-};
-#[cfg(feature = "serde")]
-use {
-    serde::{Deserialize, Deserializer, Serialize, Serializer},
-    solana_program::short_vec,
+    solana_pubkey::Pubkey,
 };
 
 struct ShortU16(u16);
@@ -89,7 +86,7 @@ impl<T: Serialize> Serialize for ShortVec<T> {
     where
         S: Serializer,
     {
-        short_vec::serialize(&self.0, serializer)
+        solana_short_vec::serialize(&self.0, serializer)
     }
 }
 
@@ -99,7 +96,7 @@ impl<'de, T: Deserialize<'de>> Deserialize<'de> for ShortVec<T> {
     where
         D: Deserializer<'de>,
     {
-        short_vec::deserialize(deserializer).map(ShortVec)
+        solana_short_vec::deserialize(deserializer).map(ShortVec)
     }
 }
 
@@ -141,7 +138,7 @@ mod tests {
         bincode::deserialize,
         solana_program::{
             pubkey::Pubkey,
-            short_vec::{decode_shortu16_len, ShortU16},
+            solana_short_vec::{decode_shortu16_len, ShortU16},
         },
     };
     #[cfg(feature = "serde")]

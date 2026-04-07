@@ -29,10 +29,10 @@ solana-client = { workspace = true, optional = true }
 solana-config-interface = { version = "1", optional = true }
 solana-cpi = { workspace = true }
 solana-instruction = { workspace = true }
-solana-program = { workspace = true, features = ["borsh"] }
 solana-program-error = { workspace = true }
 solana-pubkey = { workspace = true }
 solana-sdk = { workspace = true, optional = true }
+solana-short-vec = { workspace = true }
 
 [dev-dependencies]
 assert_matches = { workspace = true }
