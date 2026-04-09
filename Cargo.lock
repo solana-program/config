@@ -4628,7 +4628,7 @@ dependencies = [
  "solana-config-interface 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "solana-hash 4.3.0",
  "solana-instruction 3.2.0",
- "solana-msg 3.0.0",
+ "solana-msg 3.1.0",
  "solana-program-entrypoint 3.1.1",
  "solana-program-error 3.0.0",
  "solana-pubkey 4.2.0",
@@ -5423,11 +5423,11 @@ dependencies = [
 
 [[package]]
 name = "solana-msg"
-version = "3.0.0"
+version = "3.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "264275c556ea7e22b9d3f87d56305546a38d4eee8ec884f3b126236cb7dcbbb4"
+checksum = "726b7cbbc6be6f1c6f29146ac824343b9415133eee8cce156452ad1db93f8008"
 dependencies = [
- "solana-define-syscall 3.0.0",
+ "solana-define-syscall 5.0.0",
 ]
 
 [[package]]
@@ -6851,7 +6851,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "solana-instruction 3.2.0",
- "solana-msg 3.0.0",
+ "solana-msg 3.1.0",
  "solana-program-error 3.0.0",
  "solana-pubkey 3.0.0",
 ]
@@ -6867,7 +6867,7 @@ dependencies = [
  "serde_derive",
  "solana-address 2.3.0",
  "solana-instruction 3.2.0",
- "solana-msg 3.0.0",
+ "solana-msg 3.1.0",
  "solana-program-error 3.0.0",
 ]
 
@@ -7454,7 +7454,7 @@ dependencies = [
  "solana-curve25519",
  "solana-instruction 3.2.0",
  "solana-instructions-sysvar 3.0.0",
- "solana-msg 3.0.0",
+ "solana-msg 3.1.0",
  "solana-program-error 3.0.0",
  "solana-pubkey 3.0.0",
  "solana-sdk-ids 3.1.0",
@@ -7542,7 +7542,7 @@ dependencies = [
  "num-traits",
  "num_enum",
  "solana-account-info 3.1.1",
- "solana-msg 3.0.0",
+ "solana-msg 3.1.0",
  "solana-program-error 3.0.0",
  "spl-discriminator",
  "spl-pod",
