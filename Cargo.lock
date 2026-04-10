@@ -2659,7 +2659,7 @@ dependencies = [
  "solana-logger 3.0.0",
  "solana-message 3.0.1",
  "solana-precompile-error 3.0.0",
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
  "solana-program-runtime",
  "solana-pubkey 4.2.0",
  "solana-rent 3.1.0",
@@ -2751,7 +2751,7 @@ dependencies = [
  "mollusk-svm-fuzz-fixture",
  "solana-account 3.4.0",
  "solana-instruction 3.4.0",
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
  "solana-pubkey 4.2.0",
  "solana-rent 3.1.0",
  "solana-transaction-error 3.0.0",
@@ -4150,7 +4150,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a9cf16495d9eb53e3d04e72366a33bb1c20c24e78c171d8b8f5978357b63ae95"
 dependencies = [
  "solana-address 2.6.0",
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
  "solana-program-memory 3.0.0",
 ]
 
@@ -4180,7 +4180,7 @@ dependencies = [
  "sha2-const-stable",
  "solana-atomic-u64 3.0.0",
  "solana-define-syscall 5.0.0",
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
  "solana-sanitize 3.0.1",
  "solana-sha256-hasher 3.1.0",
  "wincode",
@@ -4630,7 +4630,7 @@ dependencies = [
  "solana-instruction 3.4.0",
  "solana-msg 3.1.0",
  "solana-program-entrypoint 3.1.1",
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
  "solana-pubkey 4.2.0",
  "solana-rent 4.1.0",
  "solana-short-vec 3.2.0",
@@ -4653,7 +4653,7 @@ dependencies = [
  "solana-cpi 3.1.0",
  "solana-instruction 3.4.0",
  "solana-program",
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
  "solana-pubkey 4.2.0",
  "solana-sdk",
 ]
@@ -4704,7 +4704,7 @@ dependencies = [
  "solana-account-info 3.1.1",
  "solana-define-syscall 4.0.1",
  "solana-instruction 3.4.0",
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
  "solana-pubkey 4.2.0",
  "solana-stable-layout 3.0.0",
 ]
@@ -4926,7 +4926,7 @@ checksum = "75ca9b5cbb6f500f7fd73db5bd95640f71a83f04d6121a0e59a43b202dca2731"
 dependencies = [
  "serde",
  "serde_derive",
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
  "solana-pubkey 4.2.0",
  "solana-sdk-ids 3.1.0",
 ]
@@ -5127,7 +5127,7 @@ dependencies = [
  "num-traits",
  "serde",
  "serde_derive",
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
 ]
 
 [[package]]
@@ -5157,7 +5157,7 @@ dependencies = [
  "solana-account-info 3.1.1",
  "solana-instruction 3.4.0",
  "solana-instruction-error",
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
  "solana-pubkey 3.0.0",
  "solana-sanitize 3.0.1",
  "solana-sdk-ids 3.1.0",
@@ -5758,7 +5758,7 @@ checksum = "84c9b0a1ff494e05f503a08b3d51150b73aa639544631e510279d6375f290997"
 dependencies = [
  "solana-account-info 3.1.1",
  "solana-define-syscall 4.0.1",
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
  "solana-pubkey 4.2.0",
 ]
 
@@ -5780,9 +5780,9 @@ dependencies = [
 
 [[package]]
 name = "solana-program-error"
-version = "3.0.0"
+version = "3.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a1af32c995a7b692a915bb7414d5f8e838450cf7c70414e763d8abcae7b51f28"
+checksum = "4f04fa578707b3612b095f0c8e19b66a1233f7c42ca8082fcb3b745afcc0add6"
 dependencies = [
  "borsh 1.6.0",
 ]
@@ -5832,7 +5832,7 @@ version = "3.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3d7701cb15b90667ae1c89ef4ac35a59c61e66ce58ddee13d729472af7f41d59"
 dependencies = [
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
 ]
 
 [[package]]
@@ -6711,7 +6711,7 @@ dependencies = [
  "solana-clock 3.0.0",
  "solana-cpi 3.1.0",
  "solana-instruction 3.4.0",
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
  "solana-pubkey 3.0.0",
  "solana-system-interface 2.0.0",
  "solana-sysvar 3.1.1",
@@ -6860,7 +6860,7 @@ dependencies = [
  "serde_derive",
  "solana-instruction 3.4.0",
  "solana-msg 3.1.0",
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
  "solana-pubkey 3.0.0",
 ]
 
@@ -6876,7 +6876,7 @@ dependencies = [
  "solana-address 2.6.0",
  "solana-instruction 3.4.0",
  "solana-msg 3.1.0",
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
 ]
 
 [[package]]
@@ -6978,7 +6978,7 @@ dependencies = [
  "solana-instruction 3.4.0",
  "solana-last-restart-slot 3.0.0",
  "solana-program-entrypoint 3.1.1",
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
  "solana-program-memory 3.0.0",
  "solana-pubkey 4.2.0",
  "solana-rent 3.1.0",
@@ -7365,7 +7365,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d48cc11459e265d5b501534144266620289720b4c44522a47bc6b63cd295d2f3"
 dependencies = [
  "bytemuck",
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
  "solana-sha256-hasher 3.1.0",
  "spl-discriminator-derive",
 ]
@@ -7416,7 +7416,7 @@ dependencies = [
  "num-derive",
  "num-traits",
  "num_enum",
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
  "solana-program-option 3.0.0",
  "solana-pubkey 3.0.0",
  "solana-zk-sdk",
@@ -7436,7 +7436,7 @@ dependencies = [
  "num_enum",
  "solana-account-info 3.1.1",
  "solana-instruction 3.4.0",
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
  "solana-program-option 3.0.0",
  "solana-program-pack 3.1.0",
  "solana-pubkey 3.0.0",
@@ -7463,7 +7463,7 @@ dependencies = [
  "solana-instruction 3.4.0",
  "solana-instructions-sysvar 3.0.0",
  "solana-msg 3.1.0",
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
  "solana-pubkey 3.0.0",
  "solana-sdk-ids 3.1.0",
  "solana-zk-sdk",
@@ -7493,7 +7493,7 @@ dependencies = [
  "num-traits",
  "num_enum",
  "solana-instruction 3.4.0",
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
  "solana-pubkey 3.0.0",
  "spl-discriminator",
  "spl-pod",
@@ -7512,7 +7512,7 @@ dependencies = [
  "num-traits",
  "num_enum",
  "solana-instruction 3.4.0",
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
  "solana-program-option 3.0.0",
  "solana-program-pack 3.1.0",
  "solana-pubkey 3.0.0",
@@ -7531,7 +7531,7 @@ dependencies = [
  "num-traits",
  "solana-borsh 3.0.1",
  "solana-instruction 3.4.0",
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
  "solana-pubkey 3.0.0",
  "spl-discriminator",
  "spl-pod",
@@ -7551,7 +7551,7 @@ dependencies = [
  "num_enum",
  "solana-account-info 3.1.1",
  "solana-msg 3.1.0",
- "solana-program-error 3.0.0",
+ "solana-program-error 3.0.1",
  "spl-discriminator",
  "spl-pod",
  "thiserror 2.0.18",
