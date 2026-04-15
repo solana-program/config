@@ -3,7 +3,7 @@
     "devDependencies": {
         "@codama/renderers-js": "^1.7.0",
         "@codama/renderers-rust": "^2.0.0",
-        "@codama/visitors-core": "^1.5.1",
+        "@codama/visitors-core": "^1.6.0",
         "@solana/prettier-config-solana": "0.0.6",
         "codama": "^1.5",
         "dotenv": "^17.4.2"
