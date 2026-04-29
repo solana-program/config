@@ -4591,7 +4591,7 @@ dependencies = [
  "solana-instruction 3.4.0",
  "solana-pubkey 4.2.0",
  "solana-sdk-ids 3.1.0",
- "solana-short-vec 3.2.0",
+ "solana-short-vec 3.2.1",
  "solana-system-interface 3.2.0",
 ]
 
@@ -4608,7 +4608,7 @@ dependencies = [
  "solana-instruction 3.4.0",
  "solana-pubkey 3.0.0",
  "solana-sdk-ids 3.1.0",
- "solana-short-vec 3.2.0",
+ "solana-short-vec 3.2.1",
  "solana-system-interface 2.0.0",
 ]
 
@@ -4633,7 +4633,7 @@ dependencies = [
  "solana-program-error 3.0.1",
  "solana-pubkey 4.2.0",
  "solana-rent 4.2.0",
- "solana-short-vec 3.2.0",
+ "solana-short-vec 3.2.1",
  "thiserror 2.0.18",
 ]
 
@@ -5391,7 +5391,7 @@ dependencies = [
  "solana-instruction 3.4.0",
  "solana-sanitize 3.0.1",
  "solana-sdk-ids 3.1.0",
- "solana-short-vec 3.2.0",
+ "solana-short-vec 3.2.1",
  "solana-transaction-error 3.0.0",
 ]
 
@@ -5581,7 +5581,7 @@ dependencies = [
  "solana-pubkey 3.0.0",
  "solana-rayon-threadlimit",
  "solana-sdk-ids 3.1.0",
- "solana-short-vec 3.2.0",
+ "solana-short-vec 3.2.1",
  "solana-signature 3.1.0",
  "solana-time-utils 3.0.0",
  "solana-transaction-context 3.1.9",
@@ -6537,9 +6537,9 @@ dependencies = [
 
 [[package]]
 name = "solana-short-vec"
-version = "3.2.0"
+version = "3.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "de3bd991c2cc415291c86bb0b6b4d53e93d13bb40344e4c5a2884e0e4f5fa93f"
+checksum = "2bb8cc883fc7b8ce4a7814cb1441b48c06437049ec11847005cf63bcfa85c546"
 dependencies = [
  "serde_core",
 ]
@@ -7111,7 +7111,7 @@ dependencies = [
  "solana-message 3.0.1",
  "solana-sanitize 3.0.1",
  "solana-sdk-ids 3.1.0",
- "solana-short-vec 3.2.0",
+ "solana-short-vec 3.2.1",
  "solana-signature 3.1.0",
  "solana-signer 3.0.0",
  "solana-transaction-error 3.0.0",
@@ -7188,7 +7188,7 @@ dependencies = [
  "rand 0.8.5",
  "solana-packet 3.0.0",
  "solana-perf",
- "solana-short-vec 3.2.0",
+ "solana-short-vec 3.2.1",
  "solana-signature 3.1.0",
 ]
 
@@ -7298,7 +7298,7 @@ dependencies = [
  "solana-sdk-ids 3.1.0",
  "solana-serde-varint 3.0.1",
  "solana-serialize-utils 3.1.0",
- "solana-short-vec 3.2.0",
+ "solana-short-vec 3.2.1",
  "solana-system-interface 2.0.0",
 ]
 
