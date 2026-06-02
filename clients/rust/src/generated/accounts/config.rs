@@ -7,17 +7,16 @@
 use {
     crate::hooked::ConfigKeys,
     borsh::{BorshDeserialize, BorshSerialize},
-    kaigan::types::RemainderVec,
+    spl_collections::TrailingVec,
 };
 
 #[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Eq, PartialEq)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Config {
     /// List of pubkeys stored in the config account,
     /// and whether each pubkey needs to sign subsequent calls to `store`.
     pub keys: ConfigKeys,
     /// Arbitrary data to store in the config account.
-    pub data: RemainderVec<u8>,
+    pub data: TrailingVec<u8>,
 }
 
 impl Config {
@@ -39,8 +38,8 @@ impl<'a> TryFrom<&solana_account_info::AccountInfo<'a>> for Config {
 
 #[cfg(feature = "fetch")]
 pub fn fetch_config(
-    rpc: &solana_client::rpc_client::RpcClient,
-    address: &solana_pubkey::Pubkey,
+    rpc: &solana_rpc_client::rpc_client::RpcClient,
+    address: &solana_address::Address,
 ) -> Result<crate::shared::DecodedAccount<Config>, std::io::Error> {
     let accounts = fetch_all_config(rpc, &[*address])?;
     Ok(accounts[0].clone())
@@ -48,8 +47,8 @@ pub fn fetch_config(
 
 #[cfg(feature = "fetch")]
 pub fn fetch_all_config(
-    rpc: &solana_client::rpc_client::RpcClient,
-    addresses: &[solana_pubkey::Pubkey],
+    rpc: &solana_rpc_client::rpc_client::RpcClient,
+    addresses: &[solana_address::Address],
 ) -> Result<Vec<crate::shared::DecodedAccount<Config>>, std::io::Error> {
     let accounts = rpc
         .get_multiple_accounts(addresses)
@@ -72,8 +71,8 @@ pub fn fetch_all_config(
 
 #[cfg(feature = "fetch")]
 pub fn fetch_maybe_config(
-    rpc: &solana_client::rpc_client::RpcClient,
-    address: &solana_pubkey::Pubkey,
+    rpc: &solana_rpc_client::rpc_client::RpcClient,
+    address: &solana_address::Address,
 ) -> Result<crate::shared::MaybeAccount<Config>, std::io::Error> {
     let accounts = fetch_all_maybe_config(rpc, &[*address])?;
     Ok(accounts[0].clone())
@@ -81,8 +80,8 @@ pub fn fetch_maybe_config(
 
 #[cfg(feature = "fetch")]
 pub fn fetch_all_maybe_config(
-    rpc: &solana_client::rpc_client::RpcClient,
-    addresses: &[solana_pubkey::Pubkey],
+    rpc: &solana_rpc_client::rpc_client::RpcClient,
+    addresses: &[solana_address::Address],
 ) -> Result<Vec<crate::shared::MaybeAccount<Config>>, std::io::Error> {
     let accounts = rpc
         .get_multiple_accounts(addresses)

@@ -7,7 +7,7 @@
 use {
     crate::hooked::ConfigKeys,
     borsh::{BorshDeserialize, BorshSerialize},
-    kaigan::types::RemainderVec,
+    spl_collections::TrailingVec,
 };
 
 /// Accounts.
@@ -16,7 +16,7 @@ pub struct Store {
     /// The config account to be modified.
     /// Must sign during the first call to `store` to initialize the account,
     /// or if no signers are configured in the config data.
-    pub config_account: (solana_pubkey::Pubkey, bool),
+    pub config_account: (solana_address::Address, bool),
 }
 
 impl Store {
@@ -49,7 +49,6 @@ impl Store {
 }
 
 #[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Eq, PartialEq)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct StoreInstructionData {}
 
 impl StoreInstructionData {
@@ -69,10 +68,9 @@ impl Default for StoreInstructionData {
 }
 
 #[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Eq, PartialEq)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct StoreInstructionArgs {
     pub keys: ConfigKeys,
-    pub data: RemainderVec<u8>,
+    pub data: TrailingVec<u8>,
 }
 
 impl StoreInstructionArgs {
@@ -88,9 +86,9 @@ impl StoreInstructionArgs {
 ///   0. `[writable, signer]` config_account
 #[derive(Clone, Debug, Default)]
 pub struct StoreBuilder {
-    config_account: Option<(solana_pubkey::Pubkey, bool)>,
+    config_account: Option<(solana_address::Address, bool)>,
     keys: Option<ConfigKeys>,
-    data: Option<RemainderVec<u8>>,
+    data: Option<TrailingVec<u8>>,
     __remaining_accounts: Vec<solana_instruction::AccountMeta>,
 }
 
@@ -104,7 +102,7 @@ impl StoreBuilder {
     #[inline(always)]
     pub fn config_account(
         &mut self,
-        config_account: solana_pubkey::Pubkey,
+        config_account: solana_address::Address,
         as_signer: bool,
     ) -> &mut Self {
         self.config_account = Some((config_account, as_signer));
@@ -116,7 +114,7 @@ impl StoreBuilder {
         self
     }
     #[inline(always)]
-    pub fn data(&mut self, data: RemainderVec<u8>) -> &mut Self {
+    pub fn data(&mut self, data: TrailingVec<u8>) -> &mut Self {
         self.data = Some(data);
         self
     }
@@ -279,7 +277,7 @@ impl<'a, 'b> StoreCpiBuilder<'a, 'b> {
         self
     }
     #[inline(always)]
-    pub fn data(&mut self, data: RemainderVec<u8>) -> &mut Self {
+    pub fn data(&mut self, data: TrailingVec<u8>) -> &mut Self {
         self.instruction.data = Some(data);
         self
     }
@@ -343,7 +341,7 @@ struct StoreCpiBuilderInstruction<'a, 'b> {
     __program: &'b solana_account_info::AccountInfo<'a>,
     config_account: Option<(&'b solana_account_info::AccountInfo<'a>, bool)>,
     keys: Option<ConfigKeys>,
-    data: Option<RemainderVec<u8>>,
+    data: Option<TrailingVec<u8>>,
     /// Additional instruction accounts `(AccountInfo, is_writable, is_signer)`.
     __remaining_accounts: Vec<(&'b solana_account_info::AccountInfo<'a>, bool, bool)>,
 }

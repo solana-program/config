@@ -9,32 +9,15 @@ license-file = { workspace = true }
 edition = { workspace = true }
 
 [features]
-fetch = ["dep:solana-client", "dep:solana-sdk"]
-serde = [
-    "dep:bincode",
-    "dep:serde",
-    "dep:solana-config-interface",
-    "kaigan/serde",
-    "solana-config-interface/bincode"
-]
+fetch = ["dep:solana-account", "dep:solana-rpc-client"]
 
 [dependencies]
-bincode = { workspace = true, optional = true }
-borsh = { workspace = true }
-kaigan = { workspace = true }
-serde = { workspace = true, features = ["derive"], optional = true }
-solana-account = { workspace = true }
-solana-account-info = { workspace = true }
-solana-client = { workspace = true, optional = true }
-solana-config-interface = { version = "1", optional = true }
-solana-cpi = { workspace = true }
-solana-instruction = { workspace = true }
-solana-program = { workspace = true, features = ["borsh"] }
-solana-program-error = { workspace = true }
-solana-pubkey = { workspace = true }
-solana-sdk = { workspace = true, optional = true }
-
-[dev-dependencies]
-assert_matches = { workspace = true }
-bincode = { workspace = true }
-solana-sdk = { workspace = true }
+borsh = "1.0"
+solana-account = { version = "3.0", optional = true }
+solana-account-info = "3.1"
+solana-address = { version = "2.2", features = ["borsh", "curve25519"] }
+solana-cpi = "3.1"
+solana-instruction = "3.2"
+solana-program-error = "3.0"
+solana-rpc-client = { version = "3.0", optional = true }
+spl-collections = { version = "0.1", features = ["borsh"] }

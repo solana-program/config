@@ -6,8 +6,23 @@
  * @see https://github.com/codama-idl/codama
  */
 
-import { type Address } from '@solana/kit';
-import { type ParsedStoreInstruction } from '../instructions';
+import {
+    extendClient,
+    type Address,
+    type ClientWithRpc,
+    type ClientWithTransactionPlanning,
+    type ClientWithTransactionSending,
+    type GetAccountInfoApi,
+    type GetMultipleAccountsApi,
+} from '@solana/kit';
+import {
+    addSelfFetchFunctions,
+    addSelfPlanAndSendFunctions,
+    type SelfFetchFunctions,
+    type SelfPlanAndSendFunctions,
+} from '@solana/kit/program-client-core';
+import { getConfigCodec, type Config, type ConfigArgs } from '../accounts';
+import { getStoreInstruction, type ParsedStoreInstruction, type StoreInput } from '../instructions';
 
 export const SOLANA_CONFIG_PROGRAM_ADDRESS =
     'Config1111111111111111111111111111111111111' as Address<'Config1111111111111111111111111111111111111'>;
@@ -23,3 +38,30 @@ export enum SolanaConfigInstruction {
 export type ParsedSolanaConfigInstruction<TProgram extends string = 'Config1111111111111111111111111111111111111'> = {
     instructionType: SolanaConfigInstruction.Store;
 } & ParsedStoreInstruction<TProgram>;
+
+export type SolanaConfigPlugin = { accounts: SolanaConfigPluginAccounts; instructions: SolanaConfigPluginInstructions };
+
+export type SolanaConfigPluginAccounts = {
+    config: ReturnType<typeof getConfigCodec> & SelfFetchFunctions<ConfigArgs, Config>;
+};
+
+export type SolanaConfigPluginInstructions = {
+    store: (input: StoreInput) => ReturnType<typeof getStoreInstruction> & SelfPlanAndSendFunctions;
+};
+
+export type SolanaConfigPluginRequirements = ClientWithRpc<GetAccountInfoApi & GetMultipleAccountsApi> &
+    ClientWithTransactionPlanning &
+    ClientWithTransactionSending;
+
+export function solanaConfigProgram() {
+    return <T extends SolanaConfigPluginRequirements>(
+        client: T,
+    ): Omit<T, 'solanaConfig'> & { solanaConfig: SolanaConfigPlugin } => {
+        return extendClient(client, {
+            solanaConfig: <SolanaConfigPlugin>{
+                accounts: { config: addSelfFetchFunctions(client, getConfigCodec()) },
+                instructions: { store: input => addSelfPlanAndSendFunctions(client, getStoreInstruction(input)) },
+            },
+        });
+    };
+}

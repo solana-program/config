@@ -10,9 +10,9 @@ export default {
         js: {
             from: '@codama/renderers-js',
             args: [
-                'clients/js/src/generated',
+                'clients/js',
                 {
-                    packageFolder: 'clients/js',
+                    kitImportStrategy: 'rootOnly',
                     syncPackageJson: true,
                 },
             ],
@@ -28,7 +28,6 @@ export default {
                     'clients/rust',
                     {
                         anchorTraits: false,
-                        crateFolder: 'clients/rust',
                         formatCode: true,
                         linkOverrides: {
                             definedTypes: { configKeys: 'hooked' },
