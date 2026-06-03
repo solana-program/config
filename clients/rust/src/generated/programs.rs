@@ -4,7 +4,7 @@
 //!
 //! <https://github.com/codama-idl/codama>
 
-use solana_pubkey::{pubkey, Pubkey};
+use solana_address::{address, Address};
 
 /// `solana_config` program ID.
-pub const SOLANA_CONFIG_ID: Pubkey = pubkey!("Config1111111111111111111111111111111111111");
+pub const SOLANA_CONFIG_ID: Address = address!("Config1111111111111111111111111111111111111");
