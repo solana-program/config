@@ -30,11 +30,11 @@ import {
     type WritableSignerAccount,
 } from '@solana/kit';
 import { getAccountMetaFactory, type ResolvedInstructionAccount } from '@solana/kit/program-client-core';
-import { SOLANA_CONFIG_PROGRAM_ADDRESS } from '../programs';
+import { CONFIG_PROGRAM_ADDRESS } from '../programs';
 import { getConfigKeysDecoder, getConfigKeysEncoder, type ConfigKeys, type ConfigKeysArgs } from '../types';
 
 export type StoreInstruction<
-    TProgram extends string = typeof SOLANA_CONFIG_PROGRAM_ADDRESS,
+    TProgram extends string = typeof CONFIG_PROGRAM_ADDRESS,
     TAccountConfigAccount extends string | AccountMeta<string> = string,
     TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
@@ -100,7 +100,7 @@ export type StoreInput<TAccountConfigAccount extends string = string> = {
 
 export function getStoreInstruction<
     TAccountConfigAccount extends string,
-    TProgramAddress extends Address = typeof SOLANA_CONFIG_PROGRAM_ADDRESS,
+    TProgramAddress extends Address = typeof CONFIG_PROGRAM_ADDRESS,
 >(
     input: StoreInput<TAccountConfigAccount>,
     config?: { programAddress?: TProgramAddress },
@@ -111,7 +111,7 @@ export function getStoreInstruction<
         : TAccountConfigAccount
 > {
     // Program address.
-    const programAddress = config?.programAddress ?? SOLANA_CONFIG_PROGRAM_ADDRESS;
+    const programAddress = config?.programAddress ?? CONFIG_PROGRAM_ADDRESS;
 
     // Original accounts.
     const originalAccounts = { configAccount: { value: input.configAccount ?? null, isWritable: true } };
@@ -141,7 +141,7 @@ export function getStoreInstruction<
 }
 
 export type ParsedStoreInstruction<
-    TProgram extends string = typeof SOLANA_CONFIG_PROGRAM_ADDRESS,
+    TProgram extends string = typeof CONFIG_PROGRAM_ADDRESS,
     TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
     programAddress: Address<TProgram>;

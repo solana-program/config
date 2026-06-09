@@ -134,7 +134,7 @@
       }
     ],
     "errors": [],
-    "name": "solanaConfig",
+    "name": "config",
     "prefix": "",
     "publicKey": "Config1111111111111111111111111111111111111",
     "version": "0.0.1",

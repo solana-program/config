@@ -41,7 +41,7 @@ impl Store {
         data.append(&mut args);
 
         solana_instruction::Instruction {
-            program_id: crate::SOLANA_CONFIG_ID,
+            program_id: crate::CONFIG_ID,
             accounts,
             data,
         }
@@ -219,7 +219,7 @@ impl<'a, 'b> StoreCpi<'a, 'b> {
         data.append(&mut args);
 
         let instruction = solana_instruction::Instruction {
-            program_id: crate::SOLANA_CONFIG_ID,
+            program_id: crate::CONFIG_ID,
             accounts,
             data,
         };

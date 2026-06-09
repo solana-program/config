@@ -7,7 +7,7 @@ it('sets up a LiteSVM client with the config program', async () => {
     const client = await createTestClient();
 
     // Then the client exposes the config program plugin.
-    expect(client.solanaConfig).toBeDefined();
+    expect(client.config).toBeDefined();
 
     // And the payer was funded via LiteSVM.
     const { value: balance } = await client.rpc.getBalance(client.payer.address).send();

@@ -24,41 +24,39 @@ import {
 import { getConfigCodec, type Config, type ConfigArgs } from '../accounts';
 import { getStoreInstruction, type ParsedStoreInstruction, type StoreInput } from '../instructions';
 
-export const SOLANA_CONFIG_PROGRAM_ADDRESS =
+export const CONFIG_PROGRAM_ADDRESS =
     'Config1111111111111111111111111111111111111' as Address<'Config1111111111111111111111111111111111111'>;
 
-export enum SolanaConfigAccount {
+export enum ConfigAccount {
     Config,
 }
 
-export enum SolanaConfigInstruction {
+export enum ConfigInstruction {
     Store,
 }
 
-export type ParsedSolanaConfigInstruction<TProgram extends string = 'Config1111111111111111111111111111111111111'> = {
-    instructionType: SolanaConfigInstruction.Store;
+export type ParsedConfigInstruction<TProgram extends string = 'Config1111111111111111111111111111111111111'> = {
+    instructionType: ConfigInstruction.Store;
 } & ParsedStoreInstruction<TProgram>;
 
-export type SolanaConfigPlugin = { accounts: SolanaConfigPluginAccounts; instructions: SolanaConfigPluginInstructions };
+export type ConfigPlugin = { accounts: ConfigPluginAccounts; instructions: ConfigPluginInstructions };
 
-export type SolanaConfigPluginAccounts = {
+export type ConfigPluginAccounts = {
     config: ReturnType<typeof getConfigCodec> & SelfFetchFunctions<ConfigArgs, Config>;
 };
 
-export type SolanaConfigPluginInstructions = {
+export type ConfigPluginInstructions = {
     store: (input: StoreInput) => ReturnType<typeof getStoreInstruction> & SelfPlanAndSendFunctions;
 };
 
-export type SolanaConfigPluginRequirements = ClientWithRpc<GetAccountInfoApi & GetMultipleAccountsApi> &
+export type ConfigPluginRequirements = ClientWithRpc<GetAccountInfoApi & GetMultipleAccountsApi> &
     ClientWithTransactionPlanning &
     ClientWithTransactionSending;
 
-export function solanaConfigProgram() {
-    return <T extends SolanaConfigPluginRequirements>(
-        client: T,
-    ): Omit<T, 'solanaConfig'> & { solanaConfig: SolanaConfigPlugin } => {
+export function configProgram() {
+    return <T extends ConfigPluginRequirements>(client: T): Omit<T, 'config'> & { config: ConfigPlugin } => {
         return extendClient(client, {
-            solanaConfig: <SolanaConfigPlugin>{
+            config: <ConfigPlugin>{
                 accounts: { config: addSelfFetchFunctions(client, getConfigCodec()) },
                 instructions: { store: input => addSelfPlanAndSendFunctions(client, getStoreInstruction(input)) },
             },
