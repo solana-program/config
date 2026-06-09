@@ -6,5 +6,5 @@
 
 use solana_address::{address, Address};
 
-/// `solana_config` program ID.
-pub const SOLANA_CONFIG_ID: Address = address!("Config1111111111111111111111111111111111111");
+/// `config` program ID.
+pub const CONFIG_ID: Address = address!("Config1111111111111111111111111111111111111");
