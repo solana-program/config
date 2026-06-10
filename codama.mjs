@@ -4,7 +4,7 @@ import { config } from 'dotenv';
 config({ path: path.resolve(process.cwd(), 'vars.env') });
 
 export default {
-    idl: 'program/idl.json',
+    idl: 'idl.json',
     before: [],
     scripts: {
         js: {
