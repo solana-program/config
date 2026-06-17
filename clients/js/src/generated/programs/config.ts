@@ -12,6 +12,7 @@ import {
     type ClientWithRpc,
     type ClientWithTransactionPlanning,
     type ClientWithTransactionSending,
+    type ExtendedClient,
     type GetAccountInfoApi,
     type GetMultipleAccountsApi,
 } from '@solana/kit';
@@ -54,7 +55,7 @@ export type ConfigPluginRequirements = ClientWithRpc<GetAccountInfoApi & GetMult
     ClientWithTransactionSending;
 
 export function configProgram() {
-    return <T extends ConfigPluginRequirements>(client: T): Omit<T, 'config'> & { config: ConfigPlugin } => {
+    return <T extends ConfigPluginRequirements>(client: T): ExtendedClient<T, { config: ConfigPlugin }> => {
         return extendClient(client, {
             config: <ConfigPlugin>{
                 accounts: { config: addSelfFetchFunctions(client, getConfigCodec()) },
