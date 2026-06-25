@@ -3443,7 +3443,7 @@ dependencies = [
  "solana-program-entrypoint",
  "solana-program-error",
  "solana-pubkey 4.2.0",
- "solana-rent 4.2.1",
+ "solana-rent 4.3.0",
  "solana-short-vec",
  "thiserror 2.0.18",
 ]
@@ -3936,9 +3936,9 @@ dependencies = [
 
 [[package]]
 name = "solana-rent"
-version = "4.2.1"
+version = "4.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "40f02fbe2669ebe5d851dbf29a02e91ed6244b051bb64fcc57e6644aba636063"
+checksum = "39f0d780bf8e8a1fe8b5b5fce1acad6b209485b86dec246e7523d5e4a8b7c7fc"
 dependencies = [
  "solana-sdk-macro",
 ]
