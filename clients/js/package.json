@@ -55,7 +55,7 @@
         "tsup": "^8.5.1",
         "typedoc": "^0.28.19",
         "typescript": "^6.0.3",
-        "vitest": "^4.1.9"
+        "vitest": "^4.1.10"
     },
     "peerDependencies": {
         "@solana/kit": "^6.10"
