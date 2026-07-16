@@ -15,8 +15,8 @@ importers:
         specifier: ^3.1.0
         version: 3.1.0
       '@codama/visitors-core':
-        specifier: ^1.8.0
-        version: 1.8.0
+        specifier: ^1.9.0
+        version: 1.9.0
       codama:
         specifier: ^1.9.0
         version: 1.9.0
@@ -355,7 +355,7 @@ snapshots:
       '@codama/errors': 1.8.0
       '@codama/nodes': 1.8.0
       '@codama/renderers-core': 1.3.9
-      '@codama/visitors-core': 1.8.0
+      '@codama/visitors-core': 1.9.0
       '@solana/codecs-strings': 6.9.0
       prettier: 3.8.4
       semver: 7.8.4
@@ -368,7 +368,7 @@ snapshots:
       '@codama/errors': 1.7.0
       '@codama/nodes': 1.7.0
       '@codama/renderers-core': 1.3.8
-      '@codama/visitors-core': 1.8.0
+      '@codama/visitors-core': 1.9.0
       '@iarna/toml': 2.2.5
       '@solana/codecs-strings': 6.9.0
       nunjucks: 3.2.4
