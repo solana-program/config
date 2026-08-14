@@ -12,30 +12,43 @@ edition = { workspace = true }
 bincode = { workspace = true, optional = true }
 serde = { workspace = true, optional = true }
 serde_derive = { workspace = true, optional = true }
-solana-account = { version = "3.1.0", optional = true }
-solana-instruction = { version = "3.2.0", optional = true, features = [
-    "bincode",
-] }
-solana-pubkey = { version = "4.2.0" }
+solana-instruction = { version = "3.5.0", optional = true }
+solana-pubkey = { version = "4.3.0" }
 solana-sdk-ids = { version = "3.1.0" }
-solana-short-vec = { version = "3.2.2", optional = true }
-solana-system-interface = { version = "3.2.0", optional = true, features = [
-    "bincode",
+solana-short-vec = { version = "3.3.0", optional = true }
+solana-system-interface = { version = "3.3.0", optional = true }
+wincode = { version = "0.6.1", optional = true, default-features = false, features = [
+    "alloc",
+    "derive",
 ] }
+
+[dev-dependencies]
+bincode = { workspace = true }
 
 [features]
 bincode = [
     "dep:bincode",
-    "dep:solana-account",
     "dep:solana-instruction",
     "dep:solana-system-interface",
     "serde",
+    "solana-instruction/bincode",
+    "solana-system-interface/bincode",
 ]
 serde = [
     "dep:serde",
     "dep:serde_derive",
     "dep:solana-short-vec",
     "solana-pubkey/serde",
+]
+wincode = [
+    "dep:solana-instruction",
+    "dep:solana-short-vec",
+    "dep:solana-system-interface",
+    "dep:wincode",
+    "solana-instruction/wincode",
+    "solana-pubkey/wincode",
+    "solana-short-vec/wincode",
+    "solana-system-interface/wincode",
 ]
 
 [package.metadata.docs.rs]
