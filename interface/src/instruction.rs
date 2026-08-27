@@ -1,7 +1,7 @@
 //! Program instruction helpers.
 //!
-//! The helpers are implemented once per serialization backend, since each
-//! backend constrains the config state type differently. `wincode` takes
+//! The helpers are implemented once for `bincode` and once for `wincode`,
+//! since each constrains the config state type differently. `wincode` takes
 //! precedence when both features are enabled.
 
 #[cfg(all(not(feature = "wincode"), feature = "bincode"))]
