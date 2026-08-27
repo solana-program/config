@@ -3408,12 +3408,12 @@ dependencies = [
  "bincode",
  "serde",
  "serde_derive",
- "solana-account",
  "solana-instruction",
  "solana-pubkey 4.3.0",
  "solana-sdk-ids",
  "solana-short-vec",
  "solana-system-interface 3.3.0",
+ "wincode",
 ]
 
 [[package]]
@@ -3639,6 +3639,7 @@ dependencies = [
  "solana-define-syscall 5.1.0",
  "solana-instruction-error",
  "solana-pubkey 4.3.0",
+ "wincode",
 ]
 
 [[package]]
@@ -4164,6 +4165,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c75782529cc4521114c1ecd71c7e2cdebd41a6fe9844b5d088fd36ef08c57c36"
 dependencies = [
  "serde_core",
+ "wincode",
 ]
 
 [[package]]
@@ -4340,6 +4342,7 @@ dependencies = [
  "solana-instruction",
  "solana-msg",
  "solana-program-error",
+ "wincode",
 ]
 
 [[package]]
@@ -5321,9 +5324,9 @@ checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 
 [[package]]
 name = "wincode"
-version = "0.6.0"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b5d39d1a984eb7ae37afa348f058216d62a6d5f71640f4113a8114386c2a812a"
+checksum = "bfc6339f1ba427bf7ad7c42403b28e524832ba2ddb5eef1bb2cc3b85db6b7b75"
 dependencies = [
  "pastey",
  "proc-macro2",
@@ -5334,9 +5337,9 @@ dependencies = [
 
 [[package]]
 name = "wincode-derive"
-version = "0.5.0"
+version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4cb427b174d0f50b407f003623db1d892986e780651ee9d4231f3c9fe9ffcbb7"
+checksum = "11d582d9fc9d813264407a9e16bfa16846ccf15ef032f9bbcd700741bdc00255"
 dependencies = [
  "darling 0.23.0",
  "proc-macro2",
