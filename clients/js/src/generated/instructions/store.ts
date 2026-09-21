@@ -7,7 +7,6 @@
  */
 
 import {
-    AccountRole,
     combineCodec,
     getBytesDecoder,
     getBytesEncoder,
@@ -25,11 +24,18 @@ import {
     type InstructionWithAccounts,
     type InstructionWithData,
     type ReadonlyUint8Array,
-    type TransactionSigner,
     type WritableAccount,
     type WritableSignerAccount,
 } from '@solana/kit';
-import { getAccountMetaFactory, type ResolvedInstructionAccount } from '@solana/kit/program-client-core';
+import {
+    getAccountMetaFactory,
+    getNonNullResolvedInstructionInput,
+    type InstructionAccountInput,
+    type InstructionAccountInputAddress,
+    type InstructionSignerInput,
+    type ResolvedInstructionAccount,
+    type ResolvedInstructionAccountMeta,
+} from '@solana/kit/program-client-core';
 import { CONFIG_PROGRAM_ADDRESS } from '../programs';
 import { getConfigKeysDecoder, getConfigKeysEncoder, type ConfigKeys, type ConfigKeysArgs } from '../types';
 
@@ -86,57 +92,71 @@ export function getStoreInstructionDataCodec(): Codec<StoreInstructionDataArgs, 
     return combineCodec(getStoreInstructionDataEncoder(), getStoreInstructionDataDecoder());
 }
 
-export type StoreInput<TAccountConfigAccount extends string = string> = {
+export type StoreInput<
+    TAccountConfigAccount extends InstructionAccountInput | InstructionSignerInput =
+        InstructionAccountInput | InstructionSignerInput,
+> = {
     /**
      * The config account to be modified.
      * Must sign during the first call to `store` to initialize the account,
      * or if no signers are configured in the config data.
      */
-    configAccount: Address<TAccountConfigAccount> | TransactionSigner<TAccountConfigAccount>;
+    configAccount: TAccountConfigAccount;
     keys: StoreInstructionDataArgs['keys'];
     data: StoreInstructionDataArgs['data'];
-    signers?: Array<TransactionSigner>;
+    signers?: Array<InstructionSignerInput>;
 };
 
 export function getStoreInstruction<
-    TAccountConfigAccount extends string,
+    TAccountConfigAccount extends InstructionAccountInput | InstructionSignerInput,
     TProgramAddress extends Address = typeof CONFIG_PROGRAM_ADDRESS,
 >(
     input: StoreInput<TAccountConfigAccount>,
     config?: { programAddress?: TProgramAddress },
 ): StoreInstruction<
     TProgramAddress,
-    (typeof input)['configAccount'] extends TransactionSigner<TAccountConfigAccount>
-        ? WritableSignerAccount<TAccountConfigAccount> & AccountSignerMeta<TAccountConfigAccount>
-        : TAccountConfigAccount
+    ResolvedInstructionAccountMeta<
+        TAccountConfigAccount,
+        InstructionAccountInputAddress<TAccountConfigAccount>,
+        WritableSignerAccount<InstructionAccountInputAddress<TAccountConfigAccount>> &
+            AccountSignerMeta<InstructionAccountInputAddress<TAccountConfigAccount>>
+    >
 > {
     // Program address.
     const programAddress = config?.programAddress ?? CONFIG_PROGRAM_ADDRESS;
 
+    // Account meta helper.
+    const getAccountMeta = getAccountMetaFactory(programAddress, 'omitted');
+
     // Original accounts.
-    const originalAccounts = { configAccount: { value: input.configAccount ?? null, isWritable: true } };
+    const originalAccounts = {
+        configAccount: { value: input.configAccount ?? null, isSigner: 'either', isWritable: true },
+    };
     const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedInstructionAccount>;
 
     // Original args.
     const args = { ...input };
 
     // Remaining accounts.
-    const remainingAccounts: AccountMeta[] = (args.signers ?? []).map(signer => ({
-        address: signer.address,
-        role: AccountRole.READONLY_SIGNER,
-        signer,
-    }));
+    const remainingAccounts: AccountMeta[] = (args.signers ?? []).map(value =>
+        getNonNullResolvedInstructionInput(
+            'signers',
+            getAccountMeta('signers', { value, isSigner: true, isWritable: false }),
+        ),
+    );
 
-    const getAccountMeta = getAccountMetaFactory(programAddress, 'omitted');
     return Object.freeze({
         accounts: [getAccountMeta('configAccount', accounts.configAccount), ...remainingAccounts],
         data: getStoreInstructionDataEncoder().encode(args as StoreInstructionDataArgs),
         programAddress,
     } as StoreInstruction<
         TProgramAddress,
-        (typeof input)['configAccount'] extends TransactionSigner<TAccountConfigAccount>
-            ? WritableSignerAccount<TAccountConfigAccount> & AccountSignerMeta<TAccountConfigAccount>
-            : TAccountConfigAccount
+        ResolvedInstructionAccountMeta<
+            TAccountConfigAccount,
+            InstructionAccountInputAddress<TAccountConfigAccount>,
+            WritableSignerAccount<InstructionAccountInputAddress<TAccountConfigAccount>> &
+                AccountSignerMeta<InstructionAccountInputAddress<TAccountConfigAccount>>
+        >
     >);
 }
 
