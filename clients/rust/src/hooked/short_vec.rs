@@ -18,9 +18,6 @@ impl BorshSerialize for ShortU16 {
 
 impl BorshDeserialize for ShortU16 {
     fn deserialize_reader<R: std::io::Read>(reader: &mut R) -> std::io::Result<Self> {
-        // Mirrors `solana_short_vec::decode_shortu16_len`, which is what the
-        // program uses: at most 3 bytes, no alias (trailing zero byte)
-        // encodings, and the value must fit in a `u16`.
         let mut value: u32 = 0;
 
         for shift in [0, 7, 14] {
@@ -147,7 +144,6 @@ mod tests {
 
     #[test]
     fn test_short_u16_deserialize() {
-        // Canonical encodings, as produced by `solana-short-vec`.
         for (bytes, value) in [
             (&[0x00][..], 0),
             (&[0x7f], 0x7f),
@@ -159,15 +155,11 @@ mod tests {
             assert_eq!(ShortU16::try_from_slice(bytes).unwrap().0, value);
         }
 
-        // Encodings rejected by `solana-short-vec` (and so by the program).
         for bytes in [
-            // Alias: trailing zero byte.
             &[0x80, 0x00][..],
             &[0xff, 0x80, 0x00],
-            // Overflow: value larger than `u16::MAX`.
             &[0x80, 0x80, 0x04],
             &[0xff, 0xff, 0x7f],
-            // Third byte has the continuation bit set.
             &[0x80, 0x80, 0x81],
         ] {
             assert!(ShortU16::try_from_slice(bytes).is_err(), "{bytes:?}");
