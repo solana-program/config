@@ -112,7 +112,7 @@ export function getStoreInstruction<
     TProgramAddress extends Address = typeof CONFIG_PROGRAM_ADDRESS,
 >(
     input: StoreInput<TAccountConfigAccount>,
-    config?: { programAddress?: TProgramAddress },
+    config?: { programAddress?: TProgramAddress | { readonly address: TProgramAddress } },
 ): StoreInstruction<
     TProgramAddress,
     ResolvedInstructionAccountMeta<
@@ -123,7 +123,8 @@ export function getStoreInstruction<
     >
 > {
     // Program address.
-    const programAddress = config?.programAddress ?? CONFIG_PROGRAM_ADDRESS;
+    const programAddressInput = config?.programAddress ?? CONFIG_PROGRAM_ADDRESS;
+    const programAddress = typeof programAddressInput === 'string' ? programAddressInput : programAddressInput.address;
 
     // Account meta helper.
     const getAccountMeta = getAccountMetaFactory(programAddress, 'omitted');
