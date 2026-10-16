@@ -15,6 +15,7 @@ import {
     type ExtendedClient,
     type GetAccountInfoApi,
     type GetMultipleAccountsApi,
+    type HasAddress,
 } from '@solana/kit';
 import {
     addSelfFetchFunctions,
@@ -47,19 +48,30 @@ export type ConfigPluginAccounts = {
 };
 
 export type ConfigPluginInstructions = {
-    store: (input: StoreInput) => ReturnType<typeof getStoreInstruction> & SelfPlanAndSendFunctions;
+    store: (
+        input: StoreInput,
+        config?: { programAddress?: Address | HasAddress },
+    ) => ReturnType<typeof getStoreInstruction> & SelfPlanAndSendFunctions;
 };
 
 export type ConfigPluginRequirements = ClientWithRpc<GetAccountInfoApi & GetMultipleAccountsApi> &
     ClientWithTransactionPlanning &
     ClientWithTransactionSending;
 
-export function configProgram() {
+export function configProgram(config: { programAddress?: Address | HasAddress } = {}) {
     return <T extends ConfigPluginRequirements>(client: T): ExtendedClient<T, { config: ConfigPlugin }> => {
         return extendClient(client, {
             config: <ConfigPlugin>{
                 accounts: { config: addSelfFetchFunctions(client, getConfigCodec()) },
-                instructions: { store: input => addSelfPlanAndSendFunctions(client, getStoreInstruction(input)) },
+                instructions: {
+                    store: (input, instructionConfig) =>
+                        addSelfPlanAndSendFunctions(
+                            client,
+                            getStoreInstruction(input, {
+                                programAddress: instructionConfig?.programAddress ?? config.programAddress,
+                            }),
+                        ),
+                },
             },
         });
     };

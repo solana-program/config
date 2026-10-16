@@ -22,6 +22,7 @@ import {
     type Codec,
     type Decoder,
     type Encoder,
+    type HasAddress,
 } from '@solana/kit';
 
 /**
@@ -31,7 +32,7 @@ import {
  */
 export type ConfigKeys = Array<readonly [Address, boolean]>;
 
-export type ConfigKeysArgs = ConfigKeys;
+export type ConfigKeysArgs = Array<readonly [Address | HasAddress, boolean]>;
 
 export function getConfigKeysEncoder(): Encoder<ConfigKeysArgs> {
     return getArrayEncoder(getTupleEncoder([getAddressEncoder(), getBooleanEncoder()]), { size: getShortU16Encoder() });
