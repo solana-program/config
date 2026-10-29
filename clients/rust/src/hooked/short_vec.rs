@@ -18,31 +18,33 @@ impl BorshSerialize for ShortU16 {
 
 impl BorshDeserialize for ShortU16 {
     fn deserialize_reader<R: std::io::Read>(reader: &mut R) -> std::io::Result<Self> {
-        let mut value: u16 = 0;
-        let mut shift = 0;
+        let mut value: u32 = 0;
 
-        loop {
+        for shift in [0, 7, 14] {
             let mut byte = [0u8; 1];
             reader.read_exact(&mut byte)?;
-            let part = (byte[0] & 0x7F) as u16;
 
-            if shift >= 16 {
+            if byte[0] == 0 && shift != 0 {
                 return Err(std::io::Error::new(
                     std::io::ErrorKind::InvalidData,
-                    "Overflow while decoding",
+                    "Alias encoding while decoding",
                 ));
             }
 
-            value |= part << shift;
-            shift += 7;
+            value |= u32::from(byte[0] & 0x7F) << shift;
 
             // If the top bit is not set, this is the last byte.
             if byte[0] & 0x80 == 0 {
-                break;
+                return u16::try_from(value).map(ShortU16).map_err(|_| {
+                    std::io::Error::new(std::io::ErrorKind::InvalidData, "Overflow while decoding")
+                });
             }
         }
 
-        Ok(ShortU16(value))
+        Err(std::io::Error::new(
+            std::io::ErrorKind::InvalidData,
+            "Overflow while decoding",
+        ))
     }
 }
 
@@ -54,7 +56,10 @@ fn borsh_serialize_as_short_vec<T: BorshSerialize, W: std::io::Write>(
     vec: &Vec<T>,
     writer: &mut W,
 ) -> std::io::Result<()> {
-    ShortU16(vec.len() as u16).serialize(writer)?;
+    let len = u16::try_from(vec.len()).map_err(|_| {
+        std::io::Error::new(std::io::ErrorKind::InvalidInput, "length larger than u16")
+    })?;
+    ShortU16(len).serialize(writer)?;
     for item in vec {
         item.serialize(writer)?;
     }
@@ -135,5 +140,39 @@ mod tests {
                 (address(6), true),
             ],
         });
+    }
+
+    #[test]
+    fn test_short_u16_deserialize() {
+        for (bytes, value) in [
+            (&[0x00][..], 0),
+            (&[0x7f], 0x7f),
+            (&[0x80, 0x01], 0x80),
+            (&[0xff, 0x7f], 0x3fff),
+            (&[0x80, 0x80, 0x01], 0x4000),
+            (&[0xff, 0xff, 0x03], u16::MAX),
+        ] {
+            assert_eq!(ShortU16::try_from_slice(bytes).unwrap().0, value);
+        }
+
+        for bytes in [
+            &[0x80, 0x00][..],
+            &[0xff, 0x80, 0x00],
+            &[0x80, 0x80, 0x04],
+            &[0xff, 0xff, 0x7f],
+            &[0x80, 0x80, 0x81],
+        ] {
+            assert!(ShortU16::try_from_slice(bytes).is_err(), "{bytes:?}");
+        }
+    }
+
+    #[test]
+    fn test_short_vec_serialize_too_long() {
+        let max = ShortVec(vec![0u8; u16::MAX as usize]);
+        let bytes = borsh::to_vec(&max).unwrap();
+        assert_eq!(&bytes[..3], &[0xff, 0xff, 0x03]);
+
+        let too_long = ShortVec(vec![0u8; u16::MAX as usize + 1]);
+        assert!(borsh::to_vec(&too_long).is_err());
     }
 }
