@@ -49,7 +49,7 @@
         "@solana/kit-plugin-signer": "^0.23.0",
         "@types/node": "^26",
         "oxfmt": "^0.77.0",
-        "oxlint": "^1.92.0",
+        "oxlint": "^1.93.0",
         "oxlint-tsgolint": "^7.0.2006",
         "rimraf": "^6.1.4",
         "tsup": "^9.0.0",
