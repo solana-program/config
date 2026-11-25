@@ -50,7 +50,7 @@
         "@types/node": "^26",
         "oxfmt": "^0.79.0",
         "oxlint": "^1.93.0",
-        "oxlint-tsgolint": "^7.0.2007",
+        "oxlint-tsgolint": "^7.0.2008",
         "rimraf": "^6.1.4",
         "tsup": "^9.0.0",
         "typedoc": "^0.28.20",
