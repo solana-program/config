@@ -5,99 +5,62 @@
 <a href="https://www.npmjs.com/package/@solana-program/config"><img src="https://img.shields.io/npm/v/%40solana-program%2Fconfig?logo=npm&color=377CC0" /></a>
 <a href="https://crates.io/crates/solana-config-program-client"><img src="https://img.shields.io/crates/v/solana-config-program-client?logo=rust" /></a>
 
-This template should help get you started developing Solana programs. Let's walk through this generated program repository and see what's included.
+This repository contains the Config program and its clients:
+
+- [`program`](./program): the on-chain Config program (`solana-config-program`).
+- [`interface`](./interface): the state types and instruction helpers (`solana-config-interface`).
+- [`clients/js`](./clients/js): the JS client, generated from the IDL.
+- [`clients/rust`](./clients/rust): the Rust client, generated from the IDL.
 
 ## Project setup
 
-The first thing you'll want to do is install NPM dependencies which will allow you to access all the scripts and tools provided by this template.
+This repository uses a `Makefile` for building, testing and linting. Package names are mapped to directories by replacing the first `-` with a `/` (for example, `clients-js` refers to `clients/js`).
+
+Install the NPM dependencies once to make the Codama renderers available for client generation:
 
 ```sh
 pnpm install
 ```
 
-## Managing programs
+## Managing the program
 
-You'll notice a `program` folder in the root of this repository. This is where your generated Solana program is located.
-
-Whilst only one program gets generated, note that you can have as many programs as you like in this repository.
-Whenever you add a new program folder to this repository, remember to add it to the `members` array of your root `Cargo.toml` file.
-That way, your programs will be recognized by the following scripts that allow you to build, test, format and lint your programs respectively.
+Build the SBF artifact into `target/deploy/` with:
 
 ```sh
-pnpm programs:build
-pnpm programs:test
-pnpm programs:format
-pnpm programs:lint
+make build-sbf-program
 ```
 
-## Generating IDLs
-
-You may use the following command to generate the IDLs for your programs.
+The program tests run against the built artifact using [Mollusk](https://github.com/anza-xyz/mollusk), so build the program before testing it:
 
 ```sh
-pnpm generate:idls
+make test-program
 ```
 
-Depending on your program's framework, this will either use Shank or Anchor to generate the IDLs.
-Note that, to ensure IDLs are generated using the correct framework version, the specific version used by the program will be downloaded and used locally.
+You can also format-check and lint any Rust package, for example:
+
+```sh
+make format-check-program
+make clippy-program
+```
 
 ## Generating clients
 
-Once your programs' IDLs have been generated, you can generate clients for them using the following command.
+The program IDL is checked in at the repository root as [`idl.json`](./idl.json). Regenerate the JS and Rust clients from it with:
 
 ```sh
-pnpm generate:clients
-```
-
-Alternatively, you can use the `generate` script to generate both the IDLs and the clients at once.
-
-```sh
-pnpm generate
+make generate-clients
 ```
 
 ## Managing clients
 
-The following clients are available for your programs. You may use the following links to learn more about each client.
+The following clients are available for the program. You may use the following links to learn more about each client.
 
 - [JS client](./clients/js)
 - [Rust client](./clients/rust)
 
-## Starting and stopping the local validator
-
-The following script is available to start your local validator.
+The JS client tests load `target/deploy/solana_config_program.so` into LiteSVM, so build the program first:
 
 ```sh
-pnpm validator:start
-```
-
-By default, if a local validator is already running, the script will be skipped. You may use the `validator:restart` script instead to force the validator to restart.
-
-```sh
-pnpm validator:restart
-```
-
-Finally, you may stop the local validator using the following command.
-
-```sh
-pnpm validator:stop
-```
-
-## Using external programs in your validator
-
-If your program requires any external programs to be running, you'll want to in your local validator.
-
-You can do this by adding their program addresses to the `program-dependencies` array in the `Cargo.toml` of your program.
-
-```toml
-program-dependencies = [
-  "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s",
-  "noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV",
-]
-```
-
-Next time you build your program and run your validator, these external programs will automatically be fetched from mainnet and used in your local validator.
-
-```sh
-pnpm programs:build
-pnpm validator:restart
+make build-sbf-program
+make test-js-clients-js
 ```
