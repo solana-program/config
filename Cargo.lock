@@ -3491,6 +3491,8 @@ name = "solana-config-program-client"
 version = "1.1.0"
 dependencies = [
  "borsh",
+ "num-derive 0.5.1",
+ "num-traits",
  "solana-account",
  "solana-account-info",
  "solana-address 2.9.0",
@@ -3499,6 +3501,7 @@ dependencies = [
  "solana-program-error",
  "solana-rpc-client",
  "spl-collections",
+ "thiserror 2.0.21",
 ]
 
 [[package]]

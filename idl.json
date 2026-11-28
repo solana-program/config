@@ -133,7 +133,15 @@
         ]
       }
     ],
-    "errors": [],
+    "errors": [
+      {
+        "kind": "errorNode",
+        "name": "readonlyDataModified",
+        "code": 0,
+        "message": "Instruction modified data of a read-only account",
+        "docs": ["ReadonlyDataModified: Instruction modified data of a read-only account"]
+      }
+    ],
     "name": "config",
     "prefix": "",
     "publicKey": "Config1111111111111111111111111111111111111",
